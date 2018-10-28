@@ -12,40 +12,17 @@
     android:baselineAligned="false"
     android:id="@+id/root">
     
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical">
-    
-        <ImageButton
-            tools:ignore="ContentDescription"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:scaleType="fitXY"
-            android:src="@drawable/ic_refresh_grey_32dp"
-            android:background="@android:color/transparent"
-			tools:background="#5f5f5f"
-            android:id="@+id/btn_refresh"/>
-    
-        <LinearLayout
-			android:layout_width="32dp"
-			android:layout_height="32dp"
-			android:orientation="horizontal"
-			android:id="@+id/progress_container"
-			android:visibility="invisible">
-
-			<ProgressBar
-				android:layout_width="match_parent"
-				android:layout_height="match_parent"
-				android:indeterminate="true"
-				style="@android:style/Widget.Material.Light.ProgressBar.Small"
-				android:id="@+id/progress"/>
-
-		</LinearLayout>
-    
-    </FrameLayout>
+    <ImageButton
+        tools:ignore="ContentDescription"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_refresh_grey_32dp"
+        android:background="@android:color/transparent"
+		tools:background="#5f5f5f"
+        android:id="@+id/btn_refresh"/>
     
     <LinearLayout
         android:layout_width="0dp"

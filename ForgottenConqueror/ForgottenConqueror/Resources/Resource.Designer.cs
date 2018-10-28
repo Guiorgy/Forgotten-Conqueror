@@ -2459,8 +2459,8 @@ namespace ForgottenConqueror
 			// aapt resource value: 0x7f090047
 			public const int center_vertical = 2131296327;
 			
-			// aapt resource value: 0x7f0900b1
-			public const int chapter_title = 2131296433;
+			// aapt resource value: 0x7f0900af
+			public const int chapter_title = 2131296431;
 			
 			// aapt resource value: 0x7f090073
 			public const int checkbox = 2131296371;
@@ -2588,8 +2588,8 @@ namespace ForgottenConqueror
 			// aapt resource value: 0x7f09008c
 			public const int largeLabel = 2131296396;
 			
-			// aapt resource value: 0x7f0900b2
-			public const int last_update = 2131296434;
+			// aapt resource value: 0x7f0900b0
+			public const int last_update = 2131296432;
 			
 			// aapt resource value: 0x7f090049
 			public const int left = 2131296329;
@@ -2606,8 +2606,8 @@ namespace ForgottenConqueror
 			// aapt resource value: 0x7f090061
 			public const int list_item = 2131296353;
 			
-			// aapt resource value: 0x7f0900b4
-			public const int masked = 2131296436;
+			// aapt resource value: 0x7f0900b3
+			public const int masked = 2131296435;
 			
 			// aapt resource value: 0x7f09009f
 			public const int media_actions = 2131296415;
@@ -2657,14 +2657,11 @@ namespace ForgottenConqueror
 			// aapt resource value: 0x7f09004d
 			public const int pin = 2131296333;
 			
-			// aapt resource value: 0x7f0900b0
-			public const int progress = 2131296432;
+			// aapt resource value: 0x7f0900b1
+			public const int progress = 2131296433;
 			
 			// aapt resource value: 0x7f090006
 			public const int progress_circular = 2131296262;
-			
-			// aapt resource value: 0x7f0900af
-			public const int progress_container = 2131296431;
 			
 			// aapt resource value: 0x7f090007
 			public const int progress_horizontal = 2131296263;
@@ -2870,8 +2867,8 @@ namespace ForgottenConqueror
 			// aapt resource value: 0x7f090016
 			public const int view_offset_helper = 2131296278;
 			
-			// aapt resource value: 0x7f0900b3
-			public const int visible = 2131296435;
+			// aapt resource value: 0x7f0900b2
+			public const int visible = 2131296434;
 			
 			// aapt resource value: 0x7f09003c
 			public const int withText = 2131296316;
@@ -3125,10 +3122,22 @@ namespace ForgottenConqueror
 			public const int widget_1cell = 2130968638;
 			
 			// aapt resource value: 0x7f04003f
-			public const int widget_2cell = 2130968639;
+			public const int widget_1cell_progress = 2130968639;
 			
 			// aapt resource value: 0x7f040040
-			public const int widget_3cell = 2130968640;
+			public const int widget_2cell = 2130968640;
+			
+			// aapt resource value: 0x7f040041
+			public const int widget_2cell_progress = 2130968641;
+			
+			// aapt resource value: 0x7f040042
+			public const int widget_3cell = 2130968642;
+			
+			// aapt resource value: 0x7f040043
+			public const int widget_3cell_progress = 2130968643;
+			
+			// aapt resource value: 0x7f040044
+			public const int widget_progress = 2130968644;
 			
 			static Layout()
 			{
