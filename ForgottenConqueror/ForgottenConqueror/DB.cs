@@ -31,8 +31,6 @@ namespace ForgottenConqueror
             private set { }
         }
 
-        public Realm realm { get; private set; } = Realm.GetInstance();
-
         // Entities
         public class Chapter : RealmObject
         {
@@ -42,7 +40,7 @@ namespace ForgottenConqueror
             public int Count { get; set; }
             public string Title { get; set; }
             public string URL { get; set; }
-            
+
             public Book Book { get; set; }
         }
 
@@ -62,13 +60,14 @@ namespace ForgottenConqueror
         // Methods
         public void UpdateBooks()
         {
+            Realm realm = Realm.GetInstance(Realms.RealmConfiguration.DefaultConfiguration);
             HtmlWeb web = new HtmlWeb();
             HtmlDocument doc = web.Load("http://forgottenconqueror.com/");
 
-            HtmlNodeCollection container = doc.DocumentNode.SelectNodes("//div[@class='entry-content']/h1/a");
+            HtmlNodeCollection nodes = doc.DocumentNode.SelectNodes("//div[@class='entry-content']/h1/strong/a");
 
             int count = 0;
-            foreach(HtmlNode node in container)
+            foreach(HtmlNode node in nodes)
             {
                 string title = HtmlEntity.DeEntitize(node.InnerText);
                 string url = node.Attributes["href"].Value;
@@ -89,10 +88,15 @@ namespace ForgottenConqueror
 
         public void UpdateBook(Book book)
         {
+            Realm realm = Realm.GetInstance(Realms.RealmConfiguration.DefaultConfiguration);
             HtmlWeb web = new HtmlWeb();
             HtmlDocument doc = web.Load(book.URL);
 
             HtmlNodeCollection containers = doc.DocumentNode.SelectNodes("//div[@class='entry-content']/p[position()>2]");
+
+            int count = 0;
+            var books = realm.All<Book>().Where(b => b.Count < book.Count);
+            foreach (Book b in books) count += b.Chapters.Count();
 
             List<Chapter> chapters = new List<Chapter>();
             foreach(HtmlNode container in containers)
@@ -105,7 +109,7 @@ namespace ForgottenConqueror
 
                     Chapter chapter = new Chapter()
                     {
-                        ID = book.ID * 1000 + chapters.Count,
+                        ID = count++,
                         Count = chapters.Count + 1,
                         Title = title,
                         URL = url,

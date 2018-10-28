@@ -17,7 +17,7 @@
         android:layout_gravity="center"
         android:gravity="center"
 		android:indeterminate="true"
-		style="@android:style/Widget.Material.Light.ProgressBar.Small"
+		style="@android:style/Widget.Material.Light.ProgressBar.Inverse"
 		android:id="@+id/progress"/>
 
 </FrameLayout>

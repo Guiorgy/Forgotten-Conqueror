@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
     android:background="@drawable/corner_radius_10dp"
 	android:backgroundTint="#f5f5f5"
     android:padding="5dp"
@@ -13,7 +12,7 @@
     android:id="@+id/root">
     
     <ProgressBar
-		android:layout_width="match_parent"
+		android:layout_width="128dp"
 		android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
@@ -23,39 +22,5 @@
 		android:indeterminate="true"
 		style="@android:style/Widget.Material.Light.ProgressBar.Horizontal"
 		android:id="@+id/progress"/>
-    
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:layout_gravity="center_vertical"
-        android:paddingLeft="3dp">
-    
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            tools:text="last chapter"
-            android:maxLines="2"
-            android:textSize="14sp"
-            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-			style="@style/Base.TextAppearance.AppCompat.Large"
-			android:textColor="#000000"
-            android:id="@+id/chapter_title"/>
-    
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            tools:text="last checked"
-            android:maxLines="2"
-            android:textSize="12sp"
-            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-			style="@style/Base.TextAppearance.AppCompat.Large"
-            android:id="@+id/last_update"
-			android:textColor="#000000"/>
-    
-    </LinearLayout>
 
-</LinearLayout>
+</FrameLayout>

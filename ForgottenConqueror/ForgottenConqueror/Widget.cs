@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Appwidget;
@@ -8,6 +9,7 @@ using Android.OS;
 using Android.Widget;
 using Realms;
 using static ForgottenConqueror.DB;
+//using static ForgottenConqueror.DB;
 using Uri = Android.Net.Uri;
 
 namespace ForgottenConqueror
@@ -17,20 +19,20 @@ namespace ForgottenConqueror
     [MetaData("android.appwidget.provider", Resource = "@xml/appwidgetprovider")]
     class Widget : AppWidgetProvider
     {
-        private bool isRefreshing = false;
-        private int[] layouts = {
+        private static bool isRefreshing = false;
+        private static int[] layouts = {
             Resource.Layout.widget,
             Resource.Layout.widget_1cell,
             Resource.Layout.widget_2cell,
             Resource.Layout.widget_3cell,
         };
-        private int[] layoutsRefreshing = {
+        private static int[] layoutsRefreshing = {
             Resource.Layout.widget_progress,
             Resource.Layout.widget_1cell_progress,
             Resource.Layout.widget_2cell_progress,
             Resource.Layout.widget_3cell_progress,
         };
-        private int cells = 3;
+        private static int cells = 3;
 
         public override void OnUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
         {
@@ -39,9 +41,8 @@ namespace ForgottenConqueror
                 return;
             }
             isRefreshing = true;
-
-            Data.Instance.Write(context, Data.IsFirstUpdate, true);
-            new Task(() =>
+            
+            new Thread(() =>
             {
                 // update
                 DB db = DB.Instance;
@@ -52,12 +53,12 @@ namespace ForgottenConqueror
                 }
                 else
                 {
-                    Book book = db.realm.All<Book>().Last();
-                    int count = book.Chapters.Count();
+                    Book book = Realm.GetInstance(Realms.RealmConfiguration.DefaultConfiguration).All<Book>().Last();
                     db.UpdateBook(book);
                     Data.Instance.Write(context, Data.IsFirstUpdate, false);
                 }
                 isRefreshing = false;
+                Data.Instance.Write(context, Data.LastUpdate, DateTime.Now.Ticks);
                 ComponentName provider = new ComponentName(context, Java.Lang.Class.FromType(typeof(Widget)).Name);
                 appWidgetManager.UpdateAppWidget(provider, BuildRemoteViews(context, appWidgetIds, 0));
             }).Start();
@@ -92,7 +93,7 @@ namespace ForgottenConqueror
                 try
                 {
                     //read last chapter url
-                    string url = Realm.GetInstance().All<Chapter>().Last().URL;
+                    string url = Realm.GetInstance(Realms.RealmConfiguration.DefaultConfiguration).All<Chapter>().Last().URL;
 
                     // launch in browser
                     Uri uri = Uri.Parse(url);
@@ -110,7 +111,7 @@ namespace ForgottenConqueror
         {
             RemoteViews widgetView;
 
-            cells = GetCellsForSize(width);
+            cells = width == 0 ? 0 : GetCellsForSize(width);
 
             int i = cells > 3 ? 3 : cells;
             int layout = isRefreshing ? layoutsRefreshing[i] : layouts[i];
@@ -140,10 +141,10 @@ namespace ForgottenConqueror
 
         private void SetTextViewText(Context context, RemoteViews widgetView)
         {
-            string title = DB.Instance.realm.All<Chapter>().Last().Title;
+            string title = Realm.GetInstance(Realms.RealmConfiguration.DefaultConfiguration).All<Chapter>().Last().Title;
             long lastUpdate = Data.Instance.ReadLong(context, Data.LastUpdate);
 
-            widgetView.SetTextViewText(Resource.Id.chapter_title, "title");
+            widgetView.SetTextViewText(Resource.Id.chapter_title, title);
             widgetView.SetTextViewText(Resource.Id.last_update, string.Format("{0:MM/dd/yy H:mm:ss}", new DateTime(lastUpdate)));
         }
 
