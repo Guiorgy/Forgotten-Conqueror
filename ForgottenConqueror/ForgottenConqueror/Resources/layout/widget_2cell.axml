@@ -21,7 +21,6 @@
         android:scaleType="fitXY"
         android:src="@drawable/ic_refresh_grey_32dp"
         android:background="@android:color/transparent"
-		tools:background="#5f5f5f"
         android:id="@+id/btn_refresh"/>
     
     <LinearLayout
@@ -36,25 +35,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            tools:text="last chapter"
             android:maxLines="2"
             android:textSize="14sp"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
 			style="@style/Base.TextAppearance.AppCompat.Large"
 			android:textColor="#000000"
+            tools:text="last chapter"
             android:id="@+id/chapter_title"/>
     
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            tools:text="last checked"
             android:maxLines="2"
             android:textSize="12sp"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
 			style="@style/Base.TextAppearance.AppCompat.Large"
-            android:id="@+id/last_update"
-			android:textColor="#000000"/>
+			android:textColor="#000000"
+            tools:text="last checked"
+            android:id="@+id/last_update"/>
     
     </LinearLayout>
 

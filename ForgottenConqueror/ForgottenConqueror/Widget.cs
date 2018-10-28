@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using Android.App;
 using Android.Appwidget;
 using Android.Content;
@@ -9,12 +8,11 @@ using Android.OS;
 using Android.Widget;
 using Realms;
 using static ForgottenConqueror.DB;
-//using static ForgottenConqueror.DB;
 using Uri = Android.Net.Uri;
 
 namespace ForgottenConqueror
 {
-    [BroadcastReceiver(Label = "Forgotten Conqueror")]
+    [BroadcastReceiver(Label = "Last Chapter")]
     [IntentFilter(new string[] { "android.appwidget.action.APPWIDGET_UPDATE" })]
     [MetaData("android.appwidget.provider", Resource = "@xml/appwidgetprovider")]
     class Widget : AppWidgetProvider
@@ -122,8 +120,7 @@ namespace ForgottenConqueror
 
             if (!isRefreshing)
             {
-                SetTextViewText(context, widgetView);
-                RegisterClicks(context, appWidgetIds, widgetView);
+                SetView(context, appWidgetIds, widgetView);
             }
 
             return widgetView;
@@ -139,17 +136,16 @@ namespace ForgottenConqueror
             return n - 1;
         }
 
-        private void SetTextViewText(Context context, RemoteViews widgetView)
+        private void SetView(Context context, int[] appWidgetIds, RemoteViews widgetView)
         {
+            // Set TextViews
             string title = Realm.GetInstance(Realms.RealmConfiguration.DefaultConfiguration).All<Chapter>().Last().Title;
             long lastUpdate = Data.Instance.ReadLong(context, Data.LastUpdate);
 
             widgetView.SetTextViewText(Resource.Id.chapter_title, title);
             widgetView.SetTextViewText(Resource.Id.last_update, string.Format("{0:MM/dd/yy H:mm:ss}", new DateTime(lastUpdate)));
-        }
 
-        private void RegisterClicks(Context context, int[] appWidgetIds, RemoteViews widgetView)
-        {
+            // Set Click Events
             Intent intent = new Intent(context, typeof(Widget));
             intent.SetAction(AppWidgetManager.ActionAppwidgetUpdate);
             intent.PutExtra(AppWidgetManager.ExtraAppwidgetIds, appWidgetIds);

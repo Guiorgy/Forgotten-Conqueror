@@ -74,6 +74,7 @@
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WidgetLarge.cs" />
     <Compile Include="Widget.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -179,6 +180,18 @@
     </AndroidResource>
     <AndroidResource Include="Resources\layout\widget_progress.axml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\anim\fade_in_from_right.xml" />
+    <AndroidResource Include="Resources\anim\fade_out_to_right.xml" />
+    <AndroidResource Include="Resources\layout\widget_large.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\xml\appwidgetprovider_large.xml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\widget_large_progress.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

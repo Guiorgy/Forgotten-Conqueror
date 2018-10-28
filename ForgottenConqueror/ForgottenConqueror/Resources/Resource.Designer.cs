@@ -74,10 +74,16 @@ namespace ForgottenConqueror
 			public const int design_snackbar_out = 2131034125;
 			
 			// aapt resource value: 0x7f05000e
-			public const int tooltip_enter = 2131034126;
+			public const int fade_in_from_right = 2131034126;
 			
 			// aapt resource value: 0x7f05000f
-			public const int tooltip_exit = 2131034127;
+			public const int fade_out_to_right = 2131034127;
+			
+			// aapt resource value: 0x7f050010
+			public const int tooltip_enter = 2131034128;
+			
+			// aapt resource value: 0x7f050011
+			public const int tooltip_exit = 2131034129;
 			
 			static Animation()
 			{
@@ -3137,7 +3143,13 @@ namespace ForgottenConqueror
 			public const int widget_3cell_progress = 2130968643;
 			
 			// aapt resource value: 0x7f040044
-			public const int widget_progress = 2130968644;
+			public const int widget_large = 2130968644;
+			
+			// aapt resource value: 0x7f040045
+			public const int widget_large_progress = 2130968645;
+			
+			// aapt resource value: 0x7f040046
+			public const int widget_progress = 2130968646;
 			
 			static Layout()
 			{
@@ -4480,6 +4492,9 @@ namespace ForgottenConqueror
 			
 			// aapt resource value: 0x7f070000
 			public const int appwidgetprovider = 2131165184;
+			
+			// aapt resource value: 0x7f070001
+			public const int appwidgetprovider_large = 2131165185;
 			
 			static Xml()
 			{
