@@ -78,42 +78,73 @@ namespace ForgottenConqueror
             editor.Apply();
         }
 
-        public string Read(Context context, string key)
+        public string Read(Context context, string key, string defaultValue)
         {
             ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
-            return prefs.GetString(key, null);
+            return prefs.GetString(key, defaultValue);
+        }
+
+        public string Read(Context context, string key)
+        {
+            return Read(context, key, null);
+        }
+
+        public bool ReadBoolean(Context context, string key, bool defaultValue)
+        {
+            ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
+            return prefs.GetBoolean(key, defaultValue);
         }
 
         public bool ReadBoolean(Context context, string key)
         {
+            return ReadBoolean(context, key, false);
+        }
+
+        public float ReadFloat(Context context, string key, float defaultValue)
+        {
             ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
-            return prefs.GetBoolean(key, false);
+            return prefs.GetFloat(key, defaultValue);
         }
 
         public float ReadFloat(Context context, string key)
         {
+            return ReadFloat(context, key, 0f);
+        }
+
+        public int ReadInt(Context context, string key, int defaultValue)
+        {
             ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
-            return prefs.GetFloat(key, 0f);
+            return prefs.GetInt(key, defaultValue);
         }
 
         public int ReadInt(Context context, string key)
         {
+            return ReadInt(context, key, 0);
+        }
+
+        public long ReadLong(Context context, string key, long defaultValue)
+        {
             ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
-            return prefs.GetInt(key, 0);
+            return prefs.GetLong(key, defaultValue);
         }
 
         public long ReadLong(Context context, string key)
         {
+            return ReadLong(context, key, 0L);
+        }
+
+        public ICollection<string> ReadStrings(Context context, string key, ICollection<string> defaultValue)
+        {
             ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
-            return prefs.GetLong(key, 0L);
+            return prefs.GetStringSet(key, defaultValue);
         }
 
         public ICollection<string> ReadStrings(Context context, string key)
         {
-            ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
-            return prefs.GetStringSet(key, null);
+            return ReadStrings(context, key, null);
         }
-        
+
+        public readonly static string IsFirstUpdate = "IsFirstUpdate";
         public readonly static string LastUpdate = "LastUpdate";
         public readonly static string LastChapterTitle = "LastChapterTitle";
         public readonly static string LastChapterCount = "LastChapterCount";

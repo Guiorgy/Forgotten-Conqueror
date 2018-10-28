@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Linq;
-using System.Threading;
+using System.Threading.Tasks;
 using Android.App;
 using Android.Appwidget;
 using Android.Content;
 using Android.OS;
-using Android.Views;
 using Android.Widget;
-using HtmlAgilityPack;
+using Realms;
+using static ForgottenConqueror.DB;
 using Uri = Android.Net.Uri;
 
 namespace ForgottenConqueror
@@ -18,7 +18,19 @@ namespace ForgottenConqueror
     class Widget : AppWidgetProvider
     {
         private bool isRefreshing = false;
-        private int layout = Resource.Layout.widget;
+        private int[] layouts = {
+            Resource.Layout.widget,
+            Resource.Layout.widget_1cell,
+            Resource.Layout.widget_2cell,
+            Resource.Layout.widget_3cell,
+        };
+        private int[] layoutsRefreshing = {
+            Resource.Layout.widget_progress,
+            Resource.Layout.widget_1cell_progress,
+            Resource.Layout.widget_2cell_progress,
+            Resource.Layout.widget_3cell_progress,
+        };
+        private int cells = 3;
 
         public override void OnUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
         {
@@ -28,43 +40,90 @@ namespace ForgottenConqueror
             }
             isRefreshing = true;
 
+            Data.Instance.Write(context, Data.IsFirstUpdate, true);
+            new Task(() =>
+            {
+                // update
+                DB db = DB.Instance;
+                bool isFirstUpdate = Data.Instance.ReadBoolean(context, Data.IsFirstUpdate, true);
+                if (isFirstUpdate)
+                {
+                    db.UpdateBooks();
+                }
+                else
+                {
+                    Book book = db.realm.All<Book>().Last();
+                    int count = book.Chapters.Count();
+                    db.UpdateBook(book);
+                    Data.Instance.Write(context, Data.IsFirstUpdate, false);
+                }
+                isRefreshing = false;
+                ComponentName provider = new ComponentName(context, Java.Lang.Class.FromType(typeof(Widget)).Name);
+                appWidgetManager.UpdateAppWidget(provider, BuildRemoteViews(context, appWidgetIds, 0));
+            }).Start();
+
             base.OnUpdate(context, appWidgetManager, appWidgetIds);
             ComponentName me = new ComponentName(context, Java.Lang.Class.FromType(typeof(Widget)).Name);
             appWidgetManager.UpdateAppWidget(me, BuildRemoteViews(context, appWidgetIds, 0));
+        }
+
+        public override void OnAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle newOptions)
+        {
+            Bundle options = appWidgetManager.GetAppWidgetOptions(appWidgetId);
+
+            // Get min width and height.
+            int minWidth = options.GetInt(AppWidgetManager.OptionAppwidgetMinWidth);
+            //int minHeight = options.GetInt(AppWidgetManager.OptionAppwidgetMinHeight);
+
+            // Obtain appropriate widget and update it.
+            appWidgetManager.UpdateAppWidget(appWidgetId, BuildRemoteViews(context, new int[] { appWidgetId }, minWidth));
+            base.OnAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
+        }
+
+        private readonly static string OpenChapterClick = "OpenChapterClick";
+        public override void OnReceive(Context context, Intent intent)
+        {
+            base.OnReceive(context, intent);
+
+            // Check if the click is to open chapter in browser
+            if (OpenChapterClick.Equals(intent.Action))
+            {
+                var pm = context.PackageManager;
+                try
+                {
+                    //read last chapter url
+                    string url = Realm.GetInstance().All<Chapter>().Last().URL;
+
+                    // launch in browser
+                    Uri uri = Uri.Parse(url);
+                    Intent browser = new Intent(Intent.ActionView, uri);
+                    context.StartActivity(browser);
+                }
+                catch
+                {
+                    // Something went wrong :(
+                }
+            }
         }
 
         private RemoteViews BuildRemoteViews(Context context, int[] appWidgetIds, int width)
         {
             RemoteViews widgetView;
 
-            int cells = GetCellsForSize(width);
+            cells = GetCellsForSize(width);
 
-            switch (cells)
+            int i = cells > 3 ? 3 : cells;
+            int layout = isRefreshing ? layoutsRefreshing[i] : layouts[i];
+            layouts[0] = layouts[i];
+            layoutsRefreshing[0] = layoutsRefreshing[i];
+
+            widgetView = new RemoteViews(context.PackageName, layout);
+
+            if (!isRefreshing)
             {
-                case 0:
-                    widgetView = new RemoteViews(context.PackageName, layout);
-                    break;
-                case 1:
-                    widgetView = new RemoteViews(context.PackageName, Resource.Layout.widget_1cell);
-                    layout = Resource.Layout.widget_1cell;
-                    break;
-                case 2:
-                    widgetView = new RemoteViews(context.PackageName, Resource.Layout.widget_2cell);
-                    layout = Resource.Layout.widget_2cell;
-                    break;
-                case 3:
-                    widgetView = new RemoteViews(context.PackageName, Resource.Layout.widget_3cell);
-                    layout = Resource.Layout.widget_3cell;
-                    break;
-                default:
-                    widgetView = new RemoteViews(context.PackageName, Resource.Layout.widget);
-                    layout = Resource.Layout.widget;
-                    break;
-
+                SetTextViewText(context, widgetView);
+                RegisterClicks(context, appWidgetIds, widgetView);
             }
-
-            SetTextViewText(context, widgetView, cells == 0);
-            RegisterClicks(context, appWidgetIds, widgetView);
 
             return widgetView;
         }
@@ -79,84 +138,13 @@ namespace ForgottenConqueror
             return n - 1;
         }
 
-        private void SetTextViewText(Context context, RemoteViews widgetView, bool update)
+        private void SetTextViewText(Context context, RemoteViews widgetView)
         {
-            if (!update)
-            {
-                if (layout != Resource.Layout.widget_1cell)
-                {
-                    // Read last chapter title from SharedPreference
-                    string lastChapter = Data.Instance.Read(context, Data.LastChapterTitle);
-                    if (lastChapter == null)
-                    {
-                        lastChapter = "";
-                    }
-                    // Read last chapter count from SharedPreference
-                    int chapterCount = Data.Instance.ReadInt(context, Data.LastChapterCount);
-                    long lastUpdate = Data.Instance.ReadLong(context, Data.LastUpdate);
+            string title = DB.Instance.realm.All<Chapter>().Last().Title;
+            long lastUpdate = Data.Instance.ReadLong(context, Data.LastUpdate);
 
-                    widgetView.SetTextViewText(Resource.Id.chapter_title, lastChapter);
-                    widgetView.SetTextViewText(Resource.Id.last_update, string.Format("{0:MM/dd/yy H:mm:ss}", new DateTime(lastUpdate)));
-                }
-            }
-            else
-            {
-                widgetView.SetViewVisibility(Resource.Id.btn_refresh, ViewStates.Invisible);
-                widgetView.SetViewVisibility(Resource.Id.progress_container, ViewStates.Visible);
-
-                // Read last chapter title from SharedPreference
-                string lastChapter = Data.Instance.Read(context, Data.LastChapterTitle);
-                if (lastChapter == null)
-                {
-                    lastChapter = "";
-                }
-                // Read last chapter count from SharedPreference
-                int chapterCount = Data.Instance.ReadInt(context, Data.LastChapterCount);
-                long lastUpdate = Data.Instance.ReadLong(context, Data.LastUpdate);
-
-                // Get html document
-                try
-                {
-                    string url = "http://forgottenconqueror.com/book-3/";
-                    HtmlWeb web = new HtmlWeb();
-                    HtmlDocument doc = web.Load(url);
-
-                    HtmlNode container = doc.DocumentNode.SelectSingleNode("//div[@class='entry-content']/p[last()]");
-                    HtmlNodeCollection chapters = container.SelectNodes("./a");
-
-                    int count = chapters.Count();
-                    string title = HtmlEntity.DeEntitize(chapters.Last().InnerText);
-                    string chapterURL = chapters.Last().Attributes["href"].Value;
-                    Data.Instance.Write(context, Data.LastChapterURL, chapterURL);
-
-                    // Compare
-                    if (chapterCount != count)
-                    {
-                        Data.Instance.Write(context, Data.LastChapterCount, count);
-                    }
-                    if (!lastChapter.Equals(title))
-                    {
-                        Data.Instance.Write(context, Data.LastChapterTitle, title);
-                    }
-                    long now = DateTime.Now.Ticks;
-                    Data.Instance.Write(context, Data.LastUpdate, now);
-
-                    if (layout != Resource.Layout.widget_1cell)
-                    {
-                        widgetView.SetTextViewText(Resource.Id.chapter_title, title);
-                        widgetView.SetTextViewText(Resource.Id.last_update, string.Format("{0:MM/dd/yy H:mm:ss}", new DateTime(now)));
-                    }
-                }
-                catch (Exception e)
-                {
-                    // Something went wrong :(
-                    Toast.MakeText(context, "Failed to update!", ToastLength.Short).Show();
-                }
-
-                isRefreshing = false;
-                widgetView.SetViewVisibility(Resource.Id.btn_refresh, ViewStates.Visible);
-                widgetView.SetViewVisibility(Resource.Id.progress_container, ViewStates.Invisible);
-            }
+            widgetView.SetTextViewText(Resource.Id.chapter_title, "title");
+            widgetView.SetTextViewText(Resource.Id.last_update, string.Format("{0:MM/dd/yy H:mm:ss}", new DateTime(lastUpdate)));
         }
 
         private void RegisterClicks(Context context, int[] appWidgetIds, RemoteViews widgetView)
@@ -178,46 +166,6 @@ namespace ForgottenConqueror
             var intent = new Intent(context, typeof(Widget));
             intent.SetAction(action);
             return PendingIntent.GetBroadcast(context, 0, intent, 0);
-        }
-        
-        private readonly static string OpenChapterClick = "OpenChapterClick";
-
-        public override void OnReceive(Context context, Intent intent)
-        {
-            base.OnReceive(context, intent);
-
-            // Check if the click is to open chapter in browser
-            if (OpenChapterClick.Equals(intent.Action))
-            {
-                var pm = context.PackageManager;
-                try
-                {
-                    // read last chapter url
-                    string url = Data.Instance.Read(context, Data.LastChapterURL);
-
-                    // launch in browser
-                    Uri uri = Uri.Parse(url);
-                    Intent browser = new Intent(Intent.ActionView, uri);
-                    context.StartActivity(browser);
-                }
-                catch
-                {
-                    // Something went wrong :(
-                }
-            }
-        }
-
-        public override void OnAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle newOptions)
-        {
-            Bundle options = appWidgetManager.GetAppWidgetOptions(appWidgetId);
-
-            // Get min width and height.
-            int minWidth = options.GetInt(AppWidgetManager.OptionAppwidgetMinWidth);
-            //int minHeight = options.GetInt(AppWidgetManager.OptionAppwidgetMinHeight);
-
-            // Obtain appropriate widget and update it.
-            appWidgetManager.UpdateAppWidget(appWidgetId, BuildRemoteViews(context, new int[] { appWidgetId }, minWidth));
-            base.OnAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
         }
     }
 }

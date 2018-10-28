@@ -11,16 +11,13 @@
     android:baselineAligned="false"
     android:id="@+id/root">
     
-    <ImageButton
-        tools:ignore="ContentDescription"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+    <ProgressBar
+		android:layout_width="32dp"
+		android:layout_height="32dp"
         android:layout_gravity="center"
         android:gravity="center"
-        android:scaleType="fitXY"
-        android:src="@drawable/ic_refresh_grey_32dp"
-        android:background="@android:color/transparent"
-		tools:background="#5f5f5f"
-        android:id="@+id/btn_refresh"/>
+		android:indeterminate="true"
+		style="@android:style/Widget.Material.Light.ProgressBar.Small"
+		android:id="@+id/progress"/>
 
 </FrameLayout>
