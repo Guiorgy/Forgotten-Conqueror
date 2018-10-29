@@ -17,6 +17,8 @@ namespace ForgottenConqueror
     [MetaData("android.appwidget.provider", Resource = "@xml/appwidgetprovider")]
     class Widget : AppWidgetProvider
     {
+        private readonly static string OpenChapterClick = "OpenChapterClick";
+        private readonly static string RefreshClick = "RefreshClick";
         private static bool isRefreshing = false;
         private static int[] layouts = {
             Resource.Layout.widget,
@@ -79,7 +81,6 @@ namespace ForgottenConqueror
             base.OnAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
         }
 
-        private readonly static string OpenChapterClick = "OpenChapterClick";
         public override void OnReceive(Context context, Intent intent)
         {
             base.OnReceive(context, intent);
@@ -144,25 +145,20 @@ namespace ForgottenConqueror
 
             widgetView.SetTextViewText(Resource.Id.chapter_title, title);
             widgetView.SetTextViewText(Resource.Id.last_update, string.Format("{0:MM/dd/yy H:mm:ss}", new DateTime(lastUpdate)));
-
-            // Set Click Events
-            Intent intent = new Intent(context, typeof(Widget));
-            intent.SetAction(AppWidgetManager.ActionAppwidgetUpdate);
-            intent.PutExtra(AppWidgetManager.ExtraAppwidgetIds, appWidgetIds);
-
-            // Click to open chapter in browser
-            widgetView.SetOnClickPendingIntent(Resource.Id.root, GetPendingSelfIntent(context, OpenChapterClick));
-
-            // Refresh button click
-            PendingIntent piRefresh = PendingIntent.GetBroadcast(context, 0, intent, PendingIntentFlags.UpdateCurrent);
-            widgetView.SetOnClickPendingIntent(Resource.Id.btn_refresh, piRefresh);
-        }
-
-        private PendingIntent GetPendingSelfIntent(Context context, string action)
-        {
-            var intent = new Intent(context, typeof(Widget));
-            intent.SetAction(action);
-            return PendingIntent.GetBroadcast(context, 0, intent, 0);
+            
+            // Bind the click intent for the chapter on the widget
+            Intent chapterIntent = new Intent(context, typeof(Widget));
+            chapterIntent.SetAction(OpenChapterClick);
+            chapterIntent.PutExtra(AppWidgetManager.ExtraAppwidgetIds, appWidgetIds);
+            PendingIntent chapterPendingIntent = PendingIntent.GetBroadcast(context, 0, chapterIntent, 0);
+            widgetView.SetOnClickPendingIntent(Resource.Id.root, chapterPendingIntent);
+            
+            // Bind the click intent for the refresh button on the widget
+            Intent refreshIntent = new Intent(context, typeof(Widget));
+            refreshIntent.SetAction(RefreshClick);
+            refreshIntent.PutExtra(AppWidgetManager.ExtraAppwidgetIds, appWidgetIds);
+            PendingIntent refreshPendingIntent = PendingIntent.GetBroadcast(context, 0, chapterIntent, PendingIntentFlags.UpdateCurrent);
+            widgetView.SetOnClickPendingIntent(Resource.Id.btn_refresh, refreshPendingIntent);
         }
     }
 }
