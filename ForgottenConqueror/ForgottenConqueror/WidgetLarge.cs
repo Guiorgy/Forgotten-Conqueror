@@ -2,8 +2,10 @@
 using Android.Appwidget;
 using Android.Content;
 using Android.Widget;
+using Realms;
 using System;
 using System.Threading;
+using static ForgottenConqueror.DB;
 using Uri = Android.Net.Uri;
 
 namespace ForgottenConqueror
@@ -16,33 +18,53 @@ namespace ForgottenConqueror
         private readonly static string NextClick = "NextClick";
         private readonly static string PreviousClick = "PreviousClick";
         private readonly static string RefreshClick = "RefreshClick";
-        private static bool isRefreshing = false;
         private readonly static int layouts = Resource.Layout.widget_large;
         private readonly static int layoutsRefreshing = Resource.Layout.widget_large_progress;
-        private static int bookCount = 0;
 
         public override void OnUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
         {
-            if (isRefreshing)
+            Realm realm = Realm.GetInstance(Realms.RealmConfiguration.DefaultConfiguration);
+            foreach(int appWidgetId in appWidgetIds)
             {
-                return;
+                WidgetLargeParams widgetLargeParams = realm.Find<WidgetLargeParams>(appWidgetId);
+                if (widgetLargeParams == null)
+                {
+                    // Widget created
+                    realm.Write(() =>
+                    {
+                        widgetLargeParams = new WidgetLargeParams()
+                        {
+                            ID = appWidgetId,
+                            IsRefreshing = true,
+                            Book = 1,
+                        };
+                        realm.Add<WidgetLargeParams>(widgetLargeParams);
+                    });
+                }
+                else if (widgetLargeParams.IsRefreshing)
+                {
+                    // Already updating
+                    return;
+                }
+                else realm.Write(() => widgetLargeParams.IsRefreshing = true);
+
+                new Thread(() =>
+                {
+                    // update
+                    Realm aRealm = Realm.GetInstance(Realms.RealmConfiguration.DefaultConfiguration);
+                    WidgetLargeParams aWidgetLargeParams = aRealm.Find<WidgetLargeParams>(appWidgetId);
+                    DB db = DB.Instance;
+                    db.UpdateBooks();
+                    aRealm.Write(() => aWidgetLargeParams.IsRefreshing = false);
+                    Data.Instance.Write(context, Data.LastUpdate, DateTime.Now.Ticks);
+                    ComponentName provider = new ComponentName(context, Java.Lang.Class.FromType(typeof(Widget)).Name);
+                    appWidgetManager.UpdateAppWidget(provider, BuildRemoteViews(context, appWidgetIds, aWidgetLargeParams));
+                }).Start();
+
+                ComponentName me = new ComponentName(context, Java.Lang.Class.FromType(typeof(WidgetLarge)).Name);
+                appWidgetManager.UpdateAppWidget(me, BuildRemoteViews(context, appWidgetIds, widgetLargeParams));
             }
-            isRefreshing = true;
-
-            new Thread(() =>
-            {
-                // update
-                DB db = DB.Instance;
-                db.UpdateBooks();
-                isRefreshing = false;
-                Data.Instance.Write(context, Data.LastUpdate, DateTime.Now.Ticks);
-                ComponentName provider = new ComponentName(context, Java.Lang.Class.FromType(typeof(Widget)).Name);
-                appWidgetManager.UpdateAppWidget(provider, BuildRemoteViews(context, appWidgetIds));
-            }).Start();
-
             base.OnUpdate(context, appWidgetManager, appWidgetIds);
-            ComponentName me = new ComponentName(context, Java.Lang.Class.FromType(typeof(WidgetLarge)).Name);
-            appWidgetManager.UpdateAppWidget(me, BuildRemoteViews(context, appWidgetIds));
         }
 
         public override void OnReceive(Context context, Intent intent)
@@ -63,14 +85,14 @@ namespace ForgottenConqueror
             }
         }
 
-        private RemoteViews BuildRemoteViews(Context context, int[] appWidgetIds)
+        private RemoteViews BuildRemoteViews(Context context, int[] appWidgetIds, WidgetLargeParams widgetLargeParams)
         {
             RemoteViews widgetView;
-            int layout = isRefreshing ? layoutsRefreshing : layouts;
+            int layout = widgetLargeParams.IsRefreshing ? layoutsRefreshing : layouts;
 
             widgetView = new RemoteViews(context.PackageName, layout);
 
-            if (!isRefreshing)
+            if (!widgetLargeParams.IsRefreshing)
             {
                 SetView(context, appWidgetIds, widgetView);
             }
@@ -80,7 +102,7 @@ namespace ForgottenConqueror
 
         private void SetView(Context context, int[] appWidgetIds, RemoteViews widgetView)
         {
-            Intent intent = new Intent(context, typeof(RemoteViewsService));
+            Intent intent = new Intent(context, typeof(WidgetLargeService));
 			intent.PutExtra(AppWidgetManager.ExtraAppwidgetIds, appWidgetIds);
 			intent.SetData(Uri.Parse(intent.ToUri(IntentUriType.Scheme)));
             widgetView.SetRemoteAdapter(Resource.Id.view_flipper, intent);
@@ -103,6 +125,41 @@ namespace ForgottenConqueror
             refreshIntent.SetAction(RefreshClick);
             PendingIntent refreshPendingIntent = PendingIntent.GetBroadcast(context, 0, previousIntent, PendingIntentFlags.UpdateCurrent);
             widgetView.SetOnClickPendingIntent(Resource.Id.btn_refresh, refreshPendingIntent);
+        }
+
+        public override void OnDeleted(Context context, int[] appWidgetIds)
+        {
+            base.OnDeleted(context, appWidgetIds);
+            Realm realm = Realm.GetInstance(Realms.RealmConfiguration.DefaultConfiguration);
+            realm.Write(() =>
+            {
+                foreach (int appWidgetId in appWidgetIds)
+                {
+                    WidgetLargeParams widgetParams = realm.Find<WidgetLargeParams>(appWidgetId);
+                    realm.Remove(widgetParams);
+                }
+            });
+        }
+
+        public override void OnDisabled(Context context)
+        {
+            base.OnDisabled(context);
+            Realm realm = Realm.GetInstance(Realms.RealmConfiguration.DefaultConfiguration);
+            realm.Write(() => realm.RemoveAll<WidgetLargeParams>());
+        }
+
+        public override void OnRestored(Context context, int[] oldWidgetIds, int[] newWidgetIds)
+        {
+            base.OnRestored(context, oldWidgetIds, newWidgetIds);
+            Realm realm = Realm.GetInstance(Realms.RealmConfiguration.DefaultConfiguration);
+            realm.Write(() =>
+            {
+                for (int i = 0; i < oldWidgetIds.Length; i++)
+                {
+                    WidgetLargeParams widgetLargeParams = realm.Find<WidgetLargeParams>(oldWidgetIds[i]);
+                    widgetLargeParams.ID = newWidgetIds[i];
+                }
+            });
         }
     }
 }

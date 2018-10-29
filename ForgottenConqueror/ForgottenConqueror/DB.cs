@@ -57,6 +57,24 @@ namespace ForgottenConqueror
             public IQueryable<Chapter> Chapters { get; }
         }
 
+        public class WidgetParams : RealmObject
+        {
+            [PrimaryKey]
+            public int ID { get; set; }
+            //public RealmInteger<int> Counter { get; set; }
+            public bool IsRefreshing { get; set; }
+            public int Cells { get; set; }
+        }
+
+        public class WidgetLargeParams : RealmObject
+        {
+            [PrimaryKey]
+            public int ID { get; set; }
+            //public RealmInteger<int> Counter { get; set; }
+            public bool IsRefreshing { get; set; }
+            public int Book { get; set; }
+        }
+
         // Methods
         public void UpdateBooks()
         {

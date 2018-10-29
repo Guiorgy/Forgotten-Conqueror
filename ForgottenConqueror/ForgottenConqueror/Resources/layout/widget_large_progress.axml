@@ -25,7 +25,7 @@
             android:text="Previous"
             android:textSize="16sp"
             android:maxLines="1"
-            style="@style/Widget.MaterialComponents.Button"
+            style="@android:style/Widget.Material.Button"
             android:id="@+id/btn_previous"/>
 
         <Button
@@ -37,7 +37,7 @@
             android:text="Next"
             android:textSize="16sp"
             android:maxLines="1"
-            style="@style/Widget.MaterialComponents.Button"
+            style="@android:style/Widget.Material.Button"
             android:id="@+id/btn_next"/>
 
         <TextView
