@@ -8,7 +8,7 @@ namespace ForgottenConqueror
 {
     class WidgetLargeService : RemoteViewsService
     {
-        private new static readonly string PackageName = "Za1d3.ForgottenConqueror";
+        private new static readonly string PackageName = ForgottenConqueror.Instance.PackageName; //"Za1d3.ForgottenConqueror";
 
         public override IRemoteViewsFactory OnGetViewFactory(Intent intent)
         {
@@ -33,6 +33,8 @@ namespace ForgottenConqueror
             public RemoteViews GetViewAt(int position)
             {
                 RemoteViews page = new RemoteViews(PackageName, Layouts[position]);
+
+                //page.SetTextViewText(Resource.Id.book_title, $"book {position}"); // TMP!
 
                 return page;
             }
@@ -61,7 +63,7 @@ namespace ForgottenConqueror
 
             public bool HasStableIds => true;
 
-            public RemoteViews LoadingView =>  new RemoteViews(PackageName, Resource.Layout.widget_large_progress);
+            public RemoteViews LoadingView =>  new RemoteViews(PackageName, Resource.Layout.widget_1cell_progress);
 
             public int ViewTypeCount => 1;
 

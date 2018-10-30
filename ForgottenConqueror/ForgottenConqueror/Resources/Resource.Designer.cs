@@ -2444,14 +2444,14 @@ namespace ForgottenConqueror
 			// aapt resource value: 0x7f090057
 			public const int blocking = 2131296343;
 			
-			// aapt resource value: 0x7f0900b4
-			public const int book_title = 2131296436;
+			// aapt resource value: 0x7f0900b6
+			public const int book_title = 2131296438;
 			
 			// aapt resource value: 0x7f09003d
 			public const int bottom = 2131296317;
 			
-			// aapt resource value: 0x7f0900b6
-			public const int btn_menu = 2131296438;
+			// aapt resource value: 0x7f0900b5
+			public const int btn_menu = 2131296437;
 			
 			// aapt resource value: 0x7f0900b3
 			public const int btn_next = 2131296435;
@@ -2624,14 +2624,17 @@ namespace ForgottenConqueror
 			// aapt resource value: 0x7f09001d
 			public const int listMode = 2131296285;
 			
+			// aapt resource value: 0x7f0900ba
+			public const int list_books = 2131296442;
+			
 			// aapt resource value: 0x7f0900b8
 			public const int list_chapters = 2131296440;
 			
 			// aapt resource value: 0x7f090061
 			public const int list_item = 2131296353;
 			
-			// aapt resource value: 0x7f0900bb
-			public const int masked = 2131296443;
+			// aapt resource value: 0x7f0900bc
+			public const int masked = 2131296444;
 			
 			// aapt resource value: 0x7f09009f
 			public const int media_actions = 2131296415;
@@ -2891,14 +2894,14 @@ namespace ForgottenConqueror
 			// aapt resource value: 0x7f090026
 			public const int useLogo = 2131296294;
 			
-			// aapt resource value: 0x7f0900b5
-			public const int view_flipper = 2131296437;
+			// aapt resource value: 0x7f0900b4
+			public const int view_flipper = 2131296436;
 			
 			// aapt resource value: 0x7f090016
 			public const int view_offset_helper = 2131296278;
 			
-			// aapt resource value: 0x7f0900ba
-			public const int visible = 2131296442;
+			// aapt resource value: 0x7f0900bb
+			public const int visible = 2131296443;
 			
 			// aapt resource value: 0x7f09003c
 			public const int withText = 2131296316;

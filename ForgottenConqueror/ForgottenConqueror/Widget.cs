@@ -36,7 +36,7 @@ namespace ForgottenConqueror
 
         public override void OnUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
         {
-            Realm realm = Realm.GetInstance(Realms.RealmConfiguration.DefaultConfiguration);
+            Realm realm = Realm.GetInstance(RealmConfiguration.DefaultConfiguration);
             foreach(int appWidgetId in appWidgetIds)
             {
                 WidgetParams widgetParams = realm.Find<WidgetParams>(appWidgetId);
@@ -64,21 +64,26 @@ namespace ForgottenConqueror
                 new Thread(() =>
                 {
                     // update
-                    Realm aRealm = Realm.GetInstance(Realms.RealmConfiguration.DefaultConfiguration);
+                    Realm aRealm = Realm.GetInstance(RealmConfiguration.DefaultConfiguration);
                     WidgetParams aWidgetParams = aRealm.Find<WidgetParams>(appWidgetId);
                     DB db = DB.Instance;
                     bool isFirstUpdate = Data.Instance.ReadBoolean(context, Data.IsFirstUpdate, true);
                     if (isFirstUpdate)
                     {
-                        db.UpdateBooks();
+                        db.UpdateBooks(aRealm);
                     }
                     else
                     {
                         Book book = aRealm.All<Book>().Last();
-                        db.UpdateBook(book);
+                        db.UpdateBook(aRealm, book);
                         Data.Instance.Write(context, Data.IsFirstUpdate, false);
                     }
-                    if (aRealm.IsClosed || !aWidgetParams.IsValid) return;
+                    if (aRealm.IsClosed || !aWidgetParams.IsValid)
+                    {
+                        Realm r = Realm.GetInstance(RealmConfiguration.DefaultConfiguration);
+                        r.Write(() => r.Find<WidgetParams>(appWidgetId).IsRefreshing = false);
+                        return;
+                    }
                     aRealm.Write(() => aWidgetParams.IsRefreshing = false);
                     Data.Instance.Write(context, Data.LastUpdate, DateTime.Now.Ticks);
                     ComponentName provider = new ComponentName(context, Java.Lang.Class.FromType(typeof(Widget)).Name);
@@ -99,7 +104,7 @@ namespace ForgottenConqueror
             int minWidth = options.GetInt(AppWidgetManager.OptionAppwidgetMinWidth);
             //int minHeight = options.GetInt(AppWidgetManager.OptionAppwidgetMinHeight);
 
-            Realm realm = Realm.GetInstance(Realms.RealmConfiguration.DefaultConfiguration);
+            Realm realm = Realm.GetInstance(RealmConfiguration.DefaultConfiguration);
             WidgetParams widgetParams = realm.Find<WidgetParams>(appWidgetId);
             int cells = GetCellsForSize(minWidth);
             realm.Write(() => widgetParams.Cells = cells >= 1 && cells <= 3 ? cells : 0);
@@ -127,11 +132,10 @@ namespace ForgottenConqueror
             // Check if the click is to open chapter in browser
             if (intent.Action.Equals(OpenChapterClick))
             {
-                var pm = context.PackageManager;
                 try
                 {
                     //read last chapter url
-                    string url = Realm.GetInstance(Realms.RealmConfiguration.DefaultConfiguration).All<Chapter>().Last().URL;
+                    string url = Realm.GetInstance(RealmConfiguration.DefaultConfiguration).All<Chapter>().Last().URL;
 
                     // launch in browser
                     Uri uri = Uri.Parse(url);
@@ -174,7 +178,7 @@ namespace ForgottenConqueror
         private void SetView(Context context, int appWidgetId, RemoteViews widgetView)
         {
             // Set TextViews
-            string title = Realm.GetInstance(Realms.RealmConfiguration.DefaultConfiguration).All<Chapter>().Last().Title;
+            string title = Realm.GetInstance(RealmConfiguration.DefaultConfiguration).All<Chapter>().Last().Title;
             long lastUpdate = Data.Instance.ReadLong(context, Data.LastUpdate);
 
             widgetView.SetTextViewText(Resource.Id.chapter_title, title);
@@ -198,7 +202,7 @@ namespace ForgottenConqueror
         public override void OnDeleted(Context context, int[] appWidgetIds)
         {
             base.OnDeleted(context, appWidgetIds);
-            Realm realm = Realm.GetInstance(Realms.RealmConfiguration.DefaultConfiguration);
+            Realm realm = Realm.GetInstance(RealmConfiguration.DefaultConfiguration);
             realm.Write(() =>
             {
                 foreach (int appWidgetId in appWidgetIds)
@@ -212,14 +216,14 @@ namespace ForgottenConqueror
         public override void OnDisabled(Context context)
         {
             base.OnDisabled(context);
-            Realm realm = Realm.GetInstance(Realms.RealmConfiguration.DefaultConfiguration);
+            Realm realm = Realm.GetInstance(RealmConfiguration.DefaultConfiguration);
             realm.Write(() => realm.RemoveAll<WidgetParams>());
         }
 
         public override void OnRestored(Context context, int[] oldWidgetIds, int[] newWidgetIds)
         {
             base.OnRestored(context, oldWidgetIds, newWidgetIds);
-            Realm realm = Realm.GetInstance(Realms.RealmConfiguration.DefaultConfiguration);
+            Realm realm = Realm.GetInstance(RealmConfiguration.DefaultConfiguration);
             realm.Write(() =>
             {
                 for(int i = 0; i < oldWidgetIds.Length; i++)
@@ -230,11 +234,17 @@ namespace ForgottenConqueror
             });
         }
 
-        private void Update(Context context)
+        private void UpdateAll(Context context)
         {
             AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
             ComponentName appWidgetComponentName = new ComponentName(context, Java.Lang.Class.FromType(typeof(Widget)).Name);
             int[] appWidgetIds = appWidgetManager.GetAppWidgetIds(appWidgetComponentName);
+            OnUpdate(context, appWidgetManager, appWidgetIds);
+        }
+
+        private void Update(Context context, int[] appWidgetIds)
+        {
+            AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
             OnUpdate(context, appWidgetManager, appWidgetIds);
         }
     }

@@ -23,7 +23,7 @@ namespace ForgottenConqueror
 
         public override void OnUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
         {
-            Realm realm = Realm.GetInstance(Realms.RealmConfiguration.DefaultConfiguration);
+            Realm realm = Realm.GetInstance(RealmConfiguration.DefaultConfiguration);
             foreach(int appWidgetId in appWidgetIds)
             {
                 WidgetLargeParams widgetLargeParams = realm.Find<WidgetLargeParams>(appWidgetId);
@@ -51,7 +51,7 @@ namespace ForgottenConqueror
                 new Thread(() =>
                 {
                     // update
-                    Realm aRealm = Realm.GetInstance(Realms.RealmConfiguration.DefaultConfiguration);
+                    Realm aRealm = Realm.GetInstance(RealmConfiguration.DefaultConfiguration);
                     WidgetLargeParams aWidgetLargeParams = aRealm.Find<WidgetLargeParams>(appWidgetId);
                     DB db = DB.Instance;
                     db.UpdateBooks();
@@ -61,8 +61,8 @@ namespace ForgottenConqueror
                     appWidgetManager.UpdateAppWidget(provider, BuildRemoteViews(context, appWidgetIds, aWidgetLargeParams));
                 }).Start();
 
-                ComponentName me = new ComponentName(context, Java.Lang.Class.FromType(typeof(WidgetLarge)).Name);
-                appWidgetManager.UpdateAppWidget(me, BuildRemoteViews(context, appWidgetIds, widgetLargeParams));
+                ComponentName appWidgetComponentName = new ComponentName(context, Java.Lang.Class.FromType(typeof(WidgetLarge)).Name);
+                appWidgetManager.UpdateAppWidget(appWidgetComponentName, BuildRemoteViews(context, appWidgetIds, widgetLargeParams));
             }
             base.OnUpdate(context, appWidgetManager, appWidgetIds);
         }
@@ -88,9 +88,9 @@ namespace ForgottenConqueror
         private RemoteViews BuildRemoteViews(Context context, int[] appWidgetIds, WidgetLargeParams widgetLargeParams)
         {
             RemoteViews widgetView;
-            int layout = widgetLargeParams.IsRefreshing ? layoutsRefreshing : layouts;
+            //int layout = widgetLargeParams.IsRefreshing ? layoutsRefreshing : layouts;
 
-            widgetView = new RemoteViews(context.PackageName, layout);
+            widgetView = new RemoteViews(context.PackageName, Resource.Layout.widget_large /*layout*/);
 
             if (!widgetLargeParams.IsRefreshing)
             {
@@ -130,7 +130,7 @@ namespace ForgottenConqueror
         public override void OnDeleted(Context context, int[] appWidgetIds)
         {
             base.OnDeleted(context, appWidgetIds);
-            Realm realm = Realm.GetInstance(Realms.RealmConfiguration.DefaultConfiguration);
+            Realm realm = Realm.GetInstance(RealmConfiguration.DefaultConfiguration);
             realm.Write(() =>
             {
                 foreach (int appWidgetId in appWidgetIds)
@@ -144,14 +144,14 @@ namespace ForgottenConqueror
         public override void OnDisabled(Context context)
         {
             base.OnDisabled(context);
-            Realm realm = Realm.GetInstance(Realms.RealmConfiguration.DefaultConfiguration);
+            Realm realm = Realm.GetInstance(RealmConfiguration.DefaultConfiguration);
             realm.Write(() => realm.RemoveAll<WidgetLargeParams>());
         }
 
         public override void OnRestored(Context context, int[] oldWidgetIds, int[] newWidgetIds)
         {
             base.OnRestored(context, oldWidgetIds, newWidgetIds);
-            Realm realm = Realm.GetInstance(Realms.RealmConfiguration.DefaultConfiguration);
+            Realm realm = Realm.GetInstance(RealmConfiguration.DefaultConfiguration);
             realm.Write(() =>
             {
                 for (int i = 0; i < oldWidgetIds.Length; i++)
@@ -162,11 +162,17 @@ namespace ForgottenConqueror
             });
         }
         
-        private void Update(Context context)
+        private void UpdateAll(Context context)
         {
             AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
             ComponentName appWidgetComponentName = new ComponentName(context, Java.Lang.Class.FromType(typeof(WidgetLarge)).Name);
             int[] appWidgetIds = appWidgetManager.GetAppWidgetIds(appWidgetComponentName);
+            OnUpdate(context, appWidgetManager, appWidgetIds);
+        }
+
+        private void Update(Context context, int[] appWidgetIds)
+        {
+            AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
             OnUpdate(context, appWidgetManager, appWidgetIds);
         }
     }

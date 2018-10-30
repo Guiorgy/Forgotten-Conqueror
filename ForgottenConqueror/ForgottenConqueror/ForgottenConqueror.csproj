@@ -71,6 +71,7 @@
   <ItemGroup>
     <Compile Include="Data.cs" />
     <Compile Include="DB.cs" />
+    <Compile Include="ForgottenConqueror.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

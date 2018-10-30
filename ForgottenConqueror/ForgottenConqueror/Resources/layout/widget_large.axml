@@ -40,18 +40,10 @@
             style="@android:style/Widget.Material.Button"
             android:id="@+id/btn_next"/>
 
-        <TextView
+        <Space
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:maxLines="1"
-            android:textSize="16sp"
-            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-            style="@style/Base.TextAppearance.AppCompat.Large"
-            android:textColor="#000000"
-            tools:text="Book"
-            android:id="@+id/book_title"/>
+            android:layout_weight="1"/>
 
         <ImageButton
             tools:ignore="ContentDescription"
@@ -71,6 +63,9 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:autoStart="false"
+        android:flipInterval="0"
+        android:loopViews="true"
         android:id="@+id/view_flipper"/>
 
 </LinearLayout>
