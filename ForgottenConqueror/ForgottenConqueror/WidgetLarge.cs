@@ -161,5 +161,13 @@ namespace ForgottenConqueror
                 }
             });
         }
+        
+        private void Update(Context context)
+        {
+            AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
+            ComponentName appWidgetComponentName = new ComponentName(context, Java.Lang.Class.FromType(typeof(WidgetLarge)).Name);
+            int[] appWidgetIds = appWidgetManager.GetAppWidgetIds(appWidgetComponentName);
+            OnUpdate(context, appWidgetManager, appWidgetIds);
+        }
     }
 }

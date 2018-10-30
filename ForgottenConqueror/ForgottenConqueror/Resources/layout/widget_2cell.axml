@@ -29,7 +29,8 @@
         android:layout_weight="1"
         android:orientation="vertical"
         android:layout_gravity="center_vertical"
-        android:paddingLeft="3dp">
+        android:paddingLeft="3dp"
+		android:id="@+id/container">
     
         <TextView
             android:layout_width="wrap_content"

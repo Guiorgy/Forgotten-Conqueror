@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Android.App;
@@ -58,7 +57,7 @@ namespace ForgottenConqueror
                 else if (widgetParams.IsRefreshing)
                 {
                     // Already updating
-                    return;
+                    continue;
                 }
                 else realm.Write(() => widgetParams.IsRefreshing = true);
 
@@ -79,14 +78,15 @@ namespace ForgottenConqueror
                         db.UpdateBook(book);
                         Data.Instance.Write(context, Data.IsFirstUpdate, false);
                     }
+                    if (aRealm.IsClosed || !aWidgetParams.IsValid) return;
                     aRealm.Write(() => aWidgetParams.IsRefreshing = false);
                     Data.Instance.Write(context, Data.LastUpdate, DateTime.Now.Ticks);
                     ComponentName provider = new ComponentName(context, Java.Lang.Class.FromType(typeof(Widget)).Name);
                     appWidgetManager.UpdateAppWidget(provider, BuildRemoteViews(context, appWidgetId, aWidgetParams));
                 }).Start();
 
-                ComponentName me = new ComponentName(context, Java.Lang.Class.FromType(typeof(Widget)).Name);
-                appWidgetManager.UpdateAppWidget(me, BuildRemoteViews(context, appWidgetId, widgetParams));
+                ComponentName appWidgetComponentName = new ComponentName(context, Java.Lang.Class.FromType(typeof(Widget)).Name);
+                appWidgetManager.UpdateAppWidget(appWidgetComponentName, BuildRemoteViews(context, appWidgetId, widgetParams));
             }
             base.OnUpdate(context, appWidgetManager, appWidgetIds);
         }
@@ -116,9 +116,10 @@ namespace ForgottenConqueror
             // Check if the click is to open chapter in browser
             if (intent.Action.Equals(RefreshClick))
             {
+                //Toast.MakeText(context, "REFRESH CLICKED", ToastLength.Long).Show();
                 for(int i = 0; i < 100; i++)
                 {
-                    Console.WriteLine("refresh clicked");
+                    Console.WriteLine("REFRESH CLICKED" + i);
                 }
                 return;
             }
@@ -181,16 +182,16 @@ namespace ForgottenConqueror
             
             // Bind the click intent for the chapter on the widget
             Intent chapterIntent = new Intent(context, typeof(Widget));
-            chapterIntent.SetAction(OpenChapterClick);
+            chapterIntent.SetAction(RefreshClick);
             chapterIntent.PutExtra(AppWidgetManager.ExtraAppwidgetId, appWidgetId);
             PendingIntent chapterPendingIntent = PendingIntent.GetBroadcast(context, 0, chapterIntent, 0);
-            widgetView.SetOnClickPendingIntent(Resource.Id.root, chapterPendingIntent);
+            widgetView.SetOnClickPendingIntent(Resource.Id.container, chapterPendingIntent);
             
             // Bind the click intent for the refresh button on the widget
             Intent refreshIntent = new Intent(context, typeof(Widget));
             refreshIntent.SetAction(RefreshClick);
             refreshIntent.PutExtra(AppWidgetManager.ExtraAppwidgetId, appWidgetId);
-            PendingIntent refreshPendingIntent = PendingIntent.GetBroadcast(context, 0, chapterIntent, PendingIntentFlags.UpdateCurrent);
+            PendingIntent refreshPendingIntent = PendingIntent.GetBroadcast(context, 0, refreshIntent, PendingIntentFlags.UpdateCurrent);
             widgetView.SetOnClickPendingIntent(Resource.Id.btn_refresh, refreshPendingIntent);
         }
 
@@ -227,6 +228,14 @@ namespace ForgottenConqueror
                     widgetParams.ID = newWidgetIds[i];
                 }
             });
+        }
+
+        private void Update(Context context)
+        {
+            AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
+            ComponentName appWidgetComponentName = new ComponentName(context, Java.Lang.Class.FromType(typeof(Widget)).Name);
+            int[] appWidgetIds = appWidgetManager.GetAppWidgetIds(appWidgetComponentName);
+            OnUpdate(context, appWidgetManager, appWidgetIds);
         }
     }
 }
