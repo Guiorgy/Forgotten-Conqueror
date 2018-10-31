@@ -15,21 +15,16 @@ namespace ForgottenConqueror
             return new ViewFactory(intent);
         }
 
-        private class ViewFactory : Java.Lang.Object, RemoteViewsService.IRemoteViewsFactory
+        private class ViewFactory : Java.Lang.Object, IRemoteViewsFactory
         {
             private List<int> Layouts = new List<int>() { Resource.Layout.widget_large_list, Resource.Layout.widget_large_list, Resource.Layout.widget_large_list, };
-            private int InstanceId = AppWidgetManager.InvalidAppwidgetId;
+            private int WidgetId = AppWidgetManager.InvalidAppwidgetId;
 
             public ViewFactory(Intent intent)
             {
-                InstanceId = intent.GetIntExtra(AppWidgetManager.ExtraAppwidgetId, AppWidgetManager.InvalidAppwidgetId);
+                WidgetId = intent.GetIntExtra(AppWidgetManager.ExtraAppwidgetId, AppWidgetManager.InvalidAppwidgetId);
             }
 
-            public void OnCreate()
-            {
-                // Created
-            }
-            
             public RemoteViews GetViewAt(int position)
             {
                 RemoteViews page = new RemoteViews(PackageName, Layouts[position]);
@@ -44,30 +39,28 @@ namespace ForgottenConqueror
                 return position;
             }
 
+            public int Count => Layouts.Count;
+
+            public bool HasStableIds => true;
+
+            public RemoteViews LoadingView => new RemoteViews(PackageName, Resource.Layout.widget_1cell_progress);
+
+            public int ViewTypeCount => 1;
+
+            public void OnCreate()
+            {
+                // Created
+            }
+
             public void OnDataSetChanged()
             {
                 // Dataset changed
-            }
-
-            public new void Dispose()
-            {
-                // Disposed
             }
 
             public void OnDestroy()
             {
                 // Destroyed
             }
-
-            public int Count => Layouts.Count;
-
-            public bool HasStableIds => true;
-
-            public RemoteViews LoadingView =>  new RemoteViews(PackageName, Resource.Layout.widget_1cell_progress);
-
-            public int ViewTypeCount => 1;
-
-            public new IntPtr Handle => throw new NotImplementedException();
         }
     }
 }
