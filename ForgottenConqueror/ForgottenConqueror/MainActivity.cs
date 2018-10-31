@@ -2,6 +2,8 @@
 using Android.OS;
 using Android.Support.V7.App;
 using Android.Widget;
+using Realms;
+using static ForgottenConqueror.DB;
 
 namespace ForgottenConqueror
 {
@@ -14,6 +16,10 @@ namespace ForgottenConqueror
             SetContentView(Resource.Layout.activity_main);
 
             Toast.MakeText(this, "Long-press the homescreen to add the widget", ToastLength.Long).Show();
+            
+            Realm realm = Realm.GetInstance(RealmConfiguration.DefaultConfiguration);
+            realm.Write(() => realm.RemoveAll());
+            Data.Instance.Write(this, Data.IsFirstUpdate, true);
 
             Finish();
         }

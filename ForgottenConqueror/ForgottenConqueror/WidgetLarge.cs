@@ -21,64 +21,34 @@ namespace ForgottenConqueror
         private readonly static int layouts = Resource.Layout.widget_large;
         private readonly static int layoutsRefreshing = Resource.Layout.widget_large_progress;
 
-        private static readonly Task UpdateTask = new Task(() => throw new NotImplementedException());
-        private void AsyncTask(Context context, AppWidgetManager appWidgetManager, int appWidgetId)
-        {
-            Realm realm = Realm.GetInstance(RealmConfiguration.DefaultConfiguration);
-            WidgetLargeParams widgetLargeParams = realm.Find<WidgetLargeParams>(appWidgetId);
-            DB db = DB.Instance;
-            db.UpdateBooks(realm);
-            Data.Instance.Write(context, Data.IsFirstUpdate, false);
-
-            if (realm.IsClosed || !widgetLargeParams.IsValid)
-            {
-                realm = Realm.GetInstance(RealmConfiguration.DefaultConfiguration);
-            }
-            realm.Write(() =>
-            {
-                foreach (WidgetLargeParams wp in realm.All<WidgetLargeParams>())
-                {
-                    wp.IsRefreshing = false;
-                }
-            });
-        }
-
         public override void OnUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
         {
-            //Realm realm = Realm.GetInstance(RealmConfiguration.DefaultConfiguration);
-            foreach(int appWidgetId in appWidgetIds)
+            Realm realm = Realm.GetInstance(RealmConfiguration.DefaultConfiguration);
+            foreach (int appWidgetId in appWidgetIds)
             {
-                //WidgetLargeParams widgetLargeParams = realm.Find<WidgetLargeParams>(appWidgetId);
-                //if (widgetLargeParams == null)
-                //{
-                //    // Widget created
-                //    realm.Write(() =>
-                //    {
-                //        widgetLargeParams = new WidgetLargeParams()
-                //        {
-                //            ID = appWidgetId,
-                //            IsRefreshing = true,
-                //            Book = 1,
-                //        };
-                //        realm.Add<WidgetLargeParams>(widgetLargeParams);
-                //    });
-                //}
-                //else if (widgetLargeParams.IsRefreshing)
-                //{
-                //    // Already updating
-                //    return;
-                //}
-                //else realm.Write(() => widgetLargeParams.IsRefreshing = true);
-                
-                //if (UpdateTask.IsCompleted)
-                //{
-                //    Task.Run(() => AsyncTask(context, appWidgetManager, appWidgetId))
-                //        .ContinueWith((task) =>
-                //        {
-                //            Data.Instance.Write(context, Data.LastUpdate, DateTime.Now.Ticks);
-                //            RedrawAll(context);
-                //        });
-                //}
+                WidgetLargeParams widgetLargeParams = realm.Find<WidgetLargeParams>(appWidgetId);
+                if (widgetLargeParams == null)
+                {
+                    // Widget created
+                    realm.Write(() =>
+                    {
+                        widgetLargeParams = new WidgetLargeParams()
+                        {
+                            ID = appWidgetId,
+                            IsRefreshing = true,
+                            Book = 1,
+                        };
+                        realm.Add<WidgetLargeParams>(widgetLargeParams);
+                    });
+                }
+                else if (widgetLargeParams.IsRefreshing)
+                {
+                    // Already updating
+                    return;
+                }
+                else realm.Write(() => widgetLargeParams.IsRefreshing = true);
+
+                //DBController.Instance.ParseBooks(context, false);
 
                 ComponentName appWidgetComponentName = new ComponentName(context, Java.Lang.Class.FromType(typeof(WidgetLarge)).Name);
                 appWidgetManager.UpdateAppWidget(appWidgetComponentName, BuildRemoteView(context, appWidgetId, null /*widgetLargeParams*/));
@@ -93,14 +63,17 @@ namespace ForgottenConqueror
             if (intent.Action.Equals(NextClick))
             {
                 // Next
+                Toast.MakeText(context, "Next", ToastLength.Short).Show();
             }
             if (intent.Action.Equals(PreviousClick))
             {
                 // Previous
+                Toast.MakeText(context, "Previous", ToastLength.Short).Show();
             }
             if (intent.Action.Equals(RefreshClick))
             {
                 // Refresh
+                Toast.MakeText(context, "Refresh", ToastLength.Short).Show();
             }
         }
 
@@ -111,10 +84,10 @@ namespace ForgottenConqueror
 
             widgetView = new RemoteViews(context.PackageName, Resource.Layout.widget_large /*layout*/);
 
-            if (!widgetLargeParams.IsRefreshing)
-            {
+            //if (!widgetLargeParams.IsRefreshing)
+            //{
                 SetView(context, appWidgetId, widgetView);
-            }
+            //}
 
             return widgetView;
         }
@@ -130,21 +103,21 @@ namespace ForgottenConqueror
             Intent nextIntent = new Intent(context, typeof(WidgetLarge));
 			nextIntent.SetAction(NextClick);
 			nextIntent.PutExtra(AppWidgetManager.ExtraAppwidgetId, appWidgetId);
-			PendingIntent nextPendingIntent = PendingIntent.GetBroadcast(context, 0, nextIntent, 0);
+			PendingIntent nextPendingIntent = PendingIntent.GetBroadcast(context, appWidgetId, nextIntent, 0);
             widgetView.SetOnClickPendingIntent(Resource.Id.btn_next, nextPendingIntent);
 
             // Bind the click intent for the previous button on the widget
             Intent previousIntent = new Intent(context, typeof(WidgetLarge));
             previousIntent.SetAction(PreviousClick);
             previousIntent.PutExtra(AppWidgetManager.ExtraAppwidgetId, appWidgetId);
-            PendingIntent previousPendingIntent = PendingIntent.GetBroadcast(context, 0, previousIntent, 0);
+            PendingIntent previousPendingIntent = PendingIntent.GetBroadcast(context, appWidgetId, previousIntent, 0);
             widgetView.SetOnClickPendingIntent(Resource.Id.btn_previous, previousPendingIntent);
 
             // Bind the click intent for the refresh button on the widget
             Intent refreshIntent = new Intent(context, typeof(WidgetLarge));
             refreshIntent.SetAction(RefreshClick);
             refreshIntent.PutExtra(AppWidgetManager.ExtraAppwidgetId, appWidgetId);
-            PendingIntent refreshPendingIntent = PendingIntent.GetBroadcast(context, 0, previousIntent, PendingIntentFlags.UpdateCurrent);
+            PendingIntent refreshPendingIntent = PendingIntent.GetBroadcast(context, appWidgetId, previousIntent, PendingIntentFlags.UpdateCurrent);
             widgetView.SetOnClickPendingIntent(Resource.Id.btn_refresh, refreshPendingIntent);
         }
 
@@ -182,8 +155,8 @@ namespace ForgottenConqueror
                 }
             });
         }
-        
-        private void UpdateAll(Context context)
+
+        public void UpdateAll(Context context)
         {
             AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
             ComponentName appWidgetComponentName = new ComponentName(context, Java.Lang.Class.FromType(typeof(WidgetLarge)).Name);
@@ -191,13 +164,13 @@ namespace ForgottenConqueror
             OnUpdate(context, appWidgetManager, appWidgetIds);
         }
 
-        private void Update(Context context, int[] appWidgetIds)
+        public void Update(Context context, int[] appWidgetIds)
         {
             AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
             OnUpdate(context, appWidgetManager, appWidgetIds);
         }
 
-        private void RedrawAll(Context context)
+        public void RedrawAll(Context context)
         {
             Realm realm = Realm.GetInstance(RealmConfiguration.DefaultConfiguration);
             AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
@@ -209,7 +182,7 @@ namespace ForgottenConqueror
             }
         }
 
-        private void Redraw(Context context, int[] appWidgetIds)
+        public void Redraw(Context context, int[] appWidgetIds)
         {
             Realm realm = Realm.GetInstance(RealmConfiguration.DefaultConfiguration);
             AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
