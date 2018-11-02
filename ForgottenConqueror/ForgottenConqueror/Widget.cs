@@ -109,7 +109,7 @@ namespace ForgottenConqueror
                 try
                 {
                     //read last chapter url
-                    string url = Realm.GetInstance(RealmConfiguration.DefaultConfiguration).All<Chapter>().Last().URL;
+                    string url = Realm.GetInstance(RealmConfiguration.DefaultConfiguration).All<Chapter>().OrderBy(c => c.ID).Last().URL;
 
                     // launch in browser
                     Uri uri = Uri.Parse(url);
@@ -152,8 +152,8 @@ namespace ForgottenConqueror
         private void SetView(Context context, int appWidgetId, RemoteViews widgetView)
         {
             // Set TextViews
-            string title = Realm.GetInstance(RealmConfiguration.DefaultConfiguration).All<Chapter>().Last().Title;
-            long lastUpdate = Data.Instance.ReadLong(context, Data.LastUpdate);
+            string title = Realm.GetInstance(RealmConfiguration.DefaultConfiguration).All<Chapter>().OrderBy(c => c.ID).Last().Title;
+            long lastUpdate = Data.Instance.ReadLong(context, Data.LastUpdateTime);
 
             widgetView.SetTextViewText(Resource.Id.chapter_title, title);
             widgetView.SetTextViewText(Resource.Id.last_update, string.Format("{0:MM/dd/yy H:mm:ss}", new DateTime(lastUpdate)));

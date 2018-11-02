@@ -145,6 +145,7 @@ namespace ForgottenConqueror
         }
 
         public readonly static string IsFirstUpdate = "IsFirstUpdate";
-        public readonly static string LastUpdate = "LastUpdate";
+        public readonly static string LastUpdateTime = "LastUpdateTime";
+        public readonly static string PreviouslyLastChapterId = "PreviouslyLastChapterId";
     }
 }

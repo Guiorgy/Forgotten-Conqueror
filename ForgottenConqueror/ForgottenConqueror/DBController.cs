@@ -39,9 +39,18 @@ namespace ForgottenConqueror
         private void AsyncTask(Context context, bool onlyLast)
         {
             Realm realm = Realm.GetInstance(RealmConfiguration.DefaultConfiguration);
+            var list = realm.All<Chapter>();
+            if (list.Count() != 0)
+            {
+                var last = list.OrderBy(c => c.ID).Last();
+                if (last != null)
+                {
+                    Data.Instance.Write(context, Data.PreviouslyLastChapterId, last.ID);
+                }
+            }
             if (onlyLast)
             {
-                Book book = realm.All<Book>().Last();
+                Book book = realm.All<Book>().OrderBy(b => b.ID).Last();
                 if (book != null) UpdateBook(realm, book);
                 else UpdateBooks(realm);
             }
@@ -54,18 +63,24 @@ namespace ForgottenConqueror
         private void UpdateBook(Realm realm = null, Book book = null, int id = 0)
         {
             if (realm == null) realm = Realm.GetInstance(Realms.RealmConfiguration.DefaultConfiguration);
-            HtmlWeb web = new HtmlWeb();
-            HtmlDocument doc = web.Load(book.URL);
-
-            HtmlNodeCollection containers = doc.DocumentNode.SelectNodes("//div[@class='entry-content']/p[position()>2]");
 
             if (book == null)
             {
                 book = realm.Find<Book>(id);
+                if (book == null) return;
             }
-            Chapter first = book.Chapters.First();
+            Chapter first = book.Chapters.OrderBy(c => c.ID).First();
             int count = first == null ? 0 : first.ID;
 
+            for(int i = 0; i < 50; i++)
+            {
+                Console.WriteLine("BOOK - " + book.ID + "(" + book.Title + ") : " + first.ID + "(" + first.Title + ")");
+            }
+
+            HtmlWeb web = new HtmlWeb();
+            HtmlDocument doc = web.Load(book.URL);
+            HtmlNodeCollection containers = doc.DocumentNode.SelectNodes("//div[@class='entry-content']/p[position()>2]");
+            
             List<Chapter> chapters = new List<Chapter>();
             foreach (HtmlNode container in containers)
             {
@@ -120,6 +135,7 @@ namespace ForgottenConqueror
                     URL = url,
                 };
 
+                books.Add(book);
                 UpdateBooks_Book(realm, book, chapters);
             }
 
@@ -143,6 +159,7 @@ namespace ForgottenConqueror
 
             HtmlNodeCollection containers = doc.DocumentNode.SelectNodes("//div[@class='entry-content']/p[position()>2]");
 
+            int count = 1;
             foreach (HtmlNode container in containers)
             {
                 HtmlNodeCollection nodes = container.SelectNodes("./a");
@@ -154,7 +171,7 @@ namespace ForgottenConqueror
                     Chapter chapter = new Chapter()
                     {
                         ID = chapters.Count,
-                        Count = book.Chapters.Count() + 1,
+                        Count = count++,
                         Title = title,
                         URL = url,
                         Book = book,
@@ -165,6 +182,7 @@ namespace ForgottenConqueror
             }
         }
 
+        private static int tmp = 0;
         private bool CanParse = true;
         public void ParseBooks(Context context, bool onlyLast)
         {
@@ -175,7 +193,7 @@ namespace ForgottenConqueror
                 UpdateTask.ContinueWith((task) =>
                 {
                     Realm realm = Realm.GetInstance(RealmConfiguration.DefaultConfiguration);
-                    Chapter chapter = realm.All<Chapter>().Last();
+                    Chapter chapter = realm.All<Chapter>().OrderBy(c => c.ID).Last();
                     realm.Write(() =>
                     {
                         foreach (WidgetParams widgetParams in realm.All<WidgetParams>())
@@ -188,12 +206,53 @@ namespace ForgottenConqueror
                             widgetLargeParams.IsRefreshing = false;
                         }
                     });
-                    Data.Instance.Write(context, Data.LastUpdate, DateTime.Now.Ticks);
+                    Data.Instance.Write(context, Data.LastUpdateTime, DateTime.Now.Ticks);
                     Data.Instance.Write(context, Data.IsFirstUpdate, false);
+
+                    int lastId = Data.Instance.ReadInt(context, Data.PreviouslyLastChapterId, -1);
+                    int currentId = realm.All<Chapter>().OrderBy(c => c.ID).Last().ID;
+                    if (lastId != -1 && lastId < currentId)
+                    {
+                        List<Chapter> chapters = realm.All<Chapter>().Where(c => c.ID > lastId).ToList();
+                        NotificationManager.Instance.NotifyNewChapters(context, chapters);
+                    }
+
                     RedrawAllWidgets(context);
                     CanParse = true;
                 }, TaskScheduler.FromCurrentSynchronizationContext());
-                UpdateTask.Start();
+                try
+                {
+                    UpdateTask.Start();
+                } catch(Exception e)
+                {
+                    Realm realm = Realm.GetInstance(RealmConfiguration.DefaultConfiguration);
+                    Chapter chapter = realm.All<Chapter>().OrderBy(c => c.ID).Last();
+                    realm.Write(() =>
+                    {
+                        foreach (WidgetParams widgetParams in realm.All<WidgetParams>())
+                        {
+                            widgetParams.IsRefreshing = false;
+                        }
+
+                        foreach (WidgetLargeParams widgetLargeParams in realm.All<WidgetLargeParams>())
+                        {
+                            widgetLargeParams.IsRefreshing = false;
+                        }
+                    });
+                    Data.Instance.Write(context, Data.LastUpdateTime, DateTime.Now.Ticks);
+                    Data.Instance.Write(context, Data.IsFirstUpdate, false);
+
+                    int lastId = Data.Instance.ReadInt(context, Data.PreviouslyLastChapterId, -1);
+                    int currentId = realm.All<Chapter>().OrderBy(c => c.ID).Last().ID;
+                    if (lastId != -1 && lastId < currentId)
+                    {
+                        List<Chapter> chapters = realm.All<Chapter>().Where(c => c.ID > lastId).ToList();
+                        NotificationManager.Instance.NotifyNewChapters(context, chapters);
+                    }
+
+                    RedrawAllWidgets(context);
+                    CanParse = true;
+                }
             }
         }
 
@@ -211,7 +270,7 @@ namespace ForgottenConqueror
                         UpdateTask.ContinueWith((task) =>
                         {
                             Realm realm = Realm.GetInstance(RealmConfiguration.DefaultConfiguration);
-                            Chapter chapter = realm.All<Chapter>().Last();
+                            Chapter chapter = realm.All<Chapter>().OrderBy(c => c.ID).Last();
                             realm.Write(() =>
                             {
                                 foreach (WidgetParams widgetParams in realm.All<WidgetParams>())
@@ -224,12 +283,54 @@ namespace ForgottenConqueror
                                     widgetLargeParams.IsRefreshing = false;
                                 }
                             });
-                            Data.Instance.Write(context, Data.LastUpdate, DateTime.Now.Ticks);
+                            Data.Instance.Write(context, Data.LastUpdateTime, DateTime.Now.Ticks);
                             Data.Instance.Write(context, Data.IsFirstUpdate, false);
+
+                            int lastId = Data.Instance.ReadInt(context, Data.PreviouslyLastChapterId, -1);
+                            int currentId = realm.All<Chapter>().OrderBy(c => c.ID).Last().ID;
+                            if(lastId != -1 && lastId < currentId)
+                            {
+                                List<Chapter> chapters = realm.All<Chapter>().Where(c => c.ID > lastId).ToList();
+                                NotificationManager.Instance.NotifyNewChapters(context, chapters);
+                            }
+                            
                             RedrawAllWidgets(context);
                             CanParse = true;
                         }, TaskScheduler.FromCurrentSynchronizationContext());
-                        UpdateTask.Start();
+                        try
+                        {
+                            UpdateTask.Start();
+                        }
+                        catch (Exception e)
+                        {
+                            Realm realm = Realm.GetInstance(RealmConfiguration.DefaultConfiguration);
+                            Chapter chapter = realm.All<Chapter>().OrderBy(c => c.ID).Last();
+                            realm.Write(() =>
+                            {
+                                foreach (WidgetParams widgetParams in realm.All<WidgetParams>())
+                                {
+                                    widgetParams.IsRefreshing = false;
+                                }
+
+                                foreach (WidgetLargeParams widgetLargeParams in realm.All<WidgetLargeParams>())
+                                {
+                                    widgetLargeParams.IsRefreshing = false;
+                                }
+                            });
+                            Data.Instance.Write(context, Data.LastUpdateTime, DateTime.Now.Ticks);
+                            Data.Instance.Write(context, Data.IsFirstUpdate, false);
+
+                            int lastId = Data.Instance.ReadInt(context, Data.PreviouslyLastChapterId, -1);
+                            int currentId = realm.All<Chapter>().OrderBy(c => c.ID).Last().ID;
+                            if (lastId != -1 && lastId < currentId)
+                            {
+                                List<Chapter> chapters = realm.All<Chapter>().Where(c => c.ID > lastId).ToList();
+                                NotificationManager.Instance.NotifyNewChapters(context, chapters);
+                            }
+
+                            RedrawAllWidgets(context);
+                            CanParse = true;
+                        }
                     }
                 }
             }
