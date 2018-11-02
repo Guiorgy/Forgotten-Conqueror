@@ -93,15 +93,18 @@ namespace ForgottenConqueror
         {
             base.OnReceive(context, intent);
 
+            string action = intent.Action;
+            if (action == null) return;
+
             // Check if the click is to open chapter in browser
-            if (intent.Action.Equals(RefreshClick))
+            if (action.Equals(RefreshClick))
             {
                 Update(context, new int[] { intent.GetIntExtra(AppWidgetManager.ExtraAppwidgetId, AppWidgetManager.InvalidAppwidgetId) });
                 return;
             }
 
             // Check if the click is to open chapter in browser
-            if (intent.Action.Equals(OpenChapterClick))
+            if (action.Equals(OpenChapterClick))
             {
                 try
                 {

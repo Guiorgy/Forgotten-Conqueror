@@ -60,17 +60,20 @@ namespace ForgottenConqueror
         {
             base.OnReceive(context, intent);
 
-            if (intent.Action.Equals(NextClick))
+            string action = intent.Action;
+            if (action == null) return;
+
+            if (action.Equals(NextClick))
             {
                 // Next
                 Toast.MakeText(context, "Next", ToastLength.Short).Show();
             }
-            if (intent.Action.Equals(PreviousClick))
+            if (action.Equals(PreviousClick))
             {
                 // Previous
                 Toast.MakeText(context, "Previous", ToastLength.Short).Show();
             }
-            if (intent.Action.Equals(RefreshClick))
+            if (action.Equals(RefreshClick))
             {
                 // Refresh
                 Toast.MakeText(context, "Refresh", ToastLength.Short).Show();

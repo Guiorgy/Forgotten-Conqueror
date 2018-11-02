@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using Android.Appwidget;
 using Android.Content;
-using Android.Widget;
 using HtmlAgilityPack;
 using Realms;
 using static ForgottenConqueror.DB;
@@ -38,72 +35,20 @@ namespace ForgottenConqueror
             private set { }
         }
 
-        private static readonly Task UpdateTask = new Task(() => throw new NotImplementedException());
+        private static Task UpdateTask = new Task(() => throw new NotImplementedException());
         private void AsyncTask(Context context, bool onlyLast)
         {
-            Toast.MakeText(context, "HTML", ToastLength.Short).Show();
-            //Thread.Sleep(3000);
-            //Realm realm = Realm.GetInstance(RealmConfiguration.DefaultConfiguration);
-            //realm.Write(() =>
-            //{
-            //    Book book = new Book()
-            //    {
-            //        ID = 0,
-            //        Count = 1,
-            //        Title = "Book 1",
-            //        URL = "http://google.com/",
-            //    };
-            //    realm.Add<Book>(book, true);
-            //    realm.Add<Chapter>(new Chapter()
-            //    {
-            //        ID = 0,
-            //        Count = 1,
-            //        Title = "Chapter 1",
-            //        URL = "http://google.com/",
-            //        Book = book,
-            //    }, true);
-            //});
-            //Realm realm = Realm.GetInstance(RealmConfiguration.DefaultConfiguration);
-            //if (onlyLast)
-            //{
-            //    Book book = realm.All<Book>().Last();
-            //    if (book != null) UpdateBook(realm, book);
-            //    else UpdateBooks(realm);
-            //}
-            //else
-            //{
-            //    UpdateBooks(realm);
-            //}
             Realm realm = Realm.GetInstance(RealmConfiguration.DefaultConfiguration);
-            HtmlWeb web = new HtmlWeb();
-            HtmlDocument doc = web.Load("http://forgottenconqueror.com/book-1/");
-
-            HtmlNodeCollection containers = doc.DocumentNode.SelectNodes("//div[@class='entry-content']/p[position()>2]");
-            int count = 0;
-            foreach (HtmlNode container in containers)
+            if (onlyLast)
             {
-                HtmlNodeCollection nodes = container.SelectNodes("./a");
-                realm.Write(() =>
-                {
-                    foreach (HtmlNode node in nodes)
-                    {
-                        string title = HtmlEntity.DeEntitize(node.InnerText);
-                        string url = node.Attributes["href"].Value;
-
-                        Chapter chapter = new Chapter()
-                        {
-                            ID = count++,
-                            Count = count,
-                            Title = title,
-                            URL = url,
-                            Book = null,
-                        };
-
-                        realm.Add<Chapter>(chapter);
-                    }
-                });
+                Book book = realm.All<Book>().Last();
+                if (book != null) UpdateBook(realm, book);
+                else UpdateBooks(realm);
             }
-            Thread.Sleep(3000);
+            else
+            {
+                UpdateBooks(realm);
+            }
         }
 
         private void UpdateBook(Realm realm = null, Book book = null, int id = 0)
@@ -226,29 +171,67 @@ namespace ForgottenConqueror
             if (CanParse && UpdateTask.Status != TaskStatus.Running)
             {
                 CanParse = false;
-                Task.Run(() => AsyncTask(context, onlyLast))
-                    .ContinueWith((task) =>
+                UpdateTask = new Task(() => AsyncTask(context, onlyLast));
+                UpdateTask.ContinueWith((task) =>
+                {
+                    Realm realm = Realm.GetInstance(RealmConfiguration.DefaultConfiguration);
+                    Chapter chapter = realm.All<Chapter>().Last();
+                    realm.Write(() =>
                     {
-                        Realm realm = Realm.GetInstance(RealmConfiguration.DefaultConfiguration);
-                        Chapter chapter = realm.All<Chapter>().Last();
-                        Toast.MakeText(context, chapter.ID + " " + chapter.Title + " " + chapter.URL, ToastLength.Long).Show();
-                        realm.Write(() =>
+                        foreach (WidgetParams widgetParams in realm.All<WidgetParams>())
                         {
-                            foreach (WidgetParams widgetParams in realm.All<WidgetParams>())
-                            {
-                                widgetParams.IsRefreshing = false;
-                            }
+                            widgetParams.IsRefreshing = false;
+                        }
 
-                            foreach (WidgetLargeParams widgetLargeParams in realm.All<WidgetLargeParams>())
+                        foreach (WidgetLargeParams widgetLargeParams in realm.All<WidgetLargeParams>())
+                        {
+                            widgetLargeParams.IsRefreshing = false;
+                        }
+                    });
+                    Data.Instance.Write(context, Data.LastUpdate, DateTime.Now.Ticks);
+                    Data.Instance.Write(context, Data.IsFirstUpdate, false);
+                    RedrawAllWidgets(context);
+                    CanParse = true;
+                }, TaskScheduler.FromCurrentSynchronizationContext());
+                UpdateTask.Start();
+            }
+        }
+
+        private static object parselock = new object();
+        public void ParseBooksSafe(Context context, bool onlyLast)
+        {
+            if (CanParse && UpdateTask.Status != TaskStatus.Running)
+            {
+                lock (parselock)
+                {
+                    if (CanParse && UpdateTask.Status != TaskStatus.Running)
+                    {
+                        CanParse = false;
+                        UpdateTask = new Task(() => AsyncTask(context, onlyLast));
+                        UpdateTask.ContinueWith((task) =>
+                        {
+                            Realm realm = Realm.GetInstance(RealmConfiguration.DefaultConfiguration);
+                            Chapter chapter = realm.All<Chapter>().Last();
+                            realm.Write(() =>
                             {
-                                widgetLargeParams.IsRefreshing = false;
-                            }
-                        });
-                        Data.Instance.Write(context, Data.LastUpdate, DateTime.Now.Ticks);
-                        Data.Instance.Write(context, Data.IsFirstUpdate, false);
-                        RedrawAllWidgets(context);
-                        CanParse = true;
-                    }, TaskScheduler.FromCurrentSynchronizationContext());
+                                foreach (WidgetParams widgetParams in realm.All<WidgetParams>())
+                                {
+                                    widgetParams.IsRefreshing = false;
+                                }
+
+                                foreach (WidgetLargeParams widgetLargeParams in realm.All<WidgetLargeParams>())
+                                {
+                                    widgetLargeParams.IsRefreshing = false;
+                                }
+                            });
+                            Data.Instance.Write(context, Data.LastUpdate, DateTime.Now.Ticks);
+                            Data.Instance.Write(context, Data.IsFirstUpdate, false);
+                            RedrawAllWidgets(context);
+                            CanParse = true;
+                        }, TaskScheduler.FromCurrentSynchronizationContext());
+                        UpdateTask.Start();
+                    }
+                }
             }
         }
 
