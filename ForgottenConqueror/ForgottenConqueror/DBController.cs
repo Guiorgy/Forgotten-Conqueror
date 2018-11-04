@@ -72,11 +72,6 @@ namespace ForgottenConqueror
             Chapter first = book.Chapters.OrderBy(c => c.ID).First();
             int count = first == null ? 0 : first.ID;
 
-            for(int i = 0; i < 50; i++)
-            {
-                Console.WriteLine("BOOK - " + book.ID + "(" + book.Title + ") : " + first.ID + "(" + first.Title + ")");
-            }
-
             HtmlWeb web = new HtmlWeb();
             HtmlDocument doc = web.Load(book.URL);
             HtmlNodeCollection containers = doc.DocumentNode.SelectNodes("//div[@class='entry-content']/p[position()>2]");
@@ -181,8 +176,7 @@ namespace ForgottenConqueror
                 }
             }
         }
-
-        private static int tmp = 0;
+        
         private bool CanParse = true;
         public void ParseBooks(Context context, bool onlyLast)
         {

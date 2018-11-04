@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using static ForgottenConqueror.DB;
 using static Android.Content.PM.LaunchMode;
-using Android.Content;
 
 namespace ForgottenConqueror
 {
@@ -28,14 +27,7 @@ namespace ForgottenConqueror
             List<Chapter> chapters = realm.All<Chapter>().Where(c => c.ID > 114).ToList();
             NotificationManager.Instance.NotifyNewChapters(this, chapters);
 
-            NotificationManager.Instance.NotifySimple(this, "title", "blah blah blah blah...", Resource.Drawable.new_chapter_icon);
-
             //FinishAndRemoveTask();
-        }
-
-        protected override void OnNewIntent(Intent intent)
-        {
-            NotificationManager.Instance.HandleIntent(this, intent);
         }
     }
 }

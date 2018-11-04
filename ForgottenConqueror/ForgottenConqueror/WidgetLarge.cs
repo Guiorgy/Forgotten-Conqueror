@@ -3,8 +3,6 @@ using Android.Appwidget;
 using Android.Content;
 using Android.Widget;
 using Realms;
-using System;
-using System.Threading.Tasks;
 using static ForgottenConqueror.DB;
 using Uri = Android.Net.Uri;
 

@@ -7,7 +7,6 @@ using Builder = Android.Support.V4.App.NotificationCompat.Builder;
 using NotificationManagerCompat = Android.App.NotificationManager;
 using Notification = Android.Support.V4.App.NotificationCompat;
 using Android.Net;
-using Android.Widget;
 
 namespace ForgottenConqueror
 {
@@ -57,7 +56,7 @@ namespace ForgottenConqueror
 
         public Builder GetBuilder(Context context, ChannelId channelId)
         {
-            Builder builder;
+            Builder builder = new Builder(context);
             if(Build.VERSION.SdkInt >= BuildVersionCodes.O)
             {
                 Channel channel = Channels[(int)channelId];
@@ -66,22 +65,20 @@ namespace ForgottenConqueror
                 {
                     // Create a NotificationChannel
                     NotificationChannel notificationChannel = new NotificationChannel(channel.ChannelId, channel.ChannelName, channel.Importance);
+                    notificationChannel.Description = " ";
                     notificationChannel.EnableLights(channel.Lights);
                     notificationChannel.EnableVibration(channel.Vibration);
                     notificationChannel.SetBypassDnd(channel.DoNotDisturb);
-                    notificationChannel.Group = channel.ChannelName;
                     notificationChannel.LockscreenVisibility = channel.Visibility;
 
                     // Register the new NotificationChannel
                     NotificationManagerCompat notificationManager = GetManager(context);
                     notificationManager.CreateNotificationChannel(notificationChannel);
+
+                    channel.NotificationChannel = notificationChannel;
                 }
 
-                builder = new Builder(context, channel.ChannelId);
-            }
-            else
-            {
-                builder = new Builder(context);
+                builder.SetChannelId(channel.ChannelId);
             }
             return builder;
         }
@@ -132,9 +129,8 @@ namespace ForgottenConqueror
             builder.SetContentTitle("1 New Chapter");
             builder.SetContentText(chapters[0].Title);
 
-            Intent intent = new Intent(context, typeof(MainActivity));
-            intent.SetAction(OpenNewChapter);
-            intent.PutExtra("URL", chapters[0].URL);
+            Intent intent = new Intent(Intent.ActionView);
+            intent.SetData(Uri.Parse(chapters[0].URL));
             intent.SetFlags(ActivityFlags.NewTask | ActivityFlags.ClearTask);
             PendingIntent pendingIntent = PendingIntent.GetService(context, (int)ChannelId.NewChapter, intent, PendingIntentFlags.OneShot);
             builder.SetContentIntent(pendingIntent);
@@ -159,57 +155,6 @@ namespace ForgottenConqueror
             
             NotificationManagerCompat notificationManager = GetManager(context);
             notificationManager.Notify((int)ChannelId.NewChapter, builder.Build());
-        }
-
-        public void NotifySimple(Context context, string title, string message, int icon)
-        {
-            Builder builder = GetBuilder(context, ChannelId.NaN);
-            builder.SetAutoCancel(true)
-                .SetNumber(4)
-                .SetOnlyAlertOnce(true)
-                .SetTicker(title)
-                .SetContentTitle(title)
-                .SetContentText(message)
-                .SetSubText(message)
-                .SetSmallIcon(icon);
-
-            Intent intent = new Intent(context, typeof(MainActivity));
-            intent.SetAction(UseWidgetInstead);
-            intent.SetFlags(ActivityFlags.NewTask | ActivityFlags.ClearTask);
-            PendingIntent pendingIntent = PendingIntent.GetService(context, (int)ChannelId.NewChapter, intent, PendingIntentFlags.OneShot);
-            builder.SetContentIntent(pendingIntent);
-
-            NotificationManagerCompat notificationManager = GetManager(context);
-            notificationManager.Notify((int)ChannelId.NaN, builder.Build());
-        }
-
-        private static string UseWidgetInstead = "UseWidgetInstead";
-        private static string OpenNewChapter = "OpenNewChapter";
-        public void HandleIntent(Context context, Intent intent)
-        {
-            string action = intent.Action;
-            for (int i = 0; i < 50; i++)
-                {
-                    System.Console.WriteLine(action + " " + OpenNewChapter);
-                }
-            if (action == null) return;
-            
-            if (action.Equals(UseWidgetInstead))
-            {
-                Toast.MakeText(context, "Long-press the homescreen to add the widget", ToastLength.Long).Show();
-                return;
-            }
-
-            if (action.Equals(OpenNewChapter))
-            {
-                string url = intent.GetStringExtra("URL");
-                
-                if (url == null) return;
-                Uri uri = Uri.Parse(url);
-                Intent browser = new Intent(Intent.ActionView, uri);
-                context.StartActivity(browser);
-                return;
-            }
         }
     }
 }
