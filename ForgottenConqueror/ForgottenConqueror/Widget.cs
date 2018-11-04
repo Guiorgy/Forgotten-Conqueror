@@ -19,14 +19,14 @@ namespace ForgottenConqueror
         public static Widget instance = null;
         private readonly static string OpenChapterClick = "OpenChapterClick";
         private readonly static string RefreshClick = "RefreshClick";
-        private readonly static int[] layouts =
+        private readonly static int[] Layouts =
         {
             Resource.Layout.widget,
             Resource.Layout.widget_1cell,
             Resource.Layout.widget_2cell,
             Resource.Layout.widget_3cell,
         };
-        private readonly static int[] layoutsRefreshing =
+        private readonly static int[] LayoutsRefreshing =
         {
             Resource.Layout.widget_progress,
             Resource.Layout.widget_1cell_progress,
@@ -127,7 +127,7 @@ namespace ForgottenConqueror
         {
             RemoteViews widgetView;
             
-            int layout = widgetParams.IsRefreshing ? layoutsRefreshing[widgetParams.Cells] : layouts[widgetParams.Cells];
+            int layout = widgetParams.IsRefreshing ? LayoutsRefreshing[widgetParams.Cells] : Layouts[widgetParams.Cells];
 
             widgetView = new RemoteViews(context.PackageName, layout);
 

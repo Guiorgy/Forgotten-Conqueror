@@ -11,45 +11,48 @@
     android:id="@+id/root">
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:background="#e5e5e5">
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minHeight="0dp"
-            android:paddingTop="9dp"
-            android:paddingBottom="9dp"
-            android:text="Previous"
-            android:textSize="16sp"
-            android:maxLines="1"
-            style="@android:style/Widget.Material.Button"
+        <ImageButton
+            tools:ignore="ContentDescription"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_arrow_left_grey_32dp"
+            android:background="@android:color/transparent"
+            style="@android:style/Widget.Material.ImageButton"
             android:id="@+id/btn_previous"/>
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minHeight="0dp"
-            android:paddingTop="9dp"
-            android:paddingBottom="9dp"
-            android:text="Next"
-            android:textSize="16sp"
-            android:maxLines="1"
-            style="@android:style/Widget.Material.Button"
+		<ImageButton
+            tools:ignore="ContentDescription"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+			android:layout_marginLeft="8dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_arrow_right_grey_32dp"
+            android:background="@android:color/transparent"
+            style="@android:style/Widget.Material.ImageButton"
             android:id="@+id/btn_next"/>
 
-        <Space
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+			android:backgroundTint="@android:color/transparent"/>
 
         <ProgressBar
-			android:layout_width="34dp"
-			android:layout_height="34dp"
+			android:layout_width="25dp"
+			android:layout_height="25dp"
 			android:layout_gravity="center"
 			android:gravity="center"
+			android:layout_marginLeft="4dp"
 			android:layout_marginRight="4dp"
 			android:indeterminate="true"
 			style="@android:style/Widget.Material.Light.ProgressBar.Inverse"
@@ -74,7 +77,7 @@
 			android:layout_marginRight="20dp"
 			android:indeterminate="true"
 			style="@android:style/Widget.Material.Light.ProgressBar.Horizontal"
-			android:id="@+id/progress"/>
+			android:id="@+id/list_progress"/>
 
 	</FrameLayout>
 

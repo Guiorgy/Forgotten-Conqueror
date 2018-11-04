@@ -16,8 +16,8 @@ namespace ForgottenConqueror
         private readonly static string NextClick = "NextClick";
         private readonly static string PreviousClick = "PreviousClick";
         private readonly static string RefreshClick = "RefreshClick";
-        private readonly static int layouts = Resource.Layout.widget_large;
-        private readonly static int layoutsRefreshing = Resource.Layout.widget_large_progress;
+        private readonly static int Layout = Resource.Layout.widget_large;
+        private readonly static int LayoutRefreshing = Resource.Layout.widget_large_progress;
 
         public override void OnUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
         {
@@ -34,7 +34,7 @@ namespace ForgottenConqueror
                         {
                             ID = appWidgetId,
                             IsRefreshing = true,
-                            Book = 1,
+                            Book = 0,
                         };
                         realm.Add<WidgetLargeParams>(widgetLargeParams);
                     });
@@ -46,10 +46,10 @@ namespace ForgottenConqueror
                 }
                 else realm.Write(() => widgetLargeParams.IsRefreshing = true);
 
-                //DBController.Instance.ParseBooks(context, false);
+                DBController.Instance.ParseBooks(context, false);
 
                 ComponentName appWidgetComponentName = new ComponentName(context, Java.Lang.Class.FromType(typeof(WidgetLarge)).Name);
-                appWidgetManager.UpdateAppWidget(appWidgetComponentName, BuildRemoteView(context, appWidgetId, null /*widgetLargeParams*/));
+                appWidgetManager.UpdateAppWidget(appWidgetComponentName, BuildRemoteView(context, appWidgetId, widgetLargeParams));
             }
             base.OnUpdate(context, appWidgetManager, appWidgetIds);
         }
@@ -65,60 +65,65 @@ namespace ForgottenConqueror
             {
                 // Next
                 Toast.MakeText(context, "Next", ToastLength.Short).Show();
+                return;
             }
             if (action.Equals(PreviousClick))
             {
                 // Previous
                 Toast.MakeText(context, "Previous", ToastLength.Short).Show();
+                return;
             }
             if (action.Equals(RefreshClick))
             {
                 // Refresh
                 Toast.MakeText(context, "Refresh", ToastLength.Short).Show();
+                return;
             }
         }
 
         private RemoteViews BuildRemoteView(Context context, int appWidgetId, WidgetLargeParams widgetLargeParams)
         {
             RemoteViews widgetView;
-            //int layout = widgetLargeParams.IsRefreshing ? layoutsRefreshing : layouts;
+            int layout = widgetLargeParams.IsRefreshing ? LayoutRefreshing : Layout;
 
-            widgetView = new RemoteViews(context.PackageName, Resource.Layout.widget_large /*layout*/);
+            widgetView = new RemoteViews(context.PackageName, layout);
 
-            //if (!widgetLargeParams.IsRefreshing)
-            //{
-                SetView(context, appWidgetId, widgetView);
-            //}
+            if (!widgetLargeParams.IsRefreshing)
+            {
+                SetView(context, appWidgetId, widgetView, widgetLargeParams);
+            }
 
             return widgetView;
         }
 
-        private void SetView(Context context, int appWidgetId, RemoteViews widgetView)
+        private void SetView(Context context, int appWidgetId, RemoteViews widgetView, WidgetLargeParams widgetLargeParams)
         {
             Intent intent = new Intent(context, typeof(WidgetLargeService));
 			intent.PutExtra(AppWidgetManager.ExtraAppwidgetId, appWidgetId);
-			intent.SetData(Uri.Parse(intent.ToUri(IntentUriType.Scheme)));
-            widgetView.SetRemoteAdapter(Resource.Id.view_flipper, intent);
-
-            // Bind the click intent for the next button on the widget
-            Intent nextIntent = new Intent(context, typeof(WidgetLarge));
-			nextIntent.SetAction(NextClick);
-			nextIntent.PutExtra(AppWidgetManager.ExtraAppwidgetId, appWidgetId);
-			PendingIntent nextPendingIntent = PendingIntent.GetBroadcast(context, appWidgetId, nextIntent, 0);
-            widgetView.SetOnClickPendingIntent(Resource.Id.btn_next, nextPendingIntent);
+            intent.PutExtra(WidgetLargeService.ExtraBookId, widgetLargeParams.Book);
+            intent.SetData(Uri.Parse(intent.ToUri(IntentUriType.Scheme)));
+            widgetView.SetRemoteAdapter(Resource.Id.list, intent);
+            widgetView.SetEmptyView(Resource.Id.list, Resource.Id.list_progress);
 
             // Bind the click intent for the previous button on the widget
             Intent previousIntent = new Intent(context, typeof(WidgetLarge));
             previousIntent.SetAction(PreviousClick);
             previousIntent.PutExtra(AppWidgetManager.ExtraAppwidgetId, appWidgetId);
-            PendingIntent previousPendingIntent = PendingIntent.GetBroadcast(context, appWidgetId, previousIntent, 0);
+            PendingIntent previousPendingIntent = PendingIntent.GetBroadcast(context, appWidgetId, previousIntent, PendingIntentFlags.UpdateCurrent);
             widgetView.SetOnClickPendingIntent(Resource.Id.btn_previous, previousPendingIntent);
+
+            // Bind the click intent for the next button on the widget
+            Intent nextIntent = new Intent(context, typeof(WidgetLarge));
+			nextIntent.SetAction(NextClick);
+			nextIntent.PutExtra(AppWidgetManager.ExtraAppwidgetId, appWidgetId);
+			PendingIntent nextPendingIntent = PendingIntent.GetBroadcast(context, appWidgetId, nextIntent, PendingIntentFlags.UpdateCurrent);
+            widgetView.SetOnClickPendingIntent(Resource.Id.btn_next, nextPendingIntent);
 
             // Bind the click intent for the refresh button on the widget
             Intent refreshIntent = new Intent(context, typeof(WidgetLarge));
             refreshIntent.SetAction(RefreshClick);
             refreshIntent.PutExtra(AppWidgetManager.ExtraAppwidgetId, appWidgetId);
-            PendingIntent refreshPendingIntent = PendingIntent.GetBroadcast(context, appWidgetId, previousIntent, PendingIntentFlags.UpdateCurrent);
+            PendingIntent refreshPendingIntent = PendingIntent.GetBroadcast(context, appWidgetId, refreshIntent, PendingIntentFlags.UpdateCurrent);
             widgetView.SetOnClickPendingIntent(Resource.Id.btn_refresh, refreshPendingIntent);
         }
 
