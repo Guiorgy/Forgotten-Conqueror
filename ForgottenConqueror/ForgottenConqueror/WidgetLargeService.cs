@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Android.App;
 using Android.Appwidget;
 using Android.Content;
@@ -21,9 +20,9 @@ namespace ForgottenConqueror
         private class ViewFactory : Java.Lang.Object, IRemoteViewsFactory
         {
             private Context context;
-            private int ItemLayout = Android.Resource.Layout.SimpleExpandableListItem1;
+            private int ItemLayout = Resource.Layout.widget_large_chapter_listitem;
             private int WidgetId = AppWidgetManager.InvalidAppwidgetId;
-            private Realm RealmInsrance;
+            private Realm RealmInstance;
             private int BookId;
             private Book RealmBook;
 
@@ -36,9 +35,17 @@ namespace ForgottenConqueror
 
             public RemoteViews GetViewAt(int position)
             {
+                Realm other = Realm.GetInstance(DB.RealmConfiguration);
+                if (!RealmInstance.IsSameInstance(other))
+                {
+                    RealmInstance.Dispose();
+                    RealmInstance = other;
+                    RealmBook = RealmInstance.Find<Book>(BookId);
+                }
+
                 RemoteViews page = new RemoteViews(context.PackageName, ItemLayout);
 
-                page.SetTextViewText(Android.Resource.Id.Text1, RealmBook.Chapters.ElementAtOrDefault(position).Title);
+                page.SetTextViewText(Resource.Id.chapter_title, RealmBook.Chapters.ElementAtOrDefault(position).Title);
 
                 return page;
             }
@@ -48,29 +55,46 @@ namespace ForgottenConqueror
                 return position;
             }
 
-            public int Count => RealmBook.Chapters.Count();
+            public int Count {
+                get
+                {
+                    Realm other = Realm.GetInstance(DB.RealmConfiguration);
+                    if (!RealmInstance.IsSameInstance(other))
+                    {
+                        RealmInstance.Dispose();
+                        RealmInstance = other;
+                        RealmBook = RealmInstance.Find<Book>(BookId);
+                    }
+                    return RealmBook.Chapters.Count();
+                }
+            }
 
             public bool HasStableIds => true;
 
             public RemoteViews LoadingView => new RemoteViews(context.PackageName, Resource.Layout.widget_1cell_progress);
 
             public int ViewTypeCount => 1;
-
+            
             public void OnCreate()
             {
-                RealmInsrance = Realm.GetInstance(RealmConfiguration.DefaultConfiguration);
-                RealmBook = RealmInsrance.Find<Book>(BookId);
+                RealmInstance = Realm.GetInstance(DB.RealmConfiguration);
+                RealmBook = RealmInstance.Find<Book>(BookId);
             }
 
             public void OnDataSetChanged()
             {
-                RealmInsrance.Refresh();
-                RealmBook = RealmInsrance.Find<Book>(BookId);
+                Realm other = Realm.GetInstance(DB.RealmConfiguration);
+                if (!RealmInstance.IsSameInstance(other))
+                {
+                    RealmInstance.Dispose();
+                    RealmInstance = other;
+                    RealmBook = RealmInstance.Find<Book>(BookId);
+                }
             }
 
             public void OnDestroy()
             {
-                RealmInsrance.Dispose();
+                RealmInstance.Dispose();
             }
         }
     }
