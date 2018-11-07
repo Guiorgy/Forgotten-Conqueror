@@ -2,6 +2,7 @@
 using Android.App;
 using Android.Appwidget;
 using Android.Content;
+using Android.Net;
 using Android.Widget;
 using Realms;
 using static ForgottenConqueror.DB;
@@ -24,7 +25,7 @@ namespace ForgottenConqueror
             private int WidgetId = AppWidgetManager.InvalidAppwidgetId;
             private Realm RealmInstance;
             private int BookId;
-            private Book RealmBook;
+            private int FirstChapterId;
 
             public ViewFactory(Context context, Intent intent)
             {
@@ -40,12 +41,18 @@ namespace ForgottenConqueror
                 {
                     RealmInstance.Dispose();
                     RealmInstance = other;
-                    RealmBook = RealmInstance.Find<Book>(BookId);
                 }
 
                 RemoteViews page = new RemoteViews(context.PackageName, ItemLayout);
 
-                page.SetTextViewText(Resource.Id.chapter_title, RealmBook.Chapters.ElementAtOrDefault(position).Title);
+                Chapter chapter = RealmInstance.Find<Chapter>(FirstChapterId + position);
+                if (chapter == null) return page;
+
+                page.SetTextViewText(Resource.Id.chapter_title, chapter.Title);
+
+                Intent chapterClick = new Intent();
+                chapterClick.SetData(Uri.Parse(chapter.URL));
+                page.SetOnClickFillInIntent(Resource.Id.root, chapterClick);
 
                 return page;
             }
@@ -63,9 +70,8 @@ namespace ForgottenConqueror
                     {
                         RealmInstance.Dispose();
                         RealmInstance = other;
-                        RealmBook = RealmInstance.Find<Book>(BookId);
                     }
-                    return RealmBook.Chapters.Count();
+                    return RealmInstance.Find<Book>(BookId).Chapters.Count();
                 }
             }
 
@@ -78,7 +84,7 @@ namespace ForgottenConqueror
             public void OnCreate()
             {
                 RealmInstance = Realm.GetInstance(DB.RealmConfiguration);
-                RealmBook = RealmInstance.Find<Book>(BookId);
+                FirstChapterId = RealmInstance.Find<Book>(BookId).Chapters.FirstOrDefault().ID;
             }
 
             public void OnDataSetChanged()
@@ -88,8 +94,8 @@ namespace ForgottenConqueror
                 {
                     RealmInstance.Dispose();
                     RealmInstance = other;
-                    RealmBook = RealmInstance.Find<Book>(BookId);
                 }
+                FirstChapterId = RealmInstance.Find<Book>(BookId).Chapters.FirstOrDefault().ID;
             }
 
             public void OnDestroy()

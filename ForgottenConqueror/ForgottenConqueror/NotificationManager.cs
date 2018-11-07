@@ -132,7 +132,7 @@ namespace ForgottenConqueror
             Intent intent = new Intent(Intent.ActionView);
             intent.SetData(Uri.Parse(chapters[0].URL));
             intent.SetFlags(ActivityFlags.NewTask | ActivityFlags.ClearTask);
-            PendingIntent pendingIntent = PendingIntent.GetService(context, (int)ChannelId.NewChapter, intent, PendingIntentFlags.OneShot);
+            PendingIntent pendingIntent = PendingIntent.GetActivity(context, (int)ChannelId.NewChapter, intent, PendingIntentFlags.OneShot);
             builder.SetContentIntent(pendingIntent);
 
             if (chapters.Count > 1)

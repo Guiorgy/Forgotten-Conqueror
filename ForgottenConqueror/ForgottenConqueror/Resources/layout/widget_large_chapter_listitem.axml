@@ -4,17 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="40dp"
-	android:orientation="horizontal">
+	android:orientation="horizontal"
+	android:id="@+id/root">
 
 	<TextView
 		android:layout_width="wrap_content"
 		android:layout_height="40dp"
-		android:gravity="center"
+		android:gravity="center_vertical|left"
 		android:paddingRight="5dp"
-		android:maxLines="1"
-		android:textSize="16sp"
-		android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-		style="@style/Base.TextAppearance.AppCompat.Medium"
+		android:maxLines="2"
+		android:textSize="12sp"
+		android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"
+		style="@style/TextAppearance.AppCompat.Small"
 		android:textColor="#000000"
 		tools:text="Chapter Title"
 		android:id="@+id/chapter_title"/>
@@ -26,11 +27,12 @@
 		android:gravity="center_vertical|right"
 		android:paddingRight="5dp"
 		android:maxLines="1"
-		android:textSize="14sp"
-		android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
+		android:textSize="10sp"
+		android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"
 		style="@style/TextAppearance.AppCompat.Small"
 		android:textColor="#aa000000"
 		tools:text="Chapter Date"
+		android:visibility="gone"
 		android:id="@+id/chapter_date"/>
 
 </LinearLayout>

@@ -101,7 +101,8 @@ namespace ForgottenConqueror
             // Check if the click is to open chapter in browser
             if (action.Equals(RefreshClick))
             {
-                Update(context, new int[] { intent.GetIntExtra(AppWidgetManager.ExtraAppwidgetId, AppWidgetManager.InvalidAppwidgetId) });
+                Update(context);
+                Update(context, intent.GetIntExtra(AppWidgetManager.ExtraAppwidgetId, AppWidgetManager.InvalidAppwidgetId));
                 return;
             }
 
@@ -228,7 +229,7 @@ namespace ForgottenConqueror
             OnUpdate(context, appWidgetManager, appWidgetIds);
         }
 
-        public void Update(Context context, int[] appWidgetIds)
+        public void Update(Context context, params int[] appWidgetIds)
         {
             AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
             OnUpdate(context, appWidgetManager, appWidgetIds);
@@ -248,7 +249,7 @@ namespace ForgottenConqueror
             realm.Dispose();
         }
 
-        public void Redraw(Context context, int[] appWidgetIds)
+        public void Redraw(Context context, params int[] appWidgetIds)
         {
             Realm realm = Realm.GetInstance(DB.RealmConfiguration);
             AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
