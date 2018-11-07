@@ -2494,7 +2494,7 @@ namespace ForgottenConqueror
 			
 			// aapt resource value: 0x7f0900bc
 			public const int chapter_date = 2131296444;
-			
+
 			// aapt resource value: 0x7f0900af
 			public const int chapter_title = 2131296431;
 			
@@ -2920,7 +2920,7 @@ namespace ForgottenConqueror
 			
 			// aapt resource value: 0x7f090016
 			public const int view_offset_helper = 2131296278;
-			
+
 			// aapt resource value: 0x7f0900bd
 			public const int visible = 2131296445;
 			

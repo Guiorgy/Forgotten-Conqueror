@@ -6,7 +6,6 @@ namespace ForgottenConqueror
     class DB
     {
         public static readonly RealmConfiguration RealmConfiguration = new RealmConfiguration("ForgottenConqueror.realm");
-
         private static object thislock = new object();
         private static DB instance;
         private DB() { }
@@ -56,7 +55,7 @@ namespace ForgottenConqueror
             [Backlink(nameof(Chapter.Book))]
             public IQueryable<Chapter> Chapters { get; }
         }
-
+      
         public class WidgetParams : RealmObject
         {
             [PrimaryKey]
