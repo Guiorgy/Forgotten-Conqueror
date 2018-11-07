@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Android.Content;
 using Android.Preferences;
 
@@ -145,9 +145,7 @@ namespace ForgottenConqueror
         }
 
         public readonly static string IsFirstUpdate = "IsFirstUpdate";
-        public readonly static string LastUpdate = "LastUpdate";
-        public readonly static string LastChapterTitle = "LastChapterTitle";
-        public readonly static string LastChapterCount = "LastChapterCount";
-        public readonly static string LastChapterURL = "LastChapterURL";
+        public readonly static string LastUpdateTime = "LastUpdateTime";
+        public readonly static string PreviouslyLastChapterId = "PreviouslyLastChapterId";
     }
 }
