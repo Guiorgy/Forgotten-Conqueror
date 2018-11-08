@@ -77,5 +77,16 @@ namespace ForgottenConqueror
             public int Book { get; set; }
             public bool Descending { get; set; }
         }
+
+        public class WidgetLargeAltParams : RealmObject
+        {
+            [PrimaryKey]
+            public int ID { get; set; }
+            //public RealmInteger<int> Counter { get; set; }
+            public bool IsRefreshing { get; set; }
+            public int Book { get; set; }
+            public bool Descending { get; set; }
+            public bool OpenMenu { get; set; }
+        }
     }
 }

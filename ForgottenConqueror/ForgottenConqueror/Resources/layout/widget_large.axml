@@ -19,6 +19,7 @@
             tools:ignore="ContentDescription"
             android:layout_width="32dp"
             android:layout_height="32dp"
+			android:layout_marginLeft="-4dp"
             android:layout_gravity="center"
             android:gravity="center"
             android:scaleType="fitXY"
@@ -31,7 +32,7 @@
             tools:ignore="ContentDescription"
             android:layout_width="32dp"
             android:layout_height="32dp"
-			android:layout_marginLeft="8dp"
+			android:layout_marginRight="-4dp"
             android:layout_gravity="center"
             android:gravity="center"
             android:scaleType="fitXY"
@@ -86,6 +87,13 @@
 		android:textColor="#000000"
 		tools:text="Book Title"
 		android:id="@+id/book_title"/>
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="1dp"
+		android:layout_marginLeft="5dp"
+		android:layout_marginRight="5dp"
+		android:background="#aa000000"/>
     
     <ListView
         android:layout_width="match_parent"

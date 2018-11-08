@@ -10,7 +10,7 @@ using static ForgottenConqueror.DB;
 namespace ForgottenConqueror
 {
     [Service(Permission = Android.Manifest.Permission.BindRemoteviews, Exported = false)]
-    class WidgetLargeService : RemoteViewsService
+    class RemoteChapterAdapter : RemoteViewsService
     {
         public static readonly string ExtraBookId = "ExtraBookId";
         public static readonly string ExtraSortOrder = "ExtraSortOrder";

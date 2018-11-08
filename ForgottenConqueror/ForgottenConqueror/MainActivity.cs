@@ -2,10 +2,7 @@
 using Android.OS;
 using Android.Support.V7.App;
 using Android.Widget;
-using Realms;
-using System.Collections.Generic;
 using static Android.Content.PM.LaunchMode;
-using static ForgottenConqueror.DB;
 
 namespace ForgottenConqueror
 {

@@ -84,6 +84,11 @@ namespace ForgottenConqueror
                         {
                             widgetLargeParams.IsRefreshing = false;
                         }
+
+                        foreach (WidgetLargeAltParams widgetLargeAltParams in realm.All<WidgetLargeAltParams>())
+                        {
+                            widgetLargeAltParams.IsRefreshing = false;
+                        }
                     });
                     Data.Instance.Write(context, Data.LastUpdateTime, DateTime.Now.Ticks);
                     Data.Instance.Write(context, Data.IsFirstUpdate, false);
@@ -118,6 +123,11 @@ namespace ForgottenConqueror
                         foreach (WidgetLargeParams widgetLargeParams in realm.All<WidgetLargeParams>())
                         {
                             widgetLargeParams.IsRefreshing = false;
+                        }
+
+                        foreach (WidgetLargeAltParams widgetLargeAltParams in realm.All<WidgetLargeAltParams>())
+                        {
+                            widgetLargeAltParams.IsRefreshing = false;
                         }
                     });
                     Data.Instance.Write(context, Data.LastUpdateTime, DateTime.Now.Ticks);
@@ -165,6 +175,11 @@ namespace ForgottenConqueror
                                 {
                                     widgetLargeParams.IsRefreshing = false;
                                 }
+
+                                foreach (WidgetLargeAltParams widgetLargeAltParams in realm.All<WidgetLargeAltParams>())
+                                {
+                                    widgetLargeAltParams.IsRefreshing = false;
+                                }
                             });
                             Data.Instance.Write(context, Data.LastUpdateTime, DateTime.Now.Ticks);
                             Data.Instance.Write(context, Data.IsFirstUpdate, false);
@@ -199,6 +214,11 @@ namespace ForgottenConqueror
                                 foreach (WidgetLargeParams widgetLargeParams in realm.All<WidgetLargeParams>())
                                 {
                                     widgetLargeParams.IsRefreshing = false;
+                                }
+
+                                foreach (WidgetLargeAltParams widgetLargeAltParams in realm.All<WidgetLargeAltParams>())
+                                {
+                                    widgetLargeAltParams.IsRefreshing = false;
                                 }
                             });
                             Data.Instance.Write(context, Data.LastUpdateTime, DateTime.Now.Ticks);
@@ -347,6 +367,10 @@ namespace ForgottenConqueror
             // WidgetLarge
             WidgetLarge widgetLarge = new WidgetLarge();
             widgetLarge.RedrawAll(context);
+
+            // WidgetLargeAlt
+            WidgetLargeAlt widgetLargeAlt = new WidgetLargeAlt();
+            widgetLargeAlt.RedrawAll(context);
         }
     }
 }
