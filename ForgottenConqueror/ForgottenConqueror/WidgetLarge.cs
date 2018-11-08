@@ -16,6 +16,7 @@ namespace ForgottenConqueror
     {
         private readonly static string NextClick = "NextClick";
         private readonly static string PreviousClick = "PreviousClick";
+        private readonly static string ReverseClick = "ReverseClick";
         private readonly static string RefreshClick = "RefreshClick";
         private readonly static int Layout = Resource.Layout.widget_large;
         private readonly static int LayoutRefreshing = Resource.Layout.widget_large_progress;
@@ -36,6 +37,7 @@ namespace ForgottenConqueror
                             ID = appWidgetId,
                             IsRefreshing = true,
                             Book = 0,
+                            Descending = false,
                         };
                         realm.Add<WidgetLargeParams>(widgetLargeParams);
                     });
@@ -84,6 +86,12 @@ namespace ForgottenConqueror
                 realm.Write(() => widgetLargeParams.Book = bookId - 1 < 0 ? bookCount - 1 : bookId - 1);
                 Redraw(context, appWidgetId);
             }
+            if (action.Equals(ReverseClick))
+            {
+                // Previous
+                realm.Write(() => widgetLargeParams.Descending = !widgetLargeParams.Descending);
+                Redraw(context, appWidgetId);
+            }
             if (action.Equals(RefreshClick))
             {
                 // Refresh
@@ -114,6 +122,7 @@ namespace ForgottenConqueror
                 Intent intent = new Intent(context, typeof(WidgetLargeService));
 			    intent.PutExtra(AppWidgetManager.ExtraAppwidgetId, appWidgetId);
                 intent.PutExtra(WidgetLargeService.ExtraBookId, widgetLargeParams.Book);
+                intent.PutExtra(WidgetLargeService.ExtraSortOrder, widgetLargeParams.Descending);
                 intent.SetData(Uri.Parse(intent.ToUri(IntentUriType.Scheme)));
                 widgetView.SetRemoteAdapter(Resource.Id.list_chapters, intent);
 
@@ -151,6 +160,13 @@ namespace ForgottenConqueror
 			nextIntent.PutExtra(AppWidgetManager.ExtraAppwidgetId, appWidgetId);
 			PendingIntent nextPendingIntent = PendingIntent.GetBroadcast(context, appWidgetId, nextIntent, PendingIntentFlags.UpdateCurrent);
             widgetView.SetOnClickPendingIntent(Resource.Id.btn_next, nextPendingIntent);
+
+            // Bind the click intent for the reverse button on the widget
+            Intent reverseIntent = new Intent(context, typeof(WidgetLarge));
+            reverseIntent.SetAction(ReverseClick);
+            reverseIntent.PutExtra(AppWidgetManager.ExtraAppwidgetId, appWidgetId);
+            PendingIntent reversePendingIntent = PendingIntent.GetBroadcast(context, appWidgetId, reverseIntent, PendingIntentFlags.UpdateCurrent);
+            widgetView.SetOnClickPendingIntent(Resource.Id.btn_reverse, reversePendingIntent);
         }
 
         public override void OnDeleted(Context context, int[] appWidgetIds)

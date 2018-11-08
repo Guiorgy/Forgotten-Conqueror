@@ -5,7 +5,10 @@ namespace ForgottenConqueror
 {
     class DB
     {
-        public static readonly RealmConfiguration RealmConfiguration = new RealmConfiguration("ForgottenConqueror.realm");
+        public static readonly RealmConfiguration RealmConfiguration = new RealmConfiguration("ForgottenConqueror.realm")
+        {
+            SchemaVersion = 2,
+        };
         private static object thislock = new object();
         private static DB instance;
         private DB() { }
@@ -72,6 +75,7 @@ namespace ForgottenConqueror
             //public RealmInteger<int> Counter { get; set; }
             public bool IsRefreshing { get; set; }
             public int Book { get; set; }
+            public bool Descending { get; set; }
         }
     }
 }

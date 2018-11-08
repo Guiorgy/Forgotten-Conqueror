@@ -46,6 +46,19 @@
             android:layout_weight="1"
 			android:backgroundTint="@android:color/transparent"/>
 
+		<ImageButton
+            tools:ignore="ContentDescription"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center"
+			android:layout_marginRight="8dp"
+            android:gravity="center"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_swap_vert_grey_32dp"
+            android:background="@android:color/transparent"
+            style="@android:style/Widget.Material.ImageButton"
+            android:id="@+id/btn_reverse"/>
+
         <ImageButton
             tools:ignore="ContentDescription"
             android:layout_width="32dp"
