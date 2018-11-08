@@ -2233,26 +2233,26 @@ namespace ForgottenConqueror
 			// aapt resource value: 0x7f020053
 			public const int avd_hide_password = 2130837587;
 			
-			// aapt resource value: 0x7f020074
-			public const int avd_hide_password_1 = 2130837620;
-			
-			// aapt resource value: 0x7f020075
-			public const int avd_hide_password_2 = 2130837621;
-			
 			// aapt resource value: 0x7f020076
-			public const int avd_hide_password_3 = 2130837622;
+			public const int avd_hide_password_1 = 2130837622;
+			
+			// aapt resource value: 0x7f020077
+			public const int avd_hide_password_2 = 2130837623;
+			
+			// aapt resource value: 0x7f020078
+			public const int avd_hide_password_3 = 2130837624;
 			
 			// aapt resource value: 0x7f020054
 			public const int avd_show_password = 2130837588;
 			
-			// aapt resource value: 0x7f020077
-			public const int avd_show_password_1 = 2130837623;
-			
-			// aapt resource value: 0x7f020078
-			public const int avd_show_password_2 = 2130837624;
-			
 			// aapt resource value: 0x7f020079
-			public const int avd_show_password_3 = 2130837625;
+			public const int avd_show_password_1 = 2130837625;
+			
+			// aapt resource value: 0x7f02007a
+			public const int avd_show_password_2 = 2130837626;
+			
+			// aapt resource value: 0x7f02007b
+			public const int avd_show_password_3 = 2130837627;
 			
 			// aapt resource value: 0x7f020055
 			public const int corner_radius_10dp = 2130837589;
@@ -2288,64 +2288,70 @@ namespace ForgottenConqueror
 			public const int ic_refresh_grey_32dp = 2130837599;
 			
 			// aapt resource value: 0x7f020060
-			public const int navigation_empty_icon = 2130837600;
+			public const int ic_swap_vert_grey_32dp = 2130837600;
 			
 			// aapt resource value: 0x7f020061
-			public const int new_chapter_icon = 2130837601;
+			public const int navigation_empty_icon = 2130837601;
 			
 			// aapt resource value: 0x7f020062
-			public const int notification_action_background = 2130837602;
+			public const int new_chapter_icon = 2130837602;
 			
 			// aapt resource value: 0x7f020063
-			public const int notification_bg = 2130837603;
+			public const int notification_action_background = 2130837603;
 			
 			// aapt resource value: 0x7f020064
-			public const int notification_bg_low = 2130837604;
+			public const int notification_bg = 2130837604;
 			
 			// aapt resource value: 0x7f020065
-			public const int notification_bg_low_normal = 2130837605;
+			public const int notification_bg_low = 2130837605;
 			
 			// aapt resource value: 0x7f020066
-			public const int notification_bg_low_pressed = 2130837606;
+			public const int notification_bg_low_normal = 2130837606;
 			
 			// aapt resource value: 0x7f020067
-			public const int notification_bg_normal = 2130837607;
+			public const int notification_bg_low_pressed = 2130837607;
 			
 			// aapt resource value: 0x7f020068
-			public const int notification_bg_normal_pressed = 2130837608;
+			public const int notification_bg_normal = 2130837608;
 			
 			// aapt resource value: 0x7f020069
-			public const int notification_icon_background = 2130837609;
-			
-			// aapt resource value: 0x7f020072
-			public const int notification_template_icon_bg = 2130837618;
-			
-			// aapt resource value: 0x7f020073
-			public const int notification_template_icon_low_bg = 2130837619;
+			public const int notification_bg_normal_pressed = 2130837609;
 			
 			// aapt resource value: 0x7f02006a
-			public const int notification_tile_bg = 2130837610;
+			public const int notification_icon_background = 2130837610;
+			
+			// aapt resource value: 0x7f020074
+			public const int notification_template_icon_bg = 2130837620;
+			
+			// aapt resource value: 0x7f020075
+			public const int notification_template_icon_low_bg = 2130837621;
 			
 			// aapt resource value: 0x7f02006b
-			public const int notify_panel_notification_icon_bg = 2130837611;
+			public const int notification_tile_bg = 2130837611;
 			
 			// aapt resource value: 0x7f02006c
-			public const int tooltip_frame_dark = 2130837612;
+			public const int notify_panel_notification_icon_bg = 2130837612;
 			
 			// aapt resource value: 0x7f02006d
-			public const int tooltip_frame_light = 2130837613;
+			public const int tooltip_frame_dark = 2130837613;
 			
 			// aapt resource value: 0x7f02006e
-			public const int widget_large_preview = 2130837614;
+			public const int tooltip_frame_light = 2130837614;
 			
 			// aapt resource value: 0x7f02006f
-			public const int widget_large_preview_placeholder = 2130837615;
+			public const int widget_large_alt_preview = 2130837615;
 			
 			// aapt resource value: 0x7f020070
-			public const int widget_preview = 2130837616;
+			public const int widget_large_preview = 2130837616;
 			
 			// aapt resource value: 0x7f020071
-			public const int widget_preview_placeholder = 2130837617;
+			public const int widget_large_preview_placeholder = 2130837617;
+			
+			// aapt resource value: 0x7f020072
+			public const int widget_preview = 2130837618;
+			
+			// aapt resource value: 0x7f020073
+			public const int widget_preview_placeholder = 2130837619;
 			
 			static Drawable()
 			{
@@ -2462,14 +2468,14 @@ namespace ForgottenConqueror
 			// aapt resource value: 0x7f090057
 			public const int blocking = 2131296343;
 			
-			// aapt resource value: 0x7f0900b4
-			public const int book_title = 2131296436;
+			// aapt resource value: 0x7f0900b5
+			public const int book_title = 2131296437;
 			
 			// aapt resource value: 0x7f09003d
 			public const int bottom = 2131296317;
 			
-			// aapt resource value: 0x7f0900b6
-			public const int btn_menu = 2131296438;
+			// aapt resource value: 0x7f0900b7
+			public const int btn_menu = 2131296439;
 			
 			// aapt resource value: 0x7f0900b3
 			public const int btn_next = 2131296435;
@@ -2479,6 +2485,9 @@ namespace ForgottenConqueror
 			
 			// aapt resource value: 0x7f0900ae
 			public const int btn_refresh = 2131296430;
+			
+			// aapt resource value: 0x7f0900b4
+			public const int btn_reverse = 2131296436;
 			
 			// aapt resource value: 0x7f090063
 			public const int buttonPanel = 2131296355;
@@ -2495,8 +2504,8 @@ namespace ForgottenConqueror
 			// aapt resource value: 0x7f090047
 			public const int center_vertical = 2131296327;
 			
-			// aapt resource value: 0x7f0900ba
-			public const int chapter_date = 2131296442;
+			// aapt resource value: 0x7f0900bc
+			public const int chapter_date = 2131296444;
 			
 			// aapt resource value: 0x7f0900af
 			public const int chapter_title = 2131296431;
@@ -2519,8 +2528,8 @@ namespace ForgottenConqueror
 			// aapt resource value: 0x7f09008d
 			public const int container = 2131296397;
 			
-			// aapt resource value: 0x7f0900b7
-			public const int content = 2131296439;
+			// aapt resource value: 0x7f0900b8
+			public const int content = 2131296440;
 			
 			// aapt resource value: 0x7f090066
 			public const int contentPanel = 2131296358;
@@ -2645,26 +2654,29 @@ namespace ForgottenConqueror
 			// aapt resource value: 0x7f09001d
 			public const int listMode = 2131296285;
 			
-			// aapt resource value: 0x7f0900b9
-			public const int list_books = 2131296441;
+			// aapt resource value: 0x7f0900ba
+			public const int list_books = 2131296442;
 			
-			// aapt resource value: 0x7f0900b5
-			public const int list_chapters = 2131296437;
+			// aapt resource value: 0x7f0900b6
+			public const int list_chapters = 2131296438;
 			
 			// aapt resource value: 0x7f090061
 			public const int list_item = 2131296353;
 			
-			// aapt resource value: 0x7f0900bb
-			public const int list_progress = 2131296443;
-			
 			// aapt resource value: 0x7f0900bd
-			public const int masked = 2131296445;
+			public const int list_progress = 2131296445;
+			
+			// aapt resource value: 0x7f0900bf
+			public const int masked = 2131296447;
 			
 			// aapt resource value: 0x7f09009f
 			public const int media_actions = 2131296415;
 			
-			// aapt resource value: 0x7f0900b8
-			public const int menu = 2131296440;
+			// aapt resource value: 0x7f0900b9
+			public const int menu = 2131296441;
+			
+			// aapt resource value: 0x7f0900bb
+			public const int menu_outside = 2131296443;
 			
 			// aapt resource value: 0x7f0900ac
 			public const int message = 2131296428;
@@ -2921,8 +2933,8 @@ namespace ForgottenConqueror
 			// aapt resource value: 0x7f090016
 			public const int view_offset_helper = 2131296278;
 			
-			// aapt resource value: 0x7f0900bc
-			public const int visible = 2131296444;
+			// aapt resource value: 0x7f0900be
+			public const int visible = 2131296446;
 			
 			// aapt resource value: 0x7f09003c
 			public const int withText = 2131296316;
@@ -3194,16 +3206,22 @@ namespace ForgottenConqueror
 			public const int widget_large = 2130968644;
 			
 			// aapt resource value: 0x7f040045
-			public const int widget_large_altt = 2130968645;
+			public const int widget_large_alt = 2130968645;
 			
 			// aapt resource value: 0x7f040046
-			public const int widget_large_chapter_listitem = 2130968646;
+			public const int widget_large_alt_progress = 2130968646;
 			
 			// aapt resource value: 0x7f040047
-			public const int widget_large_progress = 2130968647;
+			public const int widget_large_book_listitem = 2130968647;
 			
 			// aapt resource value: 0x7f040048
-			public const int widget_progress = 2130968648;
+			public const int widget_large_chapter_listitem = 2130968648;
+			
+			// aapt resource value: 0x7f040049
+			public const int widget_large_progress = 2130968649;
+			
+			// aapt resource value: 0x7f04004a
+			public const int widget_progress = 2130968650;
 			
 			static Layout()
 			{
@@ -4549,6 +4567,9 @@ namespace ForgottenConqueror
 			
 			// aapt resource value: 0x7f070001
 			public const int appwidgetprovider_large = 2131165185;
+			
+			// aapt resource value: 0x7f070002
+			public const int appwidgetprovider_large_alt = 2131165186;
 			
 			static Xml()
 			{

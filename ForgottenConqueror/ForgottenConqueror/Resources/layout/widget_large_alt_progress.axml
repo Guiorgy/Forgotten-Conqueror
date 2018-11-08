@@ -19,33 +19,38 @@
             tools:ignore="ContentDescription"
             android:layout_width="32dp"
             android:layout_height="32dp"
-			android:layout_marginLeft="-4dp"
             android:layout_gravity="center"
             android:gravity="center"
             android:scaleType="fitXY"
-            android:src="@drawable/ic_arrow_left_grey_32dp"
+            android:src="@drawable/ic_books_grey_32dp"
             android:background="@android:color/transparent"
             style="@android:style/Widget.Material.ImageButton"
-            android:id="@+id/btn_previous"/>
+            android:id="@+id/btn_menu"/>
 
-		<ImageButton
-            tools:ignore="ContentDescription"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-			android:layout_marginRight="-4dp"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:scaleType="fitXY"
-            android:src="@drawable/ic_arrow_right_grey_32dp"
-            android:background="@android:color/transparent"
-            style="@android:style/Widget.Material.ImageButton"
-            android:id="@+id/btn_next"/>
-
-        <LinearLayout
+		<LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
 			android:backgroundTint="@android:color/transparent"/>
+
+		<!-- <TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center"
+			android:gravity="center"
+			android:maxLines="1"
+			android:textSize="16sp"
+			android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
+			style="@style/Base.TextAppearance.AppCompat.Large"
+			android:textColor="#000000"
+			tools:text="Book Title"
+			android:id="@+id/book_title"/>
+
+		<LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+			android:backgroundTint="@android:color/transparent"/> -->
 
 		<ImageButton
             tools:ignore="ContentDescription"
@@ -74,12 +79,10 @@
     </LinearLayout>
     
     <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-		android:paddingLeft="5dp"
-		android:paddingRight="5dp"
-		android:id="@+id/list_progress">
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1"
+		android:id="@+id/content">
 
 		<ProgressBar
 			android:layout_width="match_parent"
@@ -93,6 +96,41 @@
 			android:layout_marginRight="20dp"
 			android:indeterminate="true"
 			style="@android:style/Widget.Material.Light.ProgressBar.Horizontal"/>
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:orientation="horizontal"
+			android:background="@android:color/transparent"
+			android:visibility="invisible"
+			tools:visibility="visible"
+			android:id="@+id/menu">
+
+			<FrameLayout
+				android:layout_width="0dp"
+				android:layout_height="match_parent"
+				android:layout_weight="3"
+				android:background="#f0f0f0"
+				tools:listitem="@android:layout/simple_list_item_1">
+
+				<ProgressBar
+					android:layout_width="64dp"
+					android:layout_height="64dp"
+					android:layout_gravity="center"
+					android:gravity="center"
+					android:indeterminate="true"
+					style="@android:style/Widget.Material.Light.ProgressBar.Inverse"/>
+
+			</FrameLayout>
+
+			<LinearLayout
+				android:layout_width="0dp"
+				android:layout_height="match_parent"
+				android:layout_weight="1"
+				android:background="@android:color/transparent"
+				android:id="@+id/menu_outside"/>
+
+		</LinearLayout>
 
 	</FrameLayout>
 

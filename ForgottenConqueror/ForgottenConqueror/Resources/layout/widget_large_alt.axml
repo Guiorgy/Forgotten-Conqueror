@@ -33,7 +33,7 @@
             android:layout_weight="1"
 			android:backgroundTint="@android:color/transparent"/>
 
-		<TextView
+		<!-- <TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_gravity="center"
@@ -50,7 +50,20 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-			android:backgroundTint="@android:color/transparent"/>
+			android:backgroundTint="@android:color/transparent"/> -->
+
+		<ImageButton
+            tools:ignore="ContentDescription"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center"
+			android:layout_marginRight="8dp"
+            android:gravity="center"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_swap_vert_grey_32dp"
+            android:background="@android:color/transparent"
+            style="@android:style/Widget.Material.ImageButton"
+            android:id="@+id/btn_reverse"/>
 
         <ImageButton
             tools:ignore="ContentDescription"
@@ -75,31 +88,39 @@
 		<ListView
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
+			android:layout_gravity="center"
 			android:paddingLeft="5dp"
 			android:paddingRight="5dp"
-			tools:listitem="@android:layout/simple_list_item_1"
+			tools:listitem="@layout/widget_large_chapter_listitem"
 			android:id="@+id/list_chapters"/>
 
 		<LinearLayout
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
 			android:orientation="horizontal"
-			android:background="#f5f5f5"
+			android:background="@android:color/transparent"
+			android:visibility="invisible"
+			tools:visibility="visible"
 			android:id="@+id/menu">
 
 			<ListView
 				android:layout_width="0dp"
 				android:layout_height="match_parent"
-				android:layout_weight="2"
+				android:layout_weight="3"
+				android:padding="5dp"
+				android:background="#f0f0f0"
 				tools:listitem="@android:layout/simple_list_item_1"
 				android:id="@+id/list_books"/>
 
-			<Space
+			<LinearLayout
 				android:layout_width="0dp"
 				android:layout_height="match_parent"
-				android:layout_weight="3"/>
+				android:layout_weight="1"
+				android:background="@android:color/transparent"
+				android:id="@+id/menu_outside"/>
 
 		</LinearLayout>
 
 	</FrameLayout>
+
 </LinearLayout>
