@@ -23,6 +23,8 @@ namespace ForgottenConqueror
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
 
+            FinishAndRemoveTask();
+
             viewPager = FindViewById<ViewPager>(Resource.Id.viewpager);
             pagerTitleStrip = FindViewById<PagerTitleStrip>(Resource.Id.viewpager_header);
             PageAdapter adapter = new PageAdapter(SupportFragmentManager);

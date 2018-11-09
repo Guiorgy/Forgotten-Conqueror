@@ -164,7 +164,7 @@ namespace ForgottenConqueror
             });
         }
 
-        private async void UpdateBooks()
+        private void UpdateBooks()
         {
             Realm realm = Realm.GetInstance(DB.RealmConfiguration);
             HtmlWeb web = new HtmlWeb();
@@ -190,10 +190,10 @@ namespace ForgottenConqueror
                 //AsyncConsole.WriteLine(book.Title);
 
                 books.Add(book);
-                tasks.Add(Task.Run(() => UpdateBooks_ChaptersAsync(book)));
+                tasks.Add(Task<List<Chapter>>.Run(() => UpdateBooks_Chapters(book)));
             }
 
-            await Task.WhenAll(tasks.ToArray());
+            Task.WaitAll(tasks.ToArray());
             List<Chapter> chapters = tasks.SelectMany(task => task.Result).ToList();
 
             realm.Write(() =>
@@ -210,7 +210,7 @@ namespace ForgottenConqueror
             });
         }
 
-        private List<Chapter> UpdateBooks_ChaptersAsync(Book book)
+        private List<Chapter> UpdateBooks_Chapters(Book book)
         {
             Realm realm = Realm.GetInstance(DB.RealmConfiguration);
             HtmlWeb web = new HtmlWeb();
