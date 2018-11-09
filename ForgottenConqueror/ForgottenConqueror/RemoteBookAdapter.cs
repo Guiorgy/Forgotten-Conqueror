@@ -21,10 +21,9 @@ namespace ForgottenConqueror
 
         private class ViewFactory : Java.Lang.Object, IRemoteViewsFactory
         {
+            private static readonly int ItemLayout = Resource.Layout.widget_large_book_listitem;
             private Context context;
-            private int ItemLayout = Resource.Layout.widget_large_book_listitem;
             private int WidgetId = AppWidgetManager.InvalidAppwidgetId;
-            private Realm RealmInstance;
             private int BookId;
 
             public ViewFactory(Context context, Intent intent)
@@ -36,16 +35,11 @@ namespace ForgottenConqueror
 
             public RemoteViews GetViewAt(int position)
             {
-                Realm other = Realm.GetInstance(DB.RealmConfiguration);
-                if (!RealmInstance.IsSameInstance(other))
-                {
-                    RealmInstance.Dispose();
-                    RealmInstance = other;
-                }
+                Realm realm = Realm.GetInstance(DB.RealmConfiguration);
 
                 RemoteViews page = new RemoteViews(context.PackageName, ItemLayout);
 
-                Book book = RealmInstance.Find<Book>(position);
+                Book book = realm.Find<Book>(position);
                 if (book == null) return page;
 
                 page.SetTextViewText(Resource.Id.book_title, book.Title);
@@ -83,24 +77,19 @@ namespace ForgottenConqueror
             
             public void OnCreate()
             {
-                RealmInstance = Realm.GetInstance(DB.RealmConfiguration);
-                Count = RealmInstance.All<Book>().Count();
+                Realm realm = Realm.GetInstance(DB.RealmConfiguration);
+                Count = realm.All<Book>().Count();
             }
 
             public void OnDataSetChanged()
             {
-                Realm other = Realm.GetInstance(DB.RealmConfiguration);
-                if (!RealmInstance.IsSameInstance(other))
-                {
-                    RealmInstance.Dispose();
-                    RealmInstance = other;
-                }
-                Count = RealmInstance.All<Book>().Count();
+                Realm realm = Realm.GetInstance(DB.RealmConfiguration);
+                Count = realm.All<Book>().Count();
             }
 
             public void OnDestroy()
             {
-                RealmInstance.Dispose();
+                Realm.GetInstance(DB.RealmConfiguration).Dispose();
             }
         }
     }
