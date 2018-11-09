@@ -109,7 +109,7 @@
 				android:layout_weight="3"
 				android:padding="5dp"
 				android:background="#f0f0f0"
-				tools:listitem="@android:layout/simple_list_item_1"
+				tools:listitem="@layout/widget_large_book_listitem"
 				android:id="@+id/list_books"/>
 
 			<LinearLayout
