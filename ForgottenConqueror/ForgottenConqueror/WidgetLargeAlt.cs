@@ -48,7 +48,7 @@ namespace ForgottenConqueror
                 }
                 else realm.Write(() => widgetLargeAltParams.IsRefreshing = true);
 
-                DBController.Instance.ParseBooks(context, false);
+                DBController.Instance.ParseBooks(context);
 
                 ComponentName appWidgetComponentName = new ComponentName(context, Java.Lang.Class.FromType(typeof(WidgetLargeAlt)).Name);
                 appWidgetManager.UpdateAppWidget(appWidgetComponentName, BuildRemoteView(context, appWidgetId, widgetLargeAltParams));

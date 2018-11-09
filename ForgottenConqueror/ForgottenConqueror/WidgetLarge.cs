@@ -50,7 +50,7 @@ namespace ForgottenConqueror
                 }
                 else realm.Write(() => widgetLargeParams.IsRefreshing = true);
 
-                DBController.Instance.ParseBooks(context, false);
+                DBController.Instance.ParseBooks(context);
 
                 ComponentName appWidgetComponentName = new ComponentName(context, Java.Lang.Class.FromType(typeof(WidgetLarge)).Name);
                 appWidgetManager.UpdateAppWidget(appWidgetComponentName, BuildRemoteView(context, appWidgetId, widgetLargeParams));

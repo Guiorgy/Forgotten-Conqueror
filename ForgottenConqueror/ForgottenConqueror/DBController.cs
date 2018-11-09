@@ -36,7 +36,7 @@ namespace ForgottenConqueror
         }
 
         private static Task UpdateTask = new Task(() => throw new NotImplementedException());
-        private void AsyncTask(Context context, bool onlyLast)
+        private void AsyncTask(Context context)
         {
             Realm realm = Realm.GetInstance(DB.RealmConfiguration);
             var list = realm.All<Chapter>();
@@ -48,27 +48,18 @@ namespace ForgottenConqueror
                     Data.Instance.Write(context, Data.PreviouslyLastChapterId, last.ID);
                 }
             }
-            if (onlyLast)
-            {
-                Book book = realm.All<Book>().OrderBy(b => b.ID).Last();
-                if (book != null) UpdateBook(realm, book);
-                else UpdateBooks(realm);
-            }
-            else
-            {
-                UpdateBooks(realm);
-            }
+            UpdateBooks(realm);
 
             realm.Dispose();
         }
         
         private bool CanParse = true;
-        public void ParseBooks(Context context, bool onlyLast)
+        public void ParseBooks(Context context)
         {
             if (CanParse && UpdateTask.Status != TaskStatus.Running)
             {
                 CanParse = false;
-                UpdateTask = new Task(() => AsyncTask(context, onlyLast));
+                UpdateTask = new Task(() => AsyncTask(context));
                 UpdateTask.ContinueWith((task) =>
                 {
                     Realm realm = Realm.GetInstance(DB.RealmConfiguration);
@@ -91,7 +82,6 @@ namespace ForgottenConqueror
                         }
                     });
                     Data.Instance.Write(context, Data.LastUpdateTime, DateTime.Now.Ticks);
-                    Data.Instance.Write(context, Data.IsFirstUpdate, false);
 
                     int lastId = Data.Instance.ReadInt(context, Data.PreviouslyLastChapterId, -1);
                     int currentId = realm.All<Chapter>().OrderBy(c => c.ID).Last().ID;
@@ -131,7 +121,6 @@ namespace ForgottenConqueror
                         }
                     });
                     Data.Instance.Write(context, Data.LastUpdateTime, DateTime.Now.Ticks);
-                    Data.Instance.Write(context, Data.IsFirstUpdate, false);
 
                     int lastId = Data.Instance.ReadInt(context, Data.PreviouslyLastChapterId, -1);
                     int currentId = realm.All<Chapter>().OrderBy(c => c.ID).Last().ID;
@@ -150,7 +139,7 @@ namespace ForgottenConqueror
 
         private static object parselock = new object();
         [Obsolete("A lot slower, only use if absolutely needed. Use ParseBooks(Context context, bool onlyLast) instead.")]
-        public void ParseBooksSafe(Context context, bool onlyLast)
+        public void ParseBooksSafe(Context context)
         {
             if (CanParse && UpdateTask.Status != TaskStatus.Running)
             {
@@ -159,7 +148,7 @@ namespace ForgottenConqueror
                     if (CanParse && UpdateTask.Status != TaskStatus.Running)
                     {
                         CanParse = false;
-                        UpdateTask = new Task(() => AsyncTask(context, onlyLast));
+                        UpdateTask = new Task(() => AsyncTask(context));
                         UpdateTask.ContinueWith((task) =>
                         {
                             Realm realm = Realm.GetInstance(DB.RealmConfiguration);
@@ -182,7 +171,6 @@ namespace ForgottenConqueror
                                 }
                             });
                             Data.Instance.Write(context, Data.LastUpdateTime, DateTime.Now.Ticks);
-                            Data.Instance.Write(context, Data.IsFirstUpdate, false);
 
                             int lastId = Data.Instance.ReadInt(context, Data.PreviouslyLastChapterId, -1);
                             int currentId = realm.All<Chapter>().OrderBy(c => c.ID).Last().ID;
@@ -222,7 +210,6 @@ namespace ForgottenConqueror
                                 }
                             });
                             Data.Instance.Write(context, Data.LastUpdateTime, DateTime.Now.Ticks);
-                            Data.Instance.Write(context, Data.IsFirstUpdate, false);
 
                             int lastId = Data.Instance.ReadInt(context, Data.PreviouslyLastChapterId, -1);
                             int currentId = realm.All<Chapter>().OrderBy(c => c.ID).Last().ID;

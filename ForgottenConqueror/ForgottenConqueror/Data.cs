@@ -143,8 +143,7 @@ namespace ForgottenConqueror
         {
             return ReadStrings(context, key, null);
         }
-
-        public readonly static string IsFirstUpdate = "IsFirstUpdate";
+        
         public readonly static string LastUpdateTime = "LastUpdateTime";
         public readonly static string PreviouslyLastChapterId = "PreviouslyLastChapterId";
     }

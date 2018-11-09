@@ -59,9 +59,8 @@ namespace ForgottenConqueror
                     continue;
                 }
                 else realm.Write(() => widgetParams.IsRefreshing = true);
-
-                bool isFirstUpdate = Data.Instance.ReadBoolean(context, Data.IsFirstUpdate, true);
-                DBController.Instance.ParseBooks(context, !isFirstUpdate);
+                
+                DBController.Instance.ParseBooks(context);
 
                 ComponentName appWidgetComponentName = new ComponentName(context, Java.Lang.Class.FromType(typeof(Widget)).Name);
                 appWidgetManager.UpdateAppWidget(appWidgetComponentName, BuildRemoteView(context, appWidgetId, widgetParams));
