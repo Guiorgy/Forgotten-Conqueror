@@ -9,26 +9,48 @@ using static Android.Content.PM.LaunchMode;
 using FragmentManager = Android.Support.V4.App.FragmentManager;
 using Fragment = Android.Support.V4.App.Fragment;
 using Java.Lang;
+using System.IO;
+using Android.Widget;
+using Serilog;
+using Serilog.Events;
 
 namespace ForgottenConqueror
 {
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = true, LaunchMode = SingleTop)]
     public class MainActivity : AppCompatActivity
     {
-        ViewPager viewPager;
-        PagerTitleStrip pagerTitleStrip;
+        //ViewPager viewPager;
+        //PagerTitleStrip pagerTitleStrip;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
 
-            FinishAndRemoveTask();
+            ForgottenConqueror.Instance.RequestPermission(this, ForgottenConqueror.PermissionCode.ReadWrite);
 
-            viewPager = FindViewById<ViewPager>(Resource.Id.viewpager);
-            pagerTitleStrip = FindViewById<PagerTitleStrip>(Resource.Id.viewpager_header);
-            PageAdapter adapter = new PageAdapter(SupportFragmentManager);
-            viewPager.Adapter = adapter;
+            Serilog.Log.Logger = new LoggerConfiguration()
+                .WriteTo.Async(config =>
+                    config.RollingFile(Path.Combine(Android.OS.Environment.ExternalStorageDirectory.AbsolutePath, "FC_log-{Date}.txt"),
+                    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] [{SourceContext}] {Message}{NewLine}{Exception}",
+                    restrictedToMinimumLevel: LogEventLevel.Verbose,
+                    fileSizeLimitBytes: 52428800,
+                    retainedFileCountLimit: 5))
+                .WriteTo.AndroidLog(restrictedToMinimumLevel: LogEventLevel.Verbose)
+                .CreateLogger();
+
+            Serilog.Log.Verbose("this is a log");
+            string path = Path.Combine(Android.OS.Environment.ExternalStorageDirectory.AbsolutePath, "FC_log-{Date}.txt");
+            FindViewById<TextView>(Resource.Id.text).Text = path;
+            Toast.MakeText(this, path, ToastLength.Long).Show();
+
+            Serilog.Log.CloseAndFlush();
+            //FinishAndRemoveTask();
+
+            //viewPager = FindViewById<ViewPager>(Resource.Id.viewpager);
+            //pagerTitleStrip = FindViewById<PagerTitleStrip>(Resource.Id.viewpager_header);
+            //PageAdapter adapter = new PageAdapter(SupportFragmentManager);
+            //viewPager.Adapter = adapter;
             //viewPager.PageSelected += (sender, e) =>
             //{
 

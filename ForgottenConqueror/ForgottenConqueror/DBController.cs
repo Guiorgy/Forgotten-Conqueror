@@ -187,8 +187,6 @@ namespace ForgottenConqueror
                     URL = url,
                 };
 
-                //AsyncConsole.WriteLine(book.Title);
-
                 books.Add(book);
                 tasks.Add(Task<List<Chapter>>.Run(() => UpdateBooks_Chapters(book)));
             }
@@ -234,8 +232,6 @@ namespace ForgottenConqueror
                         URL = url,
                         Book = book,
                     };
-
-                    //AsyncConsole.WriteLine($"Chapter {chapter.Count} ({chapter.Title}) of {book.Title}");
 
                     chapters.Add(chapter);
                 }
