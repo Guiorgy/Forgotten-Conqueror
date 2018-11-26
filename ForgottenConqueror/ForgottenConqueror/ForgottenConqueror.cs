@@ -48,6 +48,22 @@ namespace ForgottenConqueror
                 .WriteTo.AndroidLog(restrictedToMinimumLevel: LogEventLevel.Verbose)
                 .CreateLogger();
 #endif
+#if LOGGED_RELEASE || DEBUG
+            AppDomain.CurrentDomain.UnhandledException += (object sender, UnhandledExceptionEventArgs e) => {
+                if(e.ExceptionObject is Exception)
+                {
+                    Serilog.Log.Error(e.ExceptionObject as Exception, $"Cought an unhandled exception!   sender: {sender},   terminationg: {e.IsTerminating}");
+                }
+                else
+                {
+                    Serilog.Log.Error($"Cought an unhandled exception!   sender: {sender},   terminationg: {e.IsTerminating}");
+                }
+                if (e.IsTerminating)
+                {
+                    Process.KillProcess(Process.MyPid());
+                }
+            };
+#endif
         }
 
         public override void OnTerminate()
