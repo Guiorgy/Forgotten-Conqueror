@@ -30,18 +30,15 @@ namespace ForgottenConqueror
             ForgottenConqueror.Instance.RequestPermission(this, ForgottenConqueror.PermissionCode.ReadWrite);
 
             Serilog.Log.Logger = new LoggerConfiguration()
-                .WriteTo.Async(config =>
-                    config.RollingFile(Path.Combine(Android.OS.Environment.ExternalStorageDirectory.AbsolutePath, "FC_log-{Date}.txt"),
-                    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] [{SourceContext}] {Message}{NewLine}{Exception}",
-                    restrictedToMinimumLevel: LogEventLevel.Verbose,
-                    fileSizeLimitBytes: 52428800,
-                    retainedFileCountLimit: 5))
-                .WriteTo.AndroidLog(restrictedToMinimumLevel: LogEventLevel.Verbose)
+                .WriteTo.File(Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), "JCA_log-{Date}.txt")
+                , outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] [{SourceContext}] {Message}{NewLine}{Exception}")
+                .WriteTo.AndroidLog()
                 .CreateLogger();
 
             Serilog.Log.Verbose("this is a log");
-            string path = Path.Combine(Android.OS.Environment.ExternalStorageDirectory.AbsolutePath, "FC_log-{Date}.txt");
+            string path = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), "JCA_log-{Date}.txt");
             FindViewById<TextView>(Resource.Id.text).Text = path;
+            FindViewById<TextView>(Resource.Id.text).Click += (s, e) => Serilog.Log.Verbose("this is a log");
             Toast.MakeText(this, path, ToastLength.Long).Show();
 
             Serilog.Log.CloseAndFlush();
