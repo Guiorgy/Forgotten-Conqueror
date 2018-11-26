@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Android.Content;
 using HtmlAgilityPack;
@@ -34,7 +37,7 @@ namespace ForgottenConqueror
             }
             private set { }
         }
-
+        
         private bool CanParse = true;
         public void ParseBooks(Context context)
         {
@@ -97,8 +100,7 @@ namespace ForgottenConqueror
                     {
                         Finished();
                     }, TaskScheduler.FromCurrentSynchronizationContext());
-                }
-                catch (Exception e)
+                } catch(Exception e)
                 {
                     Log.Error(e, "ParseBooks() failed!");
                     Finished();
@@ -134,7 +136,7 @@ namespace ForgottenConqueror
             HtmlWeb web = new HtmlWeb();
             HtmlDocument doc = web.Load(book.URL);
             HtmlNodeCollection containers = doc.DocumentNode.SelectNodes("//div[@class='entry-content']/p[position()>2]");
-
+            
             List<Chapter> chapters = new List<Chapter>();
             foreach (HtmlNode container in containers)
             {
@@ -256,5 +258,51 @@ namespace ForgottenConqueror
             WidgetLargeAlt widgetLargeAlt = new WidgetLargeAlt();
             widgetLargeAlt.RedrawAll(context);
         }
+
+
+        #region String compression
+        // Thank you @xanatos (https://stackoverflow.com/questions/7343465/compression-decompression-string-with-c-sharp)
+        public static void CopyTo(Stream src, Stream dest)
+        {
+            byte[] bytes = new byte[4096];
+
+            int cnt;
+
+            while ((cnt = src.Read(bytes, 0, bytes.Length)) != 0)
+            {
+                dest.Write(bytes, 0, cnt);
+            }
+        }
+
+        public static byte[] Zip(string str)
+        {
+            var bytes = Encoding.UTF8.GetBytes(str);
+
+            using (var msi = new MemoryStream(bytes))
+            using (var mso = new MemoryStream())
+            {
+                using (var gs = new GZipStream(mso, CompressionMode.Compress))
+                {
+                    CopyTo(msi, gs);
+                }
+
+                return mso.ToArray();
+            }
+        }
+
+        public static string Unzip(byte[] bytes)
+        {
+            using (var msi = new MemoryStream(bytes))
+            using (var mso = new MemoryStream())
+            {
+                using (var gs = new GZipStream(msi, CompressionMode.Decompress))
+                {
+                    CopyTo(gs, mso);
+                }
+
+                return Encoding.UTF8.GetString(mso.ToArray());
+            }
+        }
+        #endregion
     }
 }
