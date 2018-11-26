@@ -46,7 +46,7 @@
     <EnableLLVM>false</EnableLLVM>
     <BundleAssemblies>false</BundleAssemblies>
     <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
-    <AndroidSupportedAbis>armeabi-v7a</AndroidSupportedAbis>
+    <AndroidSupportedAbis>armeabi-v7a;x86;x86_64;arm64-v8a</AndroidSupportedAbis>
     <AndroidTlsProvider>btls</AndroidTlsProvider>
     <JavaMaximumHeapSize>512M</JavaMaximumHeapSize>
   </PropertyGroup>
@@ -69,11 +69,11 @@
     <EnableProguard>true</EnableProguard>
     <AndroidSupportedAbis>armeabi-v7a;x86;x86_64;arm64-v8a</AndroidSupportedAbis>
     <AndroidTlsProvider>btls</AndroidTlsProvider>
-    <JavaMaximumHeapSize>256M</JavaMaximumHeapSize>
+    <JavaMaximumHeapSize>512M</JavaMaximumHeapSize>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'LoggedRelease|AnyCPU'">
     <OutputPath>bin\LoggedRelease\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;LOGGED_RELEASE</DefineConstants>
+    <DefineConstants>TRACE;LOGGED_RELEASE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>portable</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -86,12 +86,12 @@
     <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
     <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
     <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
-    <AndroidLinkMode>None</AndroidLinkMode>
-    <EnableProguard>true</EnableProguard>
+    <AndroidLinkMode>Full</AndroidLinkMode>
+    <EnableProguard>false</EnableProguard>
     <AndroidSupportedAbis>armeabi-v7a;x86;x86_64;arm64-v8a</AndroidSupportedAbis>
     <AndroidTlsProvider>btls</AndroidTlsProvider>
-    <DebugSymbols>true</DebugSymbols>
-    <JavaMaximumHeapSize>256M</JavaMaximumHeapSize>
+    <DebugSymbols>false</DebugSymbols>
+    <JavaMaximumHeapSize>512M</JavaMaximumHeapSize>
     <AndroidLinkSkip />
   </PropertyGroup>
   <ItemGroup>
@@ -105,7 +105,6 @@
     <Compile Include="DB.cs" />
     <Compile Include="DBController.cs" />
     <Compile Include="ForgottenConqueror.cs" />
-    <Compile Include="BaseFragment.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="MainFragment.cs" />
     <Compile Include="NotificationManager.cs" />
@@ -161,9 +160,6 @@
     <PackageReference Include="HtmlAgilityPack">
       <Version>1.8.10</Version>
     </PackageReference>
-    <PackageReference Include="LeakCanaryBinding">
-      <Version>1.5.1.1</Version>
-    </PackageReference>
     <PackageReference Include="PropertyChanged.Fody">
       <Version>2.6.0</Version>
     </PackageReference>
@@ -175,9 +171,6 @@
     </PackageReference>
     <PackageReference Include="Serilog.Sinks.Async">
       <Version>1.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="Serilog.Sinks.File">
-      <Version>4.0.0</Version>
     </PackageReference>
     <PackageReference Include="Serilog.Sinks.RollingFile">
       <Version>3.3.0</Version>

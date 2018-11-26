@@ -13,7 +13,6 @@ using System.Threading;
 #endif
 
 #if LOGGED_RELEASE
-using Square.LeakCanary;
 using Serilog;
 using System.IO;
 using Serilog.Events;
@@ -26,21 +25,12 @@ namespace ForgottenConqueror
 #else
     [Application(Debuggable = false)]
 #endif
-    class ForgottenConqueror:  Application
+    class ForgottenConqueror : Application
     {
-#if LOGGED_RELEASE
-        private RefWatcher refWatcher;
-
-        public static RefWatcher GetRefWatcher()
-        {
-            return Instance.refWatcher;
-        }
-#endif
-
         public static ForgottenConqueror Instance { get; private set; }
 
-        public ForgottenConqueror(IntPtr javaReference, JniHandleOwnership transfer):  base(javaReference, transfer)
-        {}
+        public ForgottenConqueror(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
+        { }
 
         public override void OnCreate()
         {
@@ -57,14 +47,6 @@ namespace ForgottenConqueror
                     retainedFileCountLimit: 5))
                 .WriteTo.AndroidLog(restrictedToMinimumLevel: LogEventLevel.Verbose)
                 .CreateLogger();
-
-            if (LeakCanaryXamarin.IsInAnalyzerProcess(this))
-            {
-                // This process is dedicated to LeakCanary for heap analysis.
-                // You should not init your app in this process.
-                return;
-            }
-            refWatcher = LeakCanaryXamarin.Install(this);
 #endif
         }
 
@@ -86,7 +68,7 @@ namespace ForgottenConqueror
                 Manifest.Permission.WriteExternalStorage,
             },
         };
-        
+
         public enum PermissionCode
         {
             ReadWrite = 0,
@@ -144,9 +126,9 @@ namespace ForgottenConqueror
         {
 #if DEBUG
             var thread = new Thread(() =>
-                {
-                    while (true) Console.WriteLine(ConsoleQueue.Take());
-                });
+            {
+                while (true) Console.WriteLine(ConsoleQueue.Take());
+            });
             thread.IsBackground = true;
             thread.Start();
 #endif

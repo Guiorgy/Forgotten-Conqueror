@@ -1,6 +1,6 @@
 ﻿using Android.OS;
 using Android.Views;
-using Fragment = ForgottenConqueror.BaseFragment;
+using Fragment = Android.Support.V4.App.Fragment;
 
 namespace ForgottenConqueror
 {
