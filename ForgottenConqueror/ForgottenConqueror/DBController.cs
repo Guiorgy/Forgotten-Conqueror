@@ -34,7 +34,7 @@ namespace ForgottenConqueror
             }
             private set { }
         }
-        
+
         private bool CanParse = true;
         public void ParseBooks(Context context)
         {
@@ -42,7 +42,7 @@ namespace ForgottenConqueror
             {
                 CanParse = false;
 
-                Action Finished = () =>
+                void Finished()
                 {
                     Realm realm = Realm.GetInstance(DB.RealmConfiguration);
                     realm.Write(() =>
@@ -75,7 +75,7 @@ namespace ForgottenConqueror
                     RedrawAllWidgets(context);
                     CanParse = true;
                     realm.Dispose();
-                };
+                }
 
                 try
                 {
@@ -97,8 +97,10 @@ namespace ForgottenConqueror
                     {
                         Finished();
                     }, TaskScheduler.FromCurrentSynchronizationContext());
-                } catch(Exception e)
+                }
+                catch (Exception e)
                 {
+                    Log.Error(e, "ParseBooks() failed!");
                     Finished();
                 }
             }
@@ -132,7 +134,7 @@ namespace ForgottenConqueror
             HtmlWeb web = new HtmlWeb();
             HtmlDocument doc = web.Load(book.URL);
             HtmlNodeCollection containers = doc.DocumentNode.SelectNodes("//div[@class='entry-content']/p[position()>2]");
-            
+
             List<Chapter> chapters = new List<Chapter>();
             foreach (HtmlNode container in containers)
             {
