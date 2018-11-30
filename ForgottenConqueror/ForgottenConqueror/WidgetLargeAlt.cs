@@ -292,19 +292,47 @@ namespace ForgottenConqueror
             Bundle extras = Intent.Extras;
             int appWidgetId = extras != null ? extras.GetInt(AppWidgetManager.ExtraAppwidgetId, AppWidgetManager.InvalidAppwidgetId) : AppWidgetManager.InvalidAppwidgetId;
 
+            if (appWidgetId == AppWidgetManager.InvalidAppwidgetId) this.Finish();
+
             AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(this);
 
             Intent result = new Intent();
             result.PutExtra(AppWidgetManager.ExtraAppwidgetId, appWidgetId);
             SetResult(Result.Canceled, result);
 
-            // code here
+            // Widget created
+            WidgetLargeAltParams widgetLargeAltParams = new WidgetLargeAltParams()
+            {
+                ID = appWidgetId,
+                IsRefreshing = true,
+                Book = 0,
+                Descending = false,
+            };
 
-            RemoteViews views = new RemoteViews(PackageName, Resource.Layout.widget_large_alt_progress);
-            appWidgetManager.UpdateAppWidget(appWidgetId, views);
+            void Finish()
+            {
+                // Save DB and finish
+                Realm realm = Realm.GetInstance(DB.RealmConfiguration);
+                realm.Write(() => realm.Add<WidgetLargeAltParams>(widgetLargeAltParams));
 
-            SetResult(Result.Ok, result);
-            FinishAndRemoveTask();
+                RemoteViews views = new RemoteViews(PackageName, Resource.Layout.widget_progress);
+                appWidgetManager.UpdateAppWidget(appWidgetId, views);
+
+                SetResult(Result.Ok, result);
+                FinishAndRemoveTask();
+            }
+
+            Button save = FindViewById<Button>(Resource.Id.none); // id here
+            save.Click += (sender, e) =>
+            {
+                Finish();
+            };
+
+            Button cancel = FindViewById<Button>(Resource.Id.none); // id here
+            cancel.Click += (sender, e) =>
+            {
+                this.Finish();
+            };
         }
     }
 }

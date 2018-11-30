@@ -279,8 +279,10 @@ namespace ForgottenConqueror
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_main); // needs layout
 
-            Bundle Extras = Intent.Extras;
-            int appWidgetId = Extras != null ? Extras.GetInt(AppWidgetManager.ExtraAppwidgetId, AppWidgetManager.InvalidAppwidgetId) : AppWidgetManager.InvalidAppwidgetId;
+            Bundle extras = Intent.Extras;
+            int appWidgetId = extras != null ? extras.GetInt(AppWidgetManager.ExtraAppwidgetId, AppWidgetManager.InvalidAppwidgetId) : AppWidgetManager.InvalidAppwidgetId;
+
+            if (appWidgetId == AppWidgetManager.InvalidAppwidgetId) this.Finish();
 
             AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(this);
 
@@ -288,13 +290,39 @@ namespace ForgottenConqueror
             result.PutExtra(AppWidgetManager.ExtraAppwidgetId, appWidgetId);
             SetResult(Result.Canceled, result);
 
-            // code here
+            // Widget created
+            WidgetLargeParams widgetLargeParams = new WidgetLargeParams()
+            {
+                ID = appWidgetId,
+                IsRefreshing = true,
+                Book = 0,
+                Descending = false,
+            };
 
-            RemoteViews views = new RemoteViews(PackageName, Resource.Layout.widget_large_progress);
-            appWidgetManager.UpdateAppWidget(appWidgetId, views);
+            void Finish()
+            {
+                // Save DB and finish
+                Realm realm = Realm.GetInstance(DB.RealmConfiguration);
+                realm.Write(() => realm.Add<WidgetLargeParams>(widgetLargeParams));
 
-            SetResult(Result.Ok, result);
-            FinishAndRemoveTask();
+                RemoteViews views = new RemoteViews(PackageName, Resource.Layout.widget_progress);
+                appWidgetManager.UpdateAppWidget(appWidgetId, views);
+
+                SetResult(Result.Ok, result);
+                FinishAndRemoveTask();
+            }
+
+            Button save = FindViewById<Button>(Resource.Id.none); // id here
+            save.Click += (sender, e) =>
+            {
+                Finish();
+            };
+
+            Button cancel = FindViewById<Button>(Resource.Id.none); // id here
+            cancel.Click += (sender, e) =>
+            {
+                this.Finish();
+            };
         }
     }
 }

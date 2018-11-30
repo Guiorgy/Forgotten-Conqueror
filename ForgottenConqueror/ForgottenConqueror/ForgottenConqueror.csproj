@@ -104,6 +104,7 @@
     <Compile Include="Data.cs" />
     <Compile Include="DB.cs" />
     <Compile Include="DBController.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="ForgottenConqueror.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="MainFragment.cs" />
@@ -343,6 +344,9 @@
     <AndroidResource Include="Resources\layout\fragment_main.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\widget_configuration.axml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

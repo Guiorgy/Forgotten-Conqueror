@@ -60,6 +60,7 @@ namespace ForgottenConqueror
                 }
                 if (e.IsTerminating)
                 {
+                    Thread.Sleep(500);
                     Process.KillProcess(Process.MyPid());
                 }
             };

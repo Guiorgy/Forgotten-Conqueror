@@ -10,8 +10,9 @@ using static Android.Content.PM.LaunchMode;
 using Realms;
 using static ForgottenConqueror.DB;
 using Uri = Android.Net.Uri;
-using Android.Runtime;
 using System.Collections.Generic;
+using R = Android.Resource;
+using FR.Ganfra.Materialspinner;
 
 namespace ForgottenConqueror
 {
@@ -42,6 +43,7 @@ namespace ForgottenConqueror
             Realm realm = Realm.GetInstance(DB.RealmConfiguration);
             foreach (int appWidgetId in appWidgetIds)
             {
+                for (int i = 0; i < 10; i++) Log.Debug($"Updating {appWidgetId}");
                 WidgetParams widgetParams = realm.Find<WidgetParams>(appWidgetId);
                 if (widgetParams == null)
                 {
@@ -53,6 +55,7 @@ namespace ForgottenConqueror
                             ID = appWidgetId,
                             IsRefreshing = true,
                             Cells = 3,
+                            DateFormat = "dd/MM/yyyy H:mm:ss",
                         };
                         realm.Add<WidgetParams>(widgetParams);
                     });
@@ -131,6 +134,7 @@ namespace ForgottenConqueror
 
         private RemoteViews BuildRemoteView(Context context, int appWidgetId, WidgetParams widgetParams)
         {
+            for (int i = 0; i < 10; i++) Log.Debug($"Building {appWidgetId}");
             RemoteViews widgetView;
 
             int layout = widgetParams.IsRefreshing ? LayoutsRefreshing[widgetParams.Cells] : Layouts[widgetParams.Cells];
@@ -265,69 +269,120 @@ namespace ForgottenConqueror
         }
     }
 
-    [Register("forgottenconqueror.WidgetConfigurationActivity", DoNotGenerateAcw = true)]
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false, LaunchMode = SingleTop)]
-    [IntentFilter(actions: new[] { "android.appwidget.action.APPWIDGET_CONFIGURE" })]
+
+    [Activity(Name = "Za1d3.ForgottenConqueror.WidgetConfigurationActivity",
+        Label = "@string/app_name", Theme = "@style/AppTheme", LaunchMode = SingleTop)]
+    [IntentFilter(actions: new string[] { "android.appwidget.action.APPWIDGET_CONFIGURE" })]
     public class WidgetConfigurationActivity : AppCompatActivity
     {
+        private int selected = 21;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.activity_main); // needs layout
+            SetContentView(Resource.Layout.widget_configuration);
 
-            Bundle Extras = Intent.Extras;
-            int appWidgetId = Extras != null ? Extras.GetInt(AppWidgetManager.ExtraAppwidgetId, AppWidgetManager.InvalidAppwidgetId) : AppWidgetManager.InvalidAppwidgetId;
+            Bundle extras = Intent.Extras;
+            int appWidgetId = extras != null ? extras.GetInt(AppWidgetManager.ExtraAppwidgetId, AppWidgetManager.InvalidAppwidgetId) : AppWidgetManager.InvalidAppwidgetId;
 
-            AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(this);
+            if (appWidgetId == AppWidgetManager.InvalidAppwidgetId) this.Finish();
 
             Intent result = new Intent();
             result.PutExtra(AppWidgetManager.ExtraAppwidgetId, appWidgetId);
             SetResult(Result.Canceled, result);
 
-            // code here
-            // Widget created
-            WidgetParams widgetParams = new WidgetParams()
+            void Finish()
             {
-                ID = appWidgetId,
-                IsRefreshing = true,
-                Cells = 3,
-                DateFormat = "dd/MM/yy H:mm:ss",
+                for (int i = 0; i < 10; i++) Log.Debug($"Configuring Finished {appWidgetId}");
+                // Save DB and finish
+                Realm realm = Realm.GetInstance(DB.RealmConfiguration);
+                realm.Write(() => realm.Add<WidgetParams>(
+                    new WidgetParams()
+                    {
+                        ID = appWidgetId,
+                        DateFormat = DateTimeFormats[selected].Item2,
+                    }
+                , true));
+
+                Widget widget = new Widget();
+                widget.Redraw(this, appWidgetId);
+
+                SetResult(Result.Ok, result);
+                FinishAndRemoveTask();
+            }
+
+            Button save = FindViewById<Button>(Resource.Id.btn_ok);
+            save.Click += (sender, e) =>
+            {
+                Finish();
             };
 
-            
+            Button cancel = FindViewById<Button>(Resource.Id.btn_cancel);
+            cancel.Click += (sender, e) =>
+            {
+                this.Finish();
+            };
 
-            Realm realm = Realm.GetInstance(DB.RealmConfiguration);
-            realm.Write(() =>realm.Add<WidgetParams>(widgetParams));
+            for(int i = 0; i < 10; i++) Log.Debug($"Configuring {appWidgetId}");
+            MaterialSpinner spinner = FindViewById<MaterialSpinner>(Resource.Id.date_format_spinner);
+            ArrayAdapter<string> adapter =
+                new ArrayAdapter<string>(this, R.Layout.SimpleListItem1, R.Id.Text1, DateFormats);
+            spinner.Adapter = adapter;
 
-            RemoteViews views = new RemoteViews(PackageName, Resource.Layout.widget_progress);
-            appWidgetManager.UpdateAppWidget(appWidgetId, views);
-
-            SetResult(Result.Ok, result);
-            FinishAndRemoveTask();
+            spinner.ItemSelected += (object sender, AdapterView.ItemSelectedEventArgs e) =>
+            {
+                if(e.Position == -1)
+                {
+                    spinner.SetSelected(selected);
+                    return;
+                }
+                selected = e.Position;
+            };
         }
 
-        private static readonly List<Tuple<string, string>> DateFormats = new List<Tuple<string, string>>()
+        private static readonly List<Tuple<string, string>> DateTimeFormats = new List<Tuple<string, string>>()
         {
-            new Tuple<string, string>("Saturday, 2 21 2015", "dddd, MMMM dd yyyy"),
-            new Tuple<string, string>("Saturday, 21 2 2015", "dddd, dd MMMM yyyy"),
+            new Tuple<string, string>("Sat, Feb 21 2015", "ddd, MMM dd yyyy"),
+            new Tuple<string, string>("Sat, 21 Feb 2015", "ddd, dd MMM yyyy"),
+            new Tuple<string, string>("Sat, Feb-21-2015", "ddd, MMM-dd-yyyy"),
+            new Tuple<string, string>("Sat, 21-Feb-2015", "ddd, dd-MMM-yyyy"),
+            new Tuple<string, string>("Sat, 2 21 2015", "ddd, MM dd yyyy"),
+            new Tuple<string, string>("Sat, 21 2 2015", "ddd, dd MM yyyy"),
+            new Tuple<string, string>("Sat, 2-21-2015", "ddd, MM-dd-yyyy"),
+            new Tuple<string, string>("Sat, 21-2-2015", "ddd, dd-MM-yyyy"),
+
             new Tuple<string, string>("2/21/2015", "MM/dd/yyyy"),
             new Tuple<string, string>("21/2/2015", "dd/MM/yyyy"),
+            new Tuple<string, string>("2-21-2015", "MM-dd-yyyy"),
+            new Tuple<string, string>("21-2-2015", "dd-MM-yyyy"),
+            new Tuple<string, string>("2.21.2015", "MM.dd.yyyy"),
+            new Tuple<string, string>("21.2.2015", "dd.MM.yyyy"),
 
             new Tuple<string, string>("2/21/2015 2:13 PM", "MM/dd/yyyy hh:mm tt"),
-            new Tuple<string, string>("2/21/2015 14:13", "MM/dd/yyyy HH:mm"),
+            new Tuple<string, string>("2/21/2015 14:13", "MM/dd/yyyy H:mm"),
             new Tuple<string, string>("21/2/2015 2:13 PM", "dd/MM/yyyy hh:mm tt"),
-            new Tuple<string, string>("21/2/2015 14:13", "dd/MM/yyyy HH:mm"),
-            
+            new Tuple<string, string>("21/2/2015 14:13", "dd/MM/yyyy H:mm"),
+
             new Tuple<string, string>("2/21/2015 2:13:33 PM", "MM/dd/yyyy hh:mm:ss tt"),
-            new Tuple<string, string>("2/21/2015 14:13:33", "MM/dd/yyyy HH:mm:ss"),
+            new Tuple<string, string>("2/21/2015 14:13:33", "MM/dd/yyyy H:mm:ss"),
             new Tuple<string, string>("21/2/2015 2:13:33 PM", "dd/MM/yyyy hh:mm:ss tt"),
-            new Tuple<string, string>("21/2/2015 14:13:33", "dd/MM/yyyy HH:mm:ss"),
+            new Tuple<string, string>("21/2/2015 14:13:33", "dd/MM/yyyy H:mm:ss"),
 
             new Tuple<string, string>("Saturday 2:13 PM", "dddd hh:mm tt"),
-            new Tuple<string, string>("Saturday 14:13", "dddd HH:mm"),
+            new Tuple<string, string>("Saturday 14:13", "dddd H:mm"),
 
             new Tuple<string, string>("Saturday 2:13:33 PM", "dddd hh:mm:ss tt"),
-            new Tuple<string, string>("Saturday 14:13:33", "dddd HH:mm:ss"),
+            new Tuple<string, string>("Saturday 14:13:33", "dddd H:mm:ss"),
         };
+        private static readonly string[] DateFormats;
+
+        static WidgetConfigurationActivity()
+        {
+            DateFormats = new string[DateTimeFormats.Count];
+            for (int i = 0; i < DateTimeFormats.Count; i++)
+            {
+                DateFormats[i] = DateTimeFormats[i].Item1;
+            }
+        }
     }
 }
