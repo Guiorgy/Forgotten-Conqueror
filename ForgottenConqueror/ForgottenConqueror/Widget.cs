@@ -4,10 +4,14 @@ using Android.App;
 using Android.Appwidget;
 using Android.Content;
 using Android.OS;
+using Android.Support.V7.App;
 using Android.Widget;
+using static Android.Content.PM.LaunchMode;
 using Realms;
 using static ForgottenConqueror.DB;
 using Uri = Android.Net.Uri;
+using Android.Runtime;
+using System.Collections.Generic;
 
 namespace ForgottenConqueror
 {
@@ -36,7 +40,7 @@ namespace ForgottenConqueror
         public override void OnUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
         {
             Realm realm = Realm.GetInstance(DB.RealmConfiguration);
-            foreach(int appWidgetId in appWidgetIds)
+            foreach (int appWidgetId in appWidgetIds)
             {
                 WidgetParams widgetParams = realm.Find<WidgetParams>(appWidgetId);
                 if (widgetParams == null)
@@ -59,7 +63,7 @@ namespace ForgottenConqueror
                     continue;
                 }
                 else realm.Write(() => widgetParams.IsRefreshing = true);
-                
+
                 DBController.Instance.ParseBooks(context);
 
                 ComponentName appWidgetComponentName = new ComponentName(context, Java.Lang.Class.FromType(typeof(Widget)).Name);
@@ -128,14 +132,14 @@ namespace ForgottenConqueror
         private RemoteViews BuildRemoteView(Context context, int appWidgetId, WidgetParams widgetParams)
         {
             RemoteViews widgetView;
-            
+
             int layout = widgetParams.IsRefreshing ? LayoutsRefreshing[widgetParams.Cells] : Layouts[widgetParams.Cells];
 
             widgetView = new RemoteViews(context.PackageName, layout);
 
             if (!widgetParams.IsRefreshing)
             {
-                SetView(context, appWidgetId, widgetView);
+                SetView(context, appWidgetId, widgetView, widgetParams);
             }
 
             return widgetView;
@@ -151,7 +155,7 @@ namespace ForgottenConqueror
             return n - 1;
         }
 
-        private void SetView(Context context, int appWidgetId, RemoteViews widgetView)
+        private void SetView(Context context, int appWidgetId, RemoteViews widgetView, WidgetParams widgetParams)
         {
             Realm realm = Realm.GetInstance(DB.RealmConfiguration);
 
@@ -160,15 +164,15 @@ namespace ForgottenConqueror
             long lastUpdate = Data.Instance.ReadLong(context, Data.LastUpdateTime);
 
             widgetView.SetTextViewText(Resource.Id.chapter_title, title);
-            widgetView.SetTextViewText(Resource.Id.last_update, string.Format("{0:MM/dd/yy H:mm:ss}", new DateTime(lastUpdate)));
-            
+            widgetView.SetTextViewText(Resource.Id.last_update, new DateTime(lastUpdate).ToString(widgetParams.DateFormat));
+
             // Bind the click intent for the chapter on the widget
             Intent chapterIntent = new Intent(context, typeof(Widget));
             chapterIntent.SetAction(OpenChapterClick);
             chapterIntent.PutExtra(AppWidgetManager.ExtraAppwidgetId, appWidgetId);
             PendingIntent chapterPendingIntent = PendingIntent.GetBroadcast(context, appWidgetId, chapterIntent, 0);
             widgetView.SetOnClickPendingIntent(Resource.Id.container, chapterPendingIntent);
-            
+
             // Bind the click intent for the refresh button on the widget
             Intent refreshIntent = new Intent(context, typeof(Widget));
             refreshIntent.SetAction(RefreshClick);
@@ -210,7 +214,7 @@ namespace ForgottenConqueror
             Realm realm = Realm.GetInstance(DB.RealmConfiguration);
             realm.Write(() =>
             {
-                for(int i = 0; i < oldWidgetIds.Length; i++)
+                for (int i = 0; i < oldWidgetIds.Length; i++)
                 {
                     WidgetParams widgetParams = realm.Find<WidgetParams>(oldWidgetIds[i]);
                     widgetParams.ID = newWidgetIds[i];
@@ -259,5 +263,71 @@ namespace ForgottenConqueror
 
             realm.Dispose();
         }
+    }
+
+    [Register("forgottenconqueror.WidgetConfigurationActivity", DoNotGenerateAcw = true)]
+    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false, LaunchMode = SingleTop)]
+    [IntentFilter(actions: new[] { "android.appwidget.action.APPWIDGET_CONFIGURE" })]
+    public class WidgetConfigurationActivity : AppCompatActivity
+    {
+        protected override void OnCreate(Bundle savedInstanceState)
+        {
+            base.OnCreate(savedInstanceState);
+            SetContentView(Resource.Layout.activity_main); // needs layout
+
+            Bundle Extras = Intent.Extras;
+            int appWidgetId = Extras != null ? Extras.GetInt(AppWidgetManager.ExtraAppwidgetId, AppWidgetManager.InvalidAppwidgetId) : AppWidgetManager.InvalidAppwidgetId;
+
+            AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(this);
+
+            Intent result = new Intent();
+            result.PutExtra(AppWidgetManager.ExtraAppwidgetId, appWidgetId);
+            SetResult(Result.Canceled, result);
+
+            // code here
+            // Widget created
+            WidgetParams widgetParams = new WidgetParams()
+            {
+                ID = appWidgetId,
+                IsRefreshing = true,
+                Cells = 3,
+                DateFormat = "dd/MM/yy H:mm:ss",
+            };
+
+            
+
+            Realm realm = Realm.GetInstance(DB.RealmConfiguration);
+            realm.Write(() =>realm.Add<WidgetParams>(widgetParams));
+
+            RemoteViews views = new RemoteViews(PackageName, Resource.Layout.widget_progress);
+            appWidgetManager.UpdateAppWidget(appWidgetId, views);
+
+            SetResult(Result.Ok, result);
+            FinishAndRemoveTask();
+        }
+
+        private static readonly List<Tuple<string, string>> DateFormats = new List<Tuple<string, string>>()
+        {
+            new Tuple<string, string>("Saturday, 2 21 2015", "dddd, MMMM dd yyyy"),
+            new Tuple<string, string>("Saturday, 21 2 2015", "dddd, dd MMMM yyyy"),
+            new Tuple<string, string>("2/21/2015", "MM/dd/yyyy"),
+            new Tuple<string, string>("21/2/2015", "dd/MM/yyyy"),
+
+            new Tuple<string, string>("2/21/2015 2:13 PM", "MM/dd/yyyy hh:mm tt"),
+            new Tuple<string, string>("2/21/2015 14:13", "MM/dd/yyyy HH:mm"),
+            new Tuple<string, string>("21/2/2015 2:13 PM", "dd/MM/yyyy hh:mm tt"),
+            new Tuple<string, string>("21/2/2015 14:13", "dd/MM/yyyy HH:mm"),
+            
+            new Tuple<string, string>("2/21/2015 2:13:33 PM", "MM/dd/yyyy hh:mm:ss tt"),
+            new Tuple<string, string>("2/21/2015 14:13:33", "MM/dd/yyyy HH:mm:ss"),
+            new Tuple<string, string>("21/2/2015 2:13:33 PM", "dd/MM/yyyy hh:mm:ss tt"),
+            new Tuple<string, string>("21/2/2015 14:13:33", "dd/MM/yyyy HH:mm:ss"),
+
+            new Tuple<string, string>("Saturday 2:13 PM", "dddd hh:mm tt"),
+            new Tuple<string, string>("Saturday 14:13", "dddd HH:mm"),
+
+            new Tuple<string, string>("Saturday 2:13:33 PM", "dddd hh:mm:ss tt"),
+            new Tuple<string, string>("Saturday 14:13:33", "dddd HH:mm:ss"),
+        };
     }
 }

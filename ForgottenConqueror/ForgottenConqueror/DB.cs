@@ -7,7 +7,7 @@ namespace ForgottenConqueror
     {
         public static readonly RealmConfiguration RealmConfiguration = new RealmConfiguration("ForgottenConqueror.realm")
         {
-            SchemaVersion = 2,
+            SchemaVersion = 3,
         };
         private static object thislock = new object();
         private static DB instance;
@@ -66,6 +66,7 @@ namespace ForgottenConqueror
             //public RealmInteger<int> Counter { get; set; }
             public bool IsRefreshing { get; set; }
             public int Cells { get; set; }
+            public string DateFormat { get; set; }
         }
 
         public class WidgetLargeParams : RealmObject

@@ -1,7 +1,11 @@
 ﻿using Android.App;
 using Android.Appwidget;
 using Android.Content;
+using Android.OS;
+using Android.Runtime;
+using Android.Support.V7.App;
 using Android.Widget;
+using static Android.Content.PM.LaunchMode;
 using Realms;
 using System.Linq;
 using static ForgottenConqueror.DB;
@@ -262,6 +266,35 @@ namespace ForgottenConqueror
             }
 
             realm.Dispose();
+        }
+    }
+
+    [Register("forgottenconqueror.WidgetLargeConfigurationActivity", DoNotGenerateAcw = true)]
+    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false, LaunchMode = SingleTop)]
+    [IntentFilter(actions: new[] { "android.appwidget.action.APPWIDGET_CONFIGURE" })]
+    public class WidgetLargeConfigurationActivity : AppCompatActivity
+    {
+        protected override void OnCreate(Bundle savedInstanceState)
+        {
+            base.OnCreate(savedInstanceState);
+            SetContentView(Resource.Layout.activity_main); // needs layout
+
+            Bundle Extras = Intent.Extras;
+            int appWidgetId = Extras != null ? Extras.GetInt(AppWidgetManager.ExtraAppwidgetId, AppWidgetManager.InvalidAppwidgetId) : AppWidgetManager.InvalidAppwidgetId;
+
+            AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(this);
+
+            Intent result = new Intent();
+            result.PutExtra(AppWidgetManager.ExtraAppwidgetId, appWidgetId);
+            SetResult(Result.Canceled, result);
+
+            // code here
+
+            RemoteViews views = new RemoteViews(PackageName, Resource.Layout.widget_large_progress);
+            appWidgetManager.UpdateAppWidget(appWidgetId, views);
+
+            SetResult(Result.Ok, result);
+            FinishAndRemoveTask();
         }
     }
 }
