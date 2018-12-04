@@ -270,7 +270,7 @@ namespace ForgottenConqueror
     }
 
 
-    [Activity(Name = "Za1d3.ForgottenConqueror.WidgetConfigurationActivity",
+    [Activity(Name = "forgottenconqueror.WidgetConfigurationActivity",
         Label = "@string/app_name", Theme = "@style/AppTheme", LaunchMode = SingleTop)]
     [IntentFilter(actions: new string[] { "android.appwidget.action.APPWIDGET_CONFIGURE" })]
     public class WidgetConfigurationActivity : AppCompatActivity

@@ -8,9 +8,7 @@ using static Android.Content.PM.LaunchMode;
 using FragmentManager = Android.Support.V4.App.FragmentManager;
 using Fragment = Android.Support.V4.App.Fragment;
 using Java.Lang;
-using FR.Ganfra.Materialspinner;
-using Android.Widget;
-using R = Android.Resource;
+using Realms;
 
 namespace ForgottenConqueror
 {
@@ -28,25 +26,12 @@ namespace ForgottenConqueror
 #if LOGGED_RELEASE
             ForgottenConqueror.Instance.RequestPermission(this, ForgottenConqueror.PermissionCode.ReadWrite);
 #endif
-            
-            //MaterialSpinner spinner = FindViewById<MaterialSpinner>(Resource.Id.date_format_spinner);
-            //ArrayAdapter<string> adapter =
-            //    new ArrayAdapter<string>(this, R.Layout.SimpleListItem1, R.Id.Text1, WidgetConfigurationActivity.DateFormats);
-            //spinner.Adapter = adapter;
 
-            //int selected = 21;
-            //spinner.ItemSelected += (object sender, AdapterView.ItemSelectedEventArgs e) =>
-            //{
-            //    if (e.Position == -1)
-            //    {
-            //        spinner.SetSelected(selected);
-            //        return;
-            //    }
-            //    selected = e.Position;
-            //    Log.Debug($"Selected: {selected} - {WidgetConfigurationActivity.DateFormats[selected]}");
-            //};
+            Realm realm = Realm.GetInstance(DB.RealmConfiguration);
+            DB.Chapter chapter = realm.Find<DB.Chapter>(1);
+            if(chapter != null) DBController.Instance.DownloadChapter(chapter);
 
-            FinishAndRemoveTask();
+            //FinishAndRemoveTask();
 
             //viewPager = FindViewById<ViewPager>(Resource.Id.viewpager);
             //pagerTitleStrip = FindViewById<PagerTitleStrip>(Resource.Id.viewpager_header);

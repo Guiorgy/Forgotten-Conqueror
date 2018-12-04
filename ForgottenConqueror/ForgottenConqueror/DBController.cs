@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -266,50 +264,31 @@ namespace ForgottenConqueror
             widgetLargeAlt.RedrawAll(context);
         }
 
-
-        #region String compression
-        // Thank you @xanatos (https://stackoverflow.com/questions/7343465/compression-decompression-string-with-c-sharp)
-        public static void CopyTo(Stream src, Stream dest)
+        public void DownloadChapter(Chapter chapter)
         {
-            byte[] bytes = new byte[4096];
+            Console.WriteLine("start");
+            Realm realm = Realm.GetInstance(DB.RealmConfiguration);
+            HtmlWeb web = new HtmlWeb();
+            HtmlDocument doc = web.Load(chapter.URL);
 
-            int cnt;
-
-            while ((cnt = src.Read(bytes, 0, bytes.Length)) != 0)
+            HtmlNodeCollection nodes = doc.DocumentNode.SelectNodes("//div[@class='entry-content']/p");
+            int count = 0;
+            StringBuilder builder = new StringBuilder(1024);
+            foreach(HtmlNode node in nodes)
             {
-                dest.Write(bytes, 0, cnt);
+                builder.Append(HtmlEntity.DeEntitize(node.InnerText));
+                Console.WriteLine(count++);
             }
-        }
 
-        public static byte[] Zip(string str)
-        {
-            var bytes = Encoding.UTF8.GetBytes(str);
-
-            using (var msi = new MemoryStream(bytes))
-            using (var mso = new MemoryStream())
+            realm.Write(() =>
             {
-                using (var gs = new GZipStream(mso, CompressionMode.Compress))
-                {
-                    CopyTo(msi, gs);
-                }
+                chapter.Content = builder.ToString();
+                realm.Add<Chapter>(chapter, true);
+            });
+            Console.WriteLine("finish");
 
-                return mso.ToArray();
-            }
+            Log.Information(builder.ToString());
+            Log.Information(Data.Instance.Zip(builder.ToString()).ToString());
         }
-
-        public static string Unzip(byte[] bytes)
-        {
-            using (var msi = new MemoryStream(bytes))
-            using (var mso = new MemoryStream())
-            {
-                using (var gs = new GZipStream(msi, CompressionMode.Decompress))
-                {
-                    CopyTo(gs, mso);
-                }
-
-                return Encoding.UTF8.GetString(mso.ToArray());
-            }
-        }
-        #endregion
     }
 }

@@ -44,6 +44,21 @@ namespace ForgottenConqueror
             public string URL { get; set; }
 
             public Book Book { get; set; }
+
+            private byte[] CompressedContent { get; set; }
+            [Ignored]
+            public string Content
+            {
+                get
+                {
+                    return Data.Instance.Unzip(CompressedContent);
+                }
+                set
+                {
+                    CompressedContent = Data.Instance.Zip(value);
+                }
+            }
+
         }
 
         public class Book : RealmObject
