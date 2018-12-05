@@ -43,7 +43,6 @@ namespace ForgottenConqueror
             Realm realm = Realm.GetInstance(DB.RealmConfiguration);
             foreach (int appWidgetId in appWidgetIds)
             {
-                for (int i = 0; i < 10; i++) Log.Debug($"Updating {appWidgetId}");
                 WidgetParams widgetParams = realm.Find<WidgetParams>(appWidgetId);
                 if (widgetParams == null)
                 {
@@ -134,7 +133,6 @@ namespace ForgottenConqueror
 
         private RemoteViews BuildRemoteView(Context context, int appWidgetId, WidgetParams widgetParams)
         {
-            for (int i = 0; i < 10; i++) Log.Debug($"Building {appWidgetId}");
             RemoteViews widgetView;
 
             int layout = widgetParams.IsRefreshing ? LayoutsRefreshing[widgetParams.Cells] : Layouts[widgetParams.Cells];
@@ -293,7 +291,6 @@ namespace ForgottenConqueror
 
             void Finish()
             {
-                for (int i = 0; i < 10; i++) Log.Debug($"Configuring Finished {appWidgetId}");
                 // Save DB and finish
                 Realm realm = Realm.GetInstance(DB.RealmConfiguration);
                 realm.Write(() => realm.Add<WidgetParams>(
@@ -322,8 +319,7 @@ namespace ForgottenConqueror
             {
                 this.Finish();
             };
-
-            for(int i = 0; i < 10; i++) Log.Debug($"Configuring {appWidgetId}");
+            
             MaterialSpinner spinner = FindViewById<MaterialSpinner>(Resource.Id.date_format_spinner);
             ArrayAdapter<string> adapter =
                 new ArrayAdapter<string>(this, R.Layout.SimpleListItem1, R.Id.Text1, DateFormats);

@@ -101,6 +101,7 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CLZF2.cs" />
     <Compile Include="Data.cs" />
     <Compile Include="DB.cs" />
     <Compile Include="DBController.cs" />
@@ -162,7 +163,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="HtmlAgilityPack">
-      <Version>1.8.10</Version>
+      <Version>1.8.11</Version>
     </PackageReference>
     <PackageReference Include="MaterialSpinner-Xamarin">
       <Version>1.1.1</Version>
@@ -212,6 +213,9 @@
     </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.v7.RecyclerView">
       <Version>27.0.2.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Plugins.Clipboard">
+      <Version>2.2.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.RootBeer">
       <Version>0.0.6</Version>

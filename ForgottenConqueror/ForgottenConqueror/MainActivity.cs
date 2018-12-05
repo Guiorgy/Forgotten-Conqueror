@@ -29,7 +29,12 @@ namespace ForgottenConqueror
 
             Realm realm = Realm.GetInstance(DB.RealmConfiguration);
             DB.Chapter chapter = realm.Find<DB.Chapter>(1);
-            if(chapter != null) DBController.Instance.DownloadChapter(chapter);
+            if (chapter != null)
+            {
+                DBController.Instance.DownloadChapter(chapter);
+
+                Log.Information(chapter.Content);
+            }
 
             //FinishAndRemoveTask();
 

@@ -51,11 +51,11 @@ namespace ForgottenConqueror
             {
                 get
                 {
-                    return Data.Instance.Unzip(CompressedContent);
+                    return CompressedContent == null ? null : Data.Instance.Decompress(CompressedContent);
                 }
                 set
                 {
-                    CompressedContent = Data.Instance.Zip(value);
+                    CompressedContent = value == null ? null : Data.Instance.Compress(value);
                 }
             }
 

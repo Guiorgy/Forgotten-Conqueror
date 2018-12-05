@@ -42,9 +42,7 @@ namespace ForgottenConqueror
             if (CanParse)
             {
                 CanParse = false;
-
-                for (int i = 0; i < 10; i++) Log.Debug($"ParseBooks");
-
+                
                 void Finished()
                 {
                     Realm realm = Realm.GetInstance(DB.RealmConfiguration);
@@ -170,8 +168,6 @@ namespace ForgottenConqueror
 
         private void UpdateBooks()
         {
-            for (int i = 0; i < 10; i++) Log.Debug($"UpdateBooks");
-
             Realm realm = Realm.GetInstance(DB.RealmConfiguration);
             HtmlWeb web = new HtmlWeb();
             HtmlDocument doc = web.Load("http://forgottenconqueror.com/");
@@ -212,13 +208,10 @@ namespace ForgottenConqueror
                     realm.Add<Chapter>(chapters[i], true);
                 }
             });
-            for (int i = 0; i < 10; i++) Log.Debug($"UpdateBooks_Finished");
         }
 
         private List<Chapter> UpdateBooks_Chapters(Book book)
         {
-            for (int i = 0; i < 10; i++) Log.Debug($"UpdateBooks_Chapter");
-
             Realm realm = Realm.GetInstance(DB.RealmConfiguration);
             HtmlWeb web = new HtmlWeb();
             HtmlDocument doc = web.Load(book.URL);
@@ -266,7 +259,6 @@ namespace ForgottenConqueror
 
         public void DownloadChapter(Chapter chapter)
         {
-            Console.WriteLine("start");
             Realm realm = Realm.GetInstance(DB.RealmConfiguration);
             HtmlWeb web = new HtmlWeb();
             HtmlDocument doc = web.Load(chapter.URL);
@@ -285,10 +277,6 @@ namespace ForgottenConqueror
                 chapter.Content = builder.ToString();
                 realm.Add<Chapter>(chapter, true);
             });
-            Console.WriteLine("finish");
-
-            Log.Information(builder.ToString());
-            Log.Information(Data.Instance.Zip(builder.ToString()).ToString());
         }
     }
 }

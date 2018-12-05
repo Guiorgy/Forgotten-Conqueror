@@ -167,7 +167,7 @@ namespace ForgottenConqueror
             }
         }
 
-        public byte[] Zip(string str)
+        public byte[] Compress(string str)
         {
             var bytes = Encoding.UTF8.GetBytes(str);
 
@@ -183,7 +183,21 @@ namespace ForgottenConqueror
             }
         }
 
-        public string Unzip(byte[] bytes)
+        public byte[] Zip(byte[] bytes)
+        {
+            using (var msi = new MemoryStream(bytes))
+            using (var mso = new MemoryStream())
+            {
+                using (var gs = new GZipStream(mso, CompressionMode.Compress))
+                {
+                    CopyTo(msi, gs);
+                }
+
+                return mso.ToArray();
+            }
+        }
+
+        public string Decompress(byte[] bytes)
         {
             using (var msi = new MemoryStream(bytes))
             using (var mso = new MemoryStream())
@@ -194,6 +208,20 @@ namespace ForgottenConqueror
                 }
 
                 return Encoding.UTF8.GetString(mso.ToArray());
+            }
+        }
+
+        public byte[] Unzip(byte[] bytes)
+        {
+            using (var msi = new MemoryStream(bytes))
+            using (var mso = new MemoryStream())
+            {
+                using (var gs = new GZipStream(msi, CompressionMode.Decompress))
+                {
+                    CopyTo(gs, mso);
+                }
+
+                return mso.ToArray();
             }
         }
         #endregion
