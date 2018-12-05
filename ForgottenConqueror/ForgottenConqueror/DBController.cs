@@ -264,12 +264,10 @@ namespace ForgottenConqueror
             HtmlDocument doc = web.Load(chapter.URL);
 
             HtmlNodeCollection nodes = doc.DocumentNode.SelectNodes("//div[@class='entry-content']/p");
-            int count = 0;
             StringBuilder builder = new StringBuilder(1024);
             foreach(HtmlNode node in nodes)
             {
                 builder.Append(HtmlEntity.DeEntitize(node.InnerText));
-                Console.WriteLine(count++);
             }
 
             realm.Write(() =>

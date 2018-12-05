@@ -27,16 +27,7 @@ namespace ForgottenConqueror
             ForgottenConqueror.Instance.RequestPermission(this, ForgottenConqueror.PermissionCode.ReadWrite);
 #endif
 
-            Realm realm = Realm.GetInstance(DB.RealmConfiguration);
-            DB.Chapter chapter = realm.Find<DB.Chapter>(1);
-            if (chapter != null)
-            {
-                DBController.Instance.DownloadChapter(chapter);
-
-                Log.Information(chapter.Content);
-            }
-
-            //FinishAndRemoveTask();
+            FinishAndRemoveTask();
 
             //viewPager = FindViewById<ViewPager>(Resource.Id.viewpager);
             //pagerTitleStrip = FindViewById<PagerTitleStrip>(Resource.Id.viewpager_header);
