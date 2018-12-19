@@ -224,7 +224,7 @@ namespace ForgottenConqueror
                 HtmlNodeCollection nodes = container.SelectNodes("./a");
                 foreach (HtmlNode node in nodes)
                 {
-                    string title = HtmlEntity.DeEntitize(node.InnerText);
+                    string title = HtmlEntity.DeEntitize(node.InnerText.Replace('\n', '\0'));
                     string url = node.Attributes["href"].Value;
 
                     Chapter chapter = new Chapter()
