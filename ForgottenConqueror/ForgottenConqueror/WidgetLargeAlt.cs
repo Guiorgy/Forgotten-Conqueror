@@ -55,7 +55,7 @@ namespace ForgottenConqueror
                 DBController.Instance.ParseBooks(context);
 
                 ComponentName appWidgetComponentName = new ComponentName(context, Java.Lang.Class.FromType(typeof(WidgetLargeAlt)).Name);
-                appWidgetManager.UpdateAppWidget(appWidgetComponentName, BuildRemoteView(context, appWidgetId, widgetLargeAltParams));
+                appWidgetManager.UpdateAppWidget(appWidgetComponentName, BuildRemoteView(ref context, appWidgetId, ref widgetLargeAltParams));
             }
             base.OnUpdate(context, appWidgetManager, appWidgetIds);
             realm.Dispose();
@@ -77,24 +77,24 @@ namespace ForgottenConqueror
             {
                 // Show Book list
                 realm.Write(() => widgetLargeAltParams.OpenMenu = !widgetLargeAltParams.OpenMenu);
-                Redraw(context, appWidgetId);
+                Redraw(ref context, appWidgetId);
             }
             if (action.Equals(MenuOutsideClick))
             {
                 // Hide Book list
                 realm.Write(() => widgetLargeAltParams.OpenMenu = false);
-                Redraw(context, appWidgetId);
+                Redraw(ref context, appWidgetId);
             }
             if (action.Equals(ReverseClick))
             {
                 // Reverse order
                 realm.Write(() => widgetLargeAltParams.Descending = !widgetLargeAltParams.Descending);
-                Redraw(context, appWidgetId);
+                Redraw(ref context, appWidgetId);
             }
             if (action.Equals(RefreshClick))
             {
                 // Refresh
-                Update(context, appWidgetId);
+                Update(ref context, appWidgetId);
             }
             if (action.Equals(RemoteBookAdapter.SelectBook))
             {
@@ -104,24 +104,24 @@ namespace ForgottenConqueror
                     widgetLargeAltParams.Book = bookId;
                     widgetLargeAltParams.OpenMenu = false;
                 });
-                Redraw(context, appWidgetId);
+                Redraw(ref context, appWidgetId);
             }
             realm.Dispose();
         }
 
-        private RemoteViews BuildRemoteView(Context context, int appWidgetId, WidgetLargeAltParams widgetLargeAltParams)
+        private RemoteViews BuildRemoteView(ref Context context, int appWidgetId, ref WidgetLargeAltParams widgetLargeAltParams)
         {
             RemoteViews widgetView;
             int layout = widgetLargeAltParams.IsRefreshing ? LayoutRefreshing : Layout;
 
             widgetView = new RemoteViews(context.PackageName, layout);
 
-            SetView(context, appWidgetId, widgetView, widgetLargeAltParams);
+            SetView(ref context, appWidgetId, ref widgetView, ref widgetLargeAltParams);
             
             return widgetView;
         }
 
-        private void SetView(Context context, int appWidgetId, RemoteViews widgetView, WidgetLargeAltParams widgetLargeAltParams)
+        private void SetView(ref Context context, int appWidgetId, ref RemoteViews widgetView, ref WidgetLargeAltParams widgetLargeAltParams)
         {
             if (!widgetLargeAltParams.IsRefreshing)
             {
@@ -238,7 +238,7 @@ namespace ForgottenConqueror
             realm.Dispose();
         }
 
-        public void UpdateAll(Context context)
+        public void UpdateAll(ref Context context)
         {
             AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
             ComponentName appWidgetComponentName = new ComponentName(context, Java.Lang.Class.FromType(typeof(WidgetLargeAlt)).Name);
@@ -246,13 +246,13 @@ namespace ForgottenConqueror
             OnUpdate(context, appWidgetManager, appWidgetIds);
         }
 
-        public void Update(Context context, params int[] appWidgetIds)
+        public void Update(ref Context context, params int[] appWidgetIds)
         {
             AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
             OnUpdate(context, appWidgetManager, appWidgetIds);
         }
 
-        public void RedrawAll(Context context)
+        public void RedrawAll(ref Context context)
         {
             Realm realm = Realm.GetInstance(DB.RealmConfiguration);
             AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
@@ -260,26 +260,28 @@ namespace ForgottenConqueror
             int[] appWidgetIds = appWidgetManager.GetAppWidgetIds(appWidgetComponentName);
             foreach (int appWidgetId in appWidgetIds)
             {
-                appWidgetManager.UpdateAppWidget(appWidgetId, BuildRemoteView(context, appWidgetId, realm.Find<WidgetLargeAltParams>(appWidgetId)));
+                WidgetLargeAltParams p = realm.Find<WidgetLargeAltParams>(appWidgetId);
+                appWidgetManager.UpdateAppWidget(appWidgetId, BuildRemoteView(ref context, appWidgetId, ref p));
             }
 
             realm.Dispose();
         }
 
-        public void Redraw(Context context, params int[] appWidgetIds)
+        public void Redraw(ref Context context, params int[] appWidgetIds)
         {
             Realm realm = Realm.GetInstance(DB.RealmConfiguration);
             AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
             foreach (int appWidgetId in appWidgetIds)
             {
-                appWidgetManager.UpdateAppWidget(appWidgetId, BuildRemoteView(context, appWidgetId, realm.Find<WidgetLargeAltParams>(appWidgetId)));
+                WidgetLargeAltParams p = realm.Find<WidgetLargeAltParams>(appWidgetId);
+                appWidgetManager.UpdateAppWidget(appWidgetId, BuildRemoteView(ref context, appWidgetId, ref p));
             }
 
             realm.Dispose();
         }
     }
 
-    [Register("forgottenconqueror.WidgetLargeAltConfigurationActivity", DoNotGenerateAcw = true)]
+    /*[Register("forgottenconqueror.WidgetLargeAltConfigurationActivity")]
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false, LaunchMode = SingleTop)]
     [IntentFilter(actions: new[] { "android.appwidget.action.APPWIDGET_CONFIGURE" })]
     public class WidgetLargeAltConfigurationActivity : AppCompatActivity
@@ -334,5 +336,5 @@ namespace ForgottenConqueror
                 this.Finish();
             };
         }
-    }
+    }*/
 }

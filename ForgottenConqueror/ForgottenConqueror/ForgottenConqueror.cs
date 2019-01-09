@@ -150,7 +150,7 @@ namespace ForgottenConqueror
 #endif
         }
 
-        public static void Debug(string message)
+        public static void Debug(in string message)
         {
 #if DEBUG
             ConsoleQueue.Add($"Debug: {message}");
@@ -161,7 +161,7 @@ namespace ForgottenConqueror
 #endif
         }
 
-        public static void Debug(Exception exception, string message)
+        public static void Debug(ref Exception exception, in string message)
         {
 #if DEBUG
             ConsoleQueue.Add($"Debug: {exception.StackTrace}\n{message}");
@@ -172,7 +172,7 @@ namespace ForgottenConqueror
 #endif
         }
 
-        public static void Error(string message)
+        public static void Error(in string message)
         {
 #if DEBUG
             ConsoleQueue.Add($"Error: {message}");
@@ -183,7 +183,7 @@ namespace ForgottenConqueror
 #endif
         }
 
-        public static void Error(Exception exception, string message)
+        public static void Error(ref Exception exception, in string message)
         {
 #if DEBUG
             ConsoleQueue.Add($"Error: {exception.StackTrace}\n{message}");
@@ -194,7 +194,7 @@ namespace ForgottenConqueror
 #endif
         }
 
-        public static void Fatal(string message)
+        public static void Fatal(in string message)
         {
 #if DEBUG
             ConsoleQueue.Add($"Fatal: {message}");
@@ -205,7 +205,7 @@ namespace ForgottenConqueror
 #endif
         }
 
-        public static void Fatal(Exception exception, string message)
+        public static void Fatal(ref Exception exception, in string message)
         {
 #if DEBUG
             ConsoleQueue.Add($"Fatal: {exception.StackTrace}\n{message}");
@@ -216,7 +216,7 @@ namespace ForgottenConqueror
 #endif
         }
 
-        public static void Information(string message)
+        public static void Information(in string message)
         {
 #if DEBUG
             ConsoleQueue.Add($"Information: {message}");
@@ -227,7 +227,7 @@ namespace ForgottenConqueror
 #endif
         }
 
-        public static void Information(Exception exception, string message)
+        public static void Information(ref Exception exception, in string message)
         {
 #if DEBUG
             ConsoleQueue.Add($"Information: {exception.StackTrace}\n{message}");
@@ -238,7 +238,7 @@ namespace ForgottenConqueror
 #endif
         }
 
-        public static void Verbose(string message)
+        public static void Verbose(in string message)
         {
 #if DEBUG
             ConsoleQueue.Add($"Verbose: {message}");
@@ -249,7 +249,7 @@ namespace ForgottenConqueror
 #endif
         }
 
-        public static void Verbose(Exception exception, string message)
+        public static void Verbose(ref Exception exception, in string message)
         {
 #if DEBUG
             ConsoleQueue.Add($"Verbose: {exception.StackTrace}\n{message}");
@@ -260,7 +260,7 @@ namespace ForgottenConqueror
 #endif
         }
 
-        public static void Warning(string message)
+        public static void Warning(in string message)
         {
 #if DEBUG
             ConsoleQueue.Add($"Warning: {message}");
@@ -271,7 +271,7 @@ namespace ForgottenConqueror
 #endif
         }
 
-        public static void Warning(Exception exception, string message)
+        public static void Warning(ref Exception exception, in string message)
         {
 #if DEBUG
             ConsoleQueue.Add($"Warning: {exception.StackTrace}\n{message}");

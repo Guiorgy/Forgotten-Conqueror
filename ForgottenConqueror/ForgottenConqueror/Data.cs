@@ -34,7 +34,7 @@ namespace ForgottenConqueror
         }
 
         #region SharedPreferences
-        public void Write(Context context, string key, string value)
+        public void Write(ref Context context, in string key, in string value)
         {
             ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
             ISharedPreferencesEditor editor = prefs.Edit();
@@ -42,7 +42,7 @@ namespace ForgottenConqueror
             editor.Apply();
         }
 
-        public void Write(Context context, string key, bool value)
+        public void Write(ref Context context, in string key, in bool value)
         {
             ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
             ISharedPreferencesEditor editor = prefs.Edit();
@@ -50,7 +50,7 @@ namespace ForgottenConqueror
             editor.Apply();
         }
 
-        public void Write(Context context, string key, float value)
+        public void Write(ref Context context, in string key, float value)
         {
             ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
             ISharedPreferencesEditor editor = prefs.Edit();
@@ -58,7 +58,7 @@ namespace ForgottenConqueror
             editor.Apply();
         }
 
-        public void Write(Context context, string key, int value)
+        public void Write(ref Context context, in string key, int value)
         {
             ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
             ISharedPreferencesEditor editor = prefs.Edit();
@@ -66,7 +66,7 @@ namespace ForgottenConqueror
             editor.Apply();
         }
 
-        public void Write(Context context, string key, long value)
+        public void Write(ref Context context, in string key, long value)
         {
             ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
             ISharedPreferencesEditor editor = prefs.Edit();
@@ -74,7 +74,7 @@ namespace ForgottenConqueror
             editor.Apply();
         }
 
-        public void Write(Context context, string key, ICollection<string> value)
+        public void Write(ref Context context, in string key, in ICollection<string> value)
         {
             ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
             ISharedPreferencesEditor editor = prefs.Edit();
@@ -82,80 +82,79 @@ namespace ForgottenConqueror
             editor.Apply();
         }
 
-        public string Read(Context context, string key, string defaultValue)
+        public string Read(ref Context context, in string key, in string defaultValue)
         {
             ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
             return prefs.GetString(key, defaultValue);
         }
 
-        public string Read(Context context, string key)
+        public string Read(ref Context context, in string key)
         {
-            return Read(context, key, null);
+            return Read(ref context, key, null);
         }
 
-        public bool ReadBoolean(Context context, string key, bool defaultValue)
+        public bool ReadBoolean(ref Context context, in string key, bool defaultValue)
         {
             ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
             return prefs.GetBoolean(key, defaultValue);
         }
 
-        public bool ReadBoolean(Context context, string key)
+        public bool ReadBoolean(ref Context context, in string key)
         {
-            return ReadBoolean(context, key, false);
+            return ReadBoolean(ref context, key, false);
         }
 
-        public float ReadFloat(Context context, string key, float defaultValue)
+        public float ReadFloat(ref Context context, in string key, float defaultValue)
         {
             ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
             return prefs.GetFloat(key, defaultValue);
         }
 
-        public float ReadFloat(Context context, string key)
+        public float ReadFloat(ref Context context, in string key)
         {
-            return ReadFloat(context, key, 0f);
+            return ReadFloat(ref context, key, 0f);
         }
 
-        public int ReadInt(Context context, string key, int defaultValue)
+        public int ReadInt(ref Context context, in string key, int defaultValue)
         {
             ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
             return prefs.GetInt(key, defaultValue);
         }
 
-        public int ReadInt(Context context, string key)
+        public int ReadInt(ref Context context, in string key)
         {
-            return ReadInt(context, key, 0);
+            return ReadInt(ref context, key, 0);
         }
 
-        public long ReadLong(Context context, string key, long defaultValue)
+        public long ReadLong(ref Context context, in string key, long defaultValue)
         {
             ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
             return prefs.GetLong(key, defaultValue);
         }
 
-        public long ReadLong(Context context, string key)
+        public long ReadLong(ref Context context, in string key)
         {
-            return ReadLong(context, key, 0L);
+            return ReadLong(ref context, key, 0L);
         }
 
-        public ICollection<string> ReadStrings(Context context, string key, ICollection<string> defaultValue)
+        public ICollection<string> ReadStrings(ref Context context, in string key, in ICollection<string> defaultValue)
         {
             ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
             return prefs.GetStringSet(key, defaultValue);
         }
 
-        public ICollection<string> ReadStrings(Context context, string key)
+        public ICollection<string> ReadStrings(ref Context context, in string key)
         {
-            return ReadStrings(context, key, null);
+            return ReadStrings(ref context, key, null);
         }
         
         public readonly static string LastUpdateTime = "LastUpdateTime";
         public readonly static string PreviouslyLastChapterId = "PreviouslyLastChapterId";
         #endregion
 
-
         #region String compression
         // Thank you @xanatos (https://stackoverflow.com/questions/7343465/compression-decompression-string-with-c-sharp)
-        private void CopyTo(Stream src, Stream dest)
+        private void CopyTo(in Stream src, in Stream dest)
         {
             byte[] bytes = new byte[4096];
 
@@ -167,7 +166,7 @@ namespace ForgottenConqueror
             }
         }
 
-        public byte[] Compress(string str)
+        public byte[] Compress(in string str)
         {
             var bytes = Encoding.UTF8.GetBytes(str);
 
@@ -183,7 +182,7 @@ namespace ForgottenConqueror
             }
         }
 
-        public byte[] Zip(byte[] bytes)
+        public byte[] Zip(in byte[] bytes)
         {
             using (var msi = new MemoryStream(bytes))
             using (var mso = new MemoryStream())
@@ -197,7 +196,7 @@ namespace ForgottenConqueror
             }
         }
 
-        public string Decompress(byte[] bytes)
+        public string Decompress(in byte[] bytes)
         {
             using (var msi = new MemoryStream(bytes))
             using (var mso = new MemoryStream())
@@ -211,7 +210,7 @@ namespace ForgottenConqueror
             }
         }
 
-        public byte[] Unzip(byte[] bytes)
+        public byte[] Unzip(in byte[] bytes)
         {
             using (var msi = new MemoryStream(bytes))
             using (var mso = new MemoryStream())

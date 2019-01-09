@@ -69,7 +69,7 @@ namespace ForgottenConqueror
                 DBController.Instance.ParseBooks(context);
 
                 ComponentName appWidgetComponentName = new ComponentName(context, Java.Lang.Class.FromType(typeof(Widget)).Name);
-                appWidgetManager.UpdateAppWidget(appWidgetComponentName, BuildRemoteView(context, appWidgetId, widgetParams));
+                appWidgetManager.UpdateAppWidget(appWidgetComponentName, BuildRemoteView(ref context, appWidgetId, ref widgetParams));
             }
             base.OnUpdate(context, appWidgetManager, appWidgetIds);
             realm.Dispose();
@@ -90,7 +90,7 @@ namespace ForgottenConqueror
             realm.Write(() => widgetParams.Cells = cells >= 1 && cells <= 3 ? cells : 0);
 
             // Obtain appropriate widget and update it.
-            appWidgetManager.UpdateAppWidget(appWidgetId, BuildRemoteView(context, appWidgetId, widgetParams));
+            appWidgetManager.UpdateAppWidget(appWidgetId, BuildRemoteView(ref context, appWidgetId, ref widgetParams));
             base.OnAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
 
             realm.Dispose();
@@ -106,8 +106,8 @@ namespace ForgottenConqueror
             // Check if the click is to open chapter in browser
             if (action.Equals(RefreshClick))
             {
-                Update(context);
-                Update(context, intent.GetIntExtra(AppWidgetManager.ExtraAppwidgetId, AppWidgetManager.InvalidAppwidgetId));
+                Update(ref context);
+                Update(ref context, intent.GetIntExtra(AppWidgetManager.ExtraAppwidgetId, AppWidgetManager.InvalidAppwidgetId));
                 return;
             }
 
@@ -131,7 +131,7 @@ namespace ForgottenConqueror
             }
         }
 
-        private RemoteViews BuildRemoteView(Context context, int appWidgetId, WidgetParams widgetParams)
+        private RemoteViews BuildRemoteView(ref Context context, int appWidgetId, ref WidgetParams widgetParams)
         {
             RemoteViews widgetView;
 
@@ -141,7 +141,7 @@ namespace ForgottenConqueror
 
             if (!widgetParams.IsRefreshing)
             {
-                SetView(context, appWidgetId, widgetView, widgetParams);
+                SetView(ref context, appWidgetId, ref widgetView, ref widgetParams);
             }
 
             return widgetView;
@@ -157,13 +157,13 @@ namespace ForgottenConqueror
             return n - 1;
         }
 
-        private void SetView(Context context, int appWidgetId, RemoteViews widgetView, WidgetParams widgetParams)
+        private void SetView(ref Context context, int appWidgetId, ref RemoteViews widgetView, ref WidgetParams widgetParams)
         {
             Realm realm = Realm.GetInstance(DB.RealmConfiguration);
 
             // Set TextViews
             string title = realm.All<Chapter>().OrderBy(c => c.ID).Last().Title;
-            long lastUpdate = Data.Instance.ReadLong(context, Data.LastUpdateTime);
+            long lastUpdate = Data.Instance.ReadLong(ref context, Data.LastUpdateTime);
 
             widgetView.SetTextViewText(Resource.Id.chapter_title, title);
             widgetView.SetTextViewText(Resource.Id.last_update, new DateTime(lastUpdate).ToString(widgetParams.DateFormat));
@@ -226,7 +226,7 @@ namespace ForgottenConqueror
             realm.Dispose();
         }
 
-        public void UpdateAll(Context context)
+        public void UpdateAll(ref Context context)
         {
             AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
             ComponentName appWidgetComponentName = new ComponentName(context, Java.Lang.Class.FromType(typeof(Widget)).Name);
@@ -234,13 +234,13 @@ namespace ForgottenConqueror
             OnUpdate(context, appWidgetManager, appWidgetIds);
         }
 
-        public void Update(Context context, params int[] appWidgetIds)
+        public void Update(ref Context context, params int[] appWidgetIds)
         {
             AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
             OnUpdate(context, appWidgetManager, appWidgetIds);
         }
 
-        public void RedrawAll(Context context)
+        public void RedrawAll(ref Context context)
         {
             Realm realm = Realm.GetInstance(DB.RealmConfiguration);
             AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
@@ -248,19 +248,21 @@ namespace ForgottenConqueror
             int[] appWidgetIds = appWidgetManager.GetAppWidgetIds(appWidgetComponentName);
             foreach (int appWidgetId in appWidgetIds)
             {
-                appWidgetManager.UpdateAppWidget(appWidgetId, BuildRemoteView(context, appWidgetId, realm.Find<WidgetParams>(appWidgetId)));
+                WidgetParams p = realm.Find<WidgetParams>(appWidgetId);
+                appWidgetManager.UpdateAppWidget(appWidgetId, BuildRemoteView(ref context, appWidgetId, ref p));
             }
 
             realm.Dispose();
         }
 
-        public void Redraw(Context context, params int[] appWidgetIds)
+        public void Redraw(ref Context context, params int[] appWidgetIds)
         {
             Realm realm = Realm.GetInstance(DB.RealmConfiguration);
             AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
             foreach (int appWidgetId in appWidgetIds)
             {
-                appWidgetManager.UpdateAppWidget(appWidgetId, BuildRemoteView(context, appWidgetId, realm.Find<WidgetParams>(appWidgetId)));
+                WidgetParams p = realm.Find<WidgetParams>(appWidgetId);
+                appWidgetManager.UpdateAppWidget(appWidgetId, BuildRemoteView(ref context, appWidgetId, ref p));
             }
 
             realm.Dispose();
@@ -302,7 +304,8 @@ namespace ForgottenConqueror
                 , true));
 
                 Widget widget = new Widget();
-                widget.Redraw(this, appWidgetId);
+                Context context = this;
+                widget.Redraw(ref context, appWidgetId);
 
                 SetResult(Result.Ok, result);
                 FinishAndRemoveTask();

@@ -38,7 +38,7 @@ namespace ForgottenConqueror
 
         private static object managerlock = new object();
         private NotificationManagerCompat notificationManager;
-        public NotificationManagerCompat GetManager(Context context)
+        public NotificationManagerCompat GetManager(ref Context context)
         {
             if (notificationManager == null)
             {
@@ -54,10 +54,12 @@ namespace ForgottenConqueror
             return notificationManager;
         }
 
-        public Builder GetBuilder(Context context, ChannelId channelId)
+        public Builder GetBuilder(ref Context context, ChannelId channelId)
         {
+#pragma warning disable CS0618 // Type or member is obsolete
             Builder builder = new Builder(context);
-            if(Build.VERSION.SdkInt >= BuildVersionCodes.O)
+#pragma warning restore CS0618 // Type or member is obsolete
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
             {
                 Channel channel = Channels[(int)channelId];
 
@@ -72,7 +74,7 @@ namespace ForgottenConqueror
                     notificationChannel.LockscreenVisibility = channel.Visibility;
 
                     // Register the new NotificationChannel
-                    NotificationManagerCompat notificationManager = GetManager(context);
+                    NotificationManagerCompat notificationManager = GetManager(ref context);
                     notificationManager.CreateNotificationChannel(notificationChannel);
 
                     channel.NotificationChannel = notificationChannel;
@@ -118,11 +120,11 @@ namespace ForgottenConqueror
             },
         };
 
-        public void NotifyNewChapters(Context context, List<Chapter> chapters)
+        public void NotifyNewChapters(ref Context context, ref List<Chapter> chapters)
         {
             if (chapters.Count < 1) return;
 
-            Builder builder = GetBuilder(context, ChannelId.NewChapter);
+            Builder builder = GetBuilder(ref context, ChannelId.NewChapter);
             builder.SetAutoCancel(true);
             builder.SetNumber(4);
             builder.SetOnlyAlertOnce(true);
@@ -140,7 +142,7 @@ namespace ForgottenConqueror
                 builder.SetContentTitle($"{chapters.Count} New Chapters");
                 builder.SetSubText($"and {chapters.Count - 1} more");
 
-                var inboxStyle = new Notification.InboxStyle(GetBuilder(context, ChannelId.NewChapter));
+                var inboxStyle = new Notification.InboxStyle(GetBuilder(ref context, ChannelId.NewChapter));
                 inboxStyle.SetBigContentTitle($"{chapters.Count} New Chapters");
 
                 foreach(Chapter chapter in chapters)
@@ -153,7 +155,7 @@ namespace ForgottenConqueror
             //Bitmap icon = BitmapFactory.DecodeResource(context.Resources, Resource.Drawable.new_chapter_icon);
             builder.SetSmallIcon(Resource.Drawable.new_chapter_icon);
             
-            NotificationManagerCompat notificationManager = GetManager(context);
+            NotificationManagerCompat notificationManager = GetManager(ref context);
             notificationManager.Notify((int)ChannelId.NewChapter, builder.Build());
         }
     }

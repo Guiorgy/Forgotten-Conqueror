@@ -57,7 +57,7 @@ namespace ForgottenConqueror
                 DBController.Instance.ParseBooks(context);
 
                 ComponentName appWidgetComponentName = new ComponentName(context, Java.Lang.Class.FromType(typeof(WidgetLarge)).Name);
-                appWidgetManager.UpdateAppWidget(appWidgetComponentName, BuildRemoteView(context, appWidgetId, widgetLargeParams));
+                appWidgetManager.UpdateAppWidget(appWidgetComponentName, BuildRemoteView(ref context, appWidgetId, ref widgetLargeParams));
             }
             base.OnUpdate(context, appWidgetManager, appWidgetIds);
             realm.Dispose();
@@ -81,7 +81,7 @@ namespace ForgottenConqueror
                 int bookId = widgetLargeParams.Book;
                 int bookCount = realm.All<Book>().Count();
                 realm.Write(() => widgetLargeParams.Book = bookId + 1 >= bookCount ? 0 : bookId + 1);
-                Redraw(context, appWidgetId);
+                Redraw(ref context, appWidgetId);
             }
             if (action.Equals(PreviousClick))
             {
@@ -89,18 +89,18 @@ namespace ForgottenConqueror
                 int bookId = widgetLargeParams.Book;
                 int bookCount = realm.All<Book>().Count();
                 realm.Write(() => widgetLargeParams.Book = bookId - 1 < 0 ? bookCount - 1 : bookId - 1);
-                Redraw(context, appWidgetId);
+                Redraw(ref context, appWidgetId);
             }
             if (action.Equals(ReverseClick))
             {
                 // Reverse order
                 realm.Write(() => widgetLargeParams.Descending = !widgetLargeParams.Descending);
-                Redraw(context, appWidgetId);
+                Redraw(ref context, appWidgetId);
             }
             if (action.Equals(RefreshClick))
             {
                 // Refresh
-                Update(context, appWidgetId);
+                Update(ref context, appWidgetId);
             }
             if (action.Equals(BookClick))
             {
@@ -113,19 +113,19 @@ namespace ForgottenConqueror
             realm.Dispose();
         }
 
-        private RemoteViews BuildRemoteView(Context context, int appWidgetId, WidgetLargeParams widgetLargeParams)
+        private RemoteViews BuildRemoteView(ref Context context, int appWidgetId, ref WidgetLargeParams widgetLargeParams)
         {
             RemoteViews widgetView;
             int layout = widgetLargeParams.IsRefreshing ? LayoutRefreshing : Layout;
 
             widgetView = new RemoteViews(context.PackageName, layout);
 
-            SetView(context, appWidgetId, widgetView, widgetLargeParams);
+            SetView(ref context, appWidgetId, ref widgetView, ref widgetLargeParams);
             
             return widgetView;
         }
 
-        private void SetView(Context context, int appWidgetId, RemoteViews widgetView, WidgetLargeParams widgetLargeParams)
+        private void SetView(ref Context context, int appWidgetId, ref RemoteViews widgetView, ref WidgetLargeParams widgetLargeParams)
         {
             if (!widgetLargeParams.IsRefreshing)
             {
@@ -228,7 +228,7 @@ namespace ForgottenConqueror
             realm.Dispose();
         }
 
-        public void UpdateAll(Context context)
+        public void UpdateAll(ref Context context)
         {
             AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
             ComponentName appWidgetComponentName = new ComponentName(context, Java.Lang.Class.FromType(typeof(WidgetLarge)).Name);
@@ -236,13 +236,13 @@ namespace ForgottenConqueror
             OnUpdate(context, appWidgetManager, appWidgetIds);
         }
 
-        public void Update(Context context, params int[] appWidgetIds)
+        public void Update(ref Context context, params int[] appWidgetIds)
         {
             AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
             OnUpdate(context, appWidgetManager, appWidgetIds);
         }
 
-        public void RedrawAll(Context context)
+        public void RedrawAll(ref Context context)
         {
             Realm realm = Realm.GetInstance(DB.RealmConfiguration);
             AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
@@ -250,26 +250,28 @@ namespace ForgottenConqueror
             int[] appWidgetIds = appWidgetManager.GetAppWidgetIds(appWidgetComponentName);
             foreach (int appWidgetId in appWidgetIds)
             {
-                appWidgetManager.UpdateAppWidget(appWidgetId, BuildRemoteView(context, appWidgetId, realm.Find<WidgetLargeParams>(appWidgetId)));
+                WidgetLargeParams p = realm.Find<WidgetLargeParams>(appWidgetId);
+                appWidgetManager.UpdateAppWidget(appWidgetId, BuildRemoteView(ref context, appWidgetId, ref p));
             }
 
             realm.Dispose();
         }
 
-        public void Redraw(Context context, params int[] appWidgetIds)
+        public void Redraw(ref Context context, params int[] appWidgetIds)
         {
             Realm realm = Realm.GetInstance(DB.RealmConfiguration);
             AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
             foreach (int appWidgetId in appWidgetIds)
             {
-                appWidgetManager.UpdateAppWidget(appWidgetId, BuildRemoteView(context, appWidgetId, realm.Find<WidgetLargeParams>(appWidgetId)));
+                WidgetLargeParams p = realm.Find<WidgetLargeParams>(appWidgetId);
+                appWidgetManager.UpdateAppWidget(appWidgetId, BuildRemoteView(ref context, appWidgetId, ref p));
             }
 
             realm.Dispose();
         }
     }
 
-    [Register("forgottenconqueror.WidgetLargeConfigurationActivity", DoNotGenerateAcw = true)]
+    /*[Register("forgottenconqueror.WidgetLargeConfigurationActivity")]
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = false, LaunchMode = SingleTop)]
     [IntentFilter(actions: new[] { "android.appwidget.action.APPWIDGET_CONFIGURE" })]
     public class WidgetLargeConfigurationActivity : AppCompatActivity
@@ -324,5 +326,5 @@ namespace ForgottenConqueror
                 this.Finish();
             };
         }
-    }
+    }*/
 }

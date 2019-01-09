@@ -63,17 +63,17 @@ namespace ForgottenConqueror
                             widgetLargeAltParams.IsRefreshing = false;
                         }
                     });
-                    Data.Instance.Write(context, Data.LastUpdateTime, DateTime.Now.Ticks);
+                    Data.Instance.Write(ref context, Data.LastUpdateTime, DateTime.Now.Ticks);
 
-                    int lastId = Data.Instance.ReadInt(context, Data.PreviouslyLastChapterId, -1);
+                    int lastId = Data.Instance.ReadInt(ref context, Data.PreviouslyLastChapterId, -1);
                     int currentId = realm.All<Chapter>().OrderBy(c => c.ID).Last().ID;
                     if (lastId != -1 && lastId < currentId)
                     {
                         List<Chapter> chapters = realm.All<Chapter>().Where(c => c.ID > lastId).ToList();
-                        NotificationManager.Instance.NotifyNewChapters(context, chapters);
+                        NotificationManager.Instance.NotifyNewChapters(ref context, ref chapters);
                     }
 
-                    RedrawAllWidgets(context);
+                    RedrawAllWidgets(ref context);
                     CanParse = true;
                     realm.Dispose();
                 }
@@ -89,7 +89,7 @@ namespace ForgottenConqueror
                             var last = list.OrderBy(c => c.ID).Last();
                             if (last != null)
                             {
-                                Data.Instance.Write(context, Data.PreviouslyLastChapterId, last.ID);
+                                Data.Instance.Write(ref context, Data.PreviouslyLastChapterId, last.ID);
                             }
                         }
                         UpdateBooks();
@@ -100,7 +100,7 @@ namespace ForgottenConqueror
                     }, TaskScheduler.FromCurrentSynchronizationContext());
                 } catch(Exception e)
                 {
-                    Log.Error(e, "ParseBooks() failed!");
+                    Log.Error(ref e, "ParseBooks() failed!");
                     Finished();
                 }
             }
@@ -108,7 +108,7 @@ namespace ForgottenConqueror
 
         private static object parselock = new object();
         [Obsolete("A lot slower, only use if absolutely needed. Use ParseBooks(Context context, bool onlyLast) instead.")]
-        public void ParseBooksSafe(Context context)
+        public void ParseBooksSafe(ref Context context)
         {
             if (CanParse)
             {
@@ -190,7 +190,7 @@ namespace ForgottenConqueror
                 };
 
                 books.Add(book);
-                tasks.Add(Task<List<Chapter>>.Run(() => UpdateBooks_Chapters(book)));
+                tasks.Add(Task<List<Chapter>>.Run(() => UpdateBooks_Chapters(ref book)));
             }
 
             Task.WaitAll(tasks.ToArray());
@@ -210,7 +210,7 @@ namespace ForgottenConqueror
             });
         }
 
-        private List<Chapter> UpdateBooks_Chapters(Book book)
+        private List<Chapter> UpdateBooks_Chapters(ref Book book)
         {
             Realm realm = Realm.GetInstance(DB.RealmConfiguration);
             HtmlWeb web = new HtmlWeb();
@@ -242,19 +242,19 @@ namespace ForgottenConqueror
             return chapters;
         }
 
-        private void RedrawAllWidgets(Context context)
+        private void RedrawAllWidgets(ref Context context)
         {
             // Widget
             Widget widget = new Widget();
-            widget.RedrawAll(context);
+            widget.RedrawAll(ref context);
 
             // WidgetLarge
             WidgetLarge widgetLarge = new WidgetLarge();
-            widgetLarge.RedrawAll(context);
+            widgetLarge.RedrawAll(ref context);
 
             // WidgetLargeAlt
             WidgetLargeAlt widgetLargeAlt = new WidgetLargeAlt();
-            widgetLargeAlt.RedrawAll(context);
+            widgetLargeAlt.RedrawAll(ref context);
         }
 
         public void DownloadChapter(Chapter chapter)

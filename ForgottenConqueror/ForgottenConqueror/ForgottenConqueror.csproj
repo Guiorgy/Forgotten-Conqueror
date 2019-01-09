@@ -49,6 +49,7 @@
     <AndroidSupportedAbis>armeabi-v7a;x86;x86_64;arm64-v8a</AndroidSupportedAbis>
     <AndroidTlsProvider>btls</AndroidTlsProvider>
     <JavaMaximumHeapSize>512M</JavaMaximumHeapSize>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>false</DebugSymbols>
@@ -70,6 +71,7 @@
     <AndroidSupportedAbis>armeabi-v7a;x86;x86_64;arm64-v8a</AndroidSupportedAbis>
     <AndroidTlsProvider>btls</AndroidTlsProvider>
     <JavaMaximumHeapSize>512M</JavaMaximumHeapSize>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'LoggedRelease|AnyCPU'">
     <OutputPath>bin\LoggedRelease\</OutputPath>
@@ -93,6 +95,7 @@
     <DebugSymbols>false</DebugSymbols>
     <JavaMaximumHeapSize>512M</JavaMaximumHeapSize>
     <AndroidLinkSkip />
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
