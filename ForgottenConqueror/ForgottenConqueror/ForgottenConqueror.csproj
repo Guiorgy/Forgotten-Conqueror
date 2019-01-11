@@ -360,9 +360,22 @@
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
     Other similar extension points exist, see Microsoft.Common.targets.
-    <Target Name="BeforeBuild">
+  -->
+  <!--
+    <Target Name="BeforeBuild" >
     </Target>
-    <Target Name="AfterBuild">
+  -->
+  <!--
+    <Target Name="AfterBuild" >
+    </Target>
+  -->
+  <Target Name="BeforeCreateBaseApk" BeforeTargets="_CreateBaseApk" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <!-- <Exec Command="powershell -Command &quot;(gc $(ProjectDir)obj\$(ConfigurationName)\*\android\AndroidManifest.xml) -replace '&lt;uses-permission android:name=\&quot;android.permission.READ_EXTERNAL_STORAGE\&quot; /&gt;', '' | Out-File $(ProjectDir)obj\$(ConfigurationName)\*\android\AndroidManifest.xml&quot;" />
+    <Exec Command="powershell -Command &quot;(gc $(ProjectDir)obj\$(ConfigurationName)\*\android\AndroidManifest.xml) -replace '&lt;uses-permission android:name=\&quot;android.permission.WRITE_EXTERNAL_STORAGE\&quot; /&gt;', '' | Out-File $(ProjectDir)obj\$(ConfigurationName)\*\android\AndroidManifest.xml&quot;" /> -->
+    <Exec Command="powershell -noexit &quot;&amp; '$(SolutionDir)..\RemoveAndroidPermissions.ps1'" />
+  </Target>
+  <!--
+    <Target Name="AfterCreateBaseApk" AfterTargets="_CreateBaseApk" >
     </Target>
   -->
 </Project>
