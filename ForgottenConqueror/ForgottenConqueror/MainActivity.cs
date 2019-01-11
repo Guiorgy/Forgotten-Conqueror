@@ -8,7 +8,10 @@ using static Android.Content.PM.LaunchMode;
 using FragmentManager = Android.Support.V4.App.FragmentManager;
 using Fragment = Android.Support.V4.App.Fragment;
 using Java.Lang;
-using Realms;
+
+#if !RELEASE
+using Android;
+#endif
 
 namespace ForgottenConqueror
 {
@@ -23,8 +26,8 @@ namespace ForgottenConqueror
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.widget_configuration);
 
-#if LOGGED_RELEASE
-            ForgottenConqueror.Instance.RequestPermission(this, ForgottenConqueror.PermissionCode.ReadWrite);
+#if !RELEASE
+            ForgottenConqueror.Instance.RequestPermission(this, Manifest.Permission.ReadExternalStorage, Manifest.Permission.WriteExternalStorage);
 #endif
 
             FinishAndRemoveTask();

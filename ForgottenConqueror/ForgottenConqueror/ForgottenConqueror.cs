@@ -6,6 +6,7 @@ using Android.OS;
 using Android.Support.V7.App;
 using Android.Content.PM;
 using Android.Support.Design.Widget;
+using System.Collections.Generic;
 
 #if DEBUG
 using System.Collections.Concurrent;
@@ -43,7 +44,7 @@ namespace ForgottenConqueror
                     config.RollingFile(Path.Combine(Android.OS.Environment.ExternalStorageDirectory.AbsolutePath, "ForgottenConqueror/FC_log-{Date}.txt"),
                     outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] [{SourceContext}] {Message}{NewLine}{Exception}",
                     restrictedToMinimumLevel: LogEventLevel.Verbose,
-                    fileSizeLimitBytes: 52428800,
+                    fileSizeLimitBytes: 52428800, // 50 Megabybtes
                     retainedFileCountLimit: 5))
                 .WriteTo.AndroidLog(restrictedToMinimumLevel: LogEventLevel.Verbose)
                 .CreateLogger();
@@ -77,48 +78,41 @@ namespace ForgottenConqueror
         }
 
         #region Permissions
-        private readonly string[][] Permissions =
+        private static readonly Dictionary<string, string> Permissions = new Dictionary<string, string>()
         {
-            new string[] {
-                Manifest.Permission.ReadExternalStorage,
-                Manifest.Permission.WriteExternalStorage,
-            },
+            { Manifest.Permission.ReadExternalStorage, "Read External Storage" },
+            { Manifest.Permission.WriteExternalStorage, "Write External Storage" },
         };
 
-        public enum PermissionCode
-        {
-            ReadWrite = 0,
-        }
-
-        public void RequestPermission(AppCompatActivity activity, PermissionCode permissionCode)
+        public void RequestPermission(AppCompatActivity activity, params string[] permissions)
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.M) return;
 
-            foreach (string permission in Permissions[(int)permissionCode])
+            foreach (string permission in permissions)
             {
                 if (activity.CheckSelfPermission(permission) != Permission.Granted)
                 {
-                    if (activity.ShouldShowRequestPermissionRationale(Manifest.Permission.ReadContacts)
-                        || activity.ShouldShowRequestPermissionRationale(Manifest.Permission.WriteContacts))
+                    if (activity.ShouldShowRequestPermissionRationale(permission))
                     {
-                        Snackbar.Make(activity.FindViewById(Resource.Id.root), "Allow ForgottenConqueror to access this device's external storage?",
+                        string request = string.Join(", ", permission);
+                        Snackbar.Make(activity.FindViewById(Resource.Id.root), $"Allow ForgottenConqueror permission to {request}?",
                             Snackbar.LengthIndefinite).SetAction("Allow", new Action<Android.Views.View>(delegate (Android.Views.View obj) {
-                                activity.RequestPermissions(Permissions[(int)permissionCode], (int)permissionCode);
+                                activity.RequestPermissions(permissions, permission.GetHashCode());
                             })).Show();
                     }
                     else
                     {
-                        activity.RequestPermissions(Permissions[(int)permissionCode], (int)permissionCode);
+                        activity.RequestPermissions(permissions, permission.GetHashCode());
                     }
                 }
             }
         }
 
-        public bool CheckForPermission(PermissionCode permissionCode)
+        public bool CheckForPermissions(params string[] permissions)
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.M) return true;
 
-            foreach (string permission in Permissions[(int)permissionCode])
+            foreach (string permission in permissions)
             {
                 if (Instance.CheckSelfPermission(permission) != Permission.Granted)
                 {
