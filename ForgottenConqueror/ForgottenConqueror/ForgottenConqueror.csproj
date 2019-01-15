@@ -225,6 +225,9 @@
     <PackageReference Include="Xamarin.RootBeer">
       <Version>0.0.6</Version>
     </PackageReference>
+    <PackageReference Include="Xamarin.TreeView">
+      <Version>1.0.0</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\corner_radius_10dp.xml" />

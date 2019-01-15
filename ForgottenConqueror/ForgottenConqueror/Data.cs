@@ -1,9 +1,15 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
 using Android.Content;
 using Android.Preferences;
+
+#if DEBUG
+using System.Collections.Concurrent;
+using System.Threading;
+#endif
 
 namespace ForgottenConqueror
 {
@@ -225,4 +231,265 @@ namespace ForgottenConqueror
         }
         #endregion
     }
+
+    #region Log
+    public static class Log
+    {
+#if DEBUG
+        private static BlockingCollection<string> ConsoleQueue = new BlockingCollection<string>();
+#endif
+
+        static Log()
+        {
+#if DEBUG
+            var thread = new Thread(() =>
+            {
+                while (true) Console.WriteLine(ConsoleQueue.Take());
+            });
+            thread.IsBackground = true;
+            thread.Start();
+#endif
+        }
+
+        public static void Debug(ref string message)
+        {
+#if DEBUG
+            ConsoleQueue.Add($"Debug: {message}");
+#endif
+#if LOGGED_RELEASE
+            Serilog.Log.Debug(message);
+#endif
+        }
+
+        public static void Debug(string message)
+        {
+#if DEBUG
+            ConsoleQueue.Add($"Debug: {message}");
+#endif
+#if LOGGED_RELEASE
+            Serilog.Log.Debug(message);
+#endif
+        }
+
+        public static void Debug(ref Exception exception, ref string message)
+        {
+#if DEBUG
+            ConsoleQueue.Add($"Debug: {exception.StackTrace}\n{message}");
+#endif
+#if LOGGED_RELEASE
+            Serilog.Log.Debug(exception, message);
+#endif
+        }
+
+        public static void Debug(ref Exception exception, string message)
+        {
+#if DEBUG
+            ConsoleQueue.Add($"Debug: {exception.StackTrace}\n{message}");
+#endif
+#if LOGGED_RELEASE
+            Serilog.Log.Debug(exception, message);
+#endif
+        }
+
+        public static void Error(ref string message)
+        {
+#if DEBUG
+            ConsoleQueue.Add($"Error: {message}");
+#endif
+#if LOGGED_RELEASE
+            Serilog.Log.Error(message);
+#endif
+        }
+
+        public static void Error(string message)
+        {
+#if DEBUG
+            ConsoleQueue.Add($"Error: {message}");
+#endif
+#if LOGGED_RELEASE
+            Serilog.Log.Error(message);
+#endif
+        }
+
+        public static void Error(ref Exception exception, ref string message)
+        {
+#if DEBUG
+            ConsoleQueue.Add($"Error: {exception.StackTrace}\n{message}");
+#endif
+#if LOGGED_RELEASE
+            Serilog.Log.Error(exception, message);
+#endif
+        }
+
+        public static void Error(ref Exception exception, string message)
+        {
+#if DEBUG
+            ConsoleQueue.Add($"Error: {exception.StackTrace}\n{message}");
+#endif
+#if LOGGED_RELEASE
+            Serilog.Log.Error(exception, message);
+#endif
+        }
+
+        public static void Fatal(ref string message)
+        {
+#if DEBUG
+            ConsoleQueue.Add($"Fatal: {message}");
+#endif
+#if LOGGED_RELEASE
+            Serilog.Log.Fatal(message);
+#endif
+        }
+
+        public static void Fatal(string message)
+        {
+#if DEBUG
+            ConsoleQueue.Add($"Fatal: {message}");
+#endif
+#if LOGGED_RELEASE
+            Serilog.Log.Fatal(message);
+#endif
+        }
+
+        public static void Fatal(ref Exception exception, ref string message)
+        {
+#if DEBUG
+            ConsoleQueue.Add($"Fatal: {exception.StackTrace}\n{message}");
+#endif
+#if LOGGED_RELEASE
+            Serilog.Log.Fatal(exception, message);
+#endif
+        }
+
+        public static void Fatal(ref Exception exception, string message)
+        {
+#if DEBUG
+            ConsoleQueue.Add($"Fatal: {exception.StackTrace}\n{message}");
+#endif
+#if LOGGED_RELEASE
+            Serilog.Log.Fatal(exception, message);
+#endif
+        }
+
+        public static void Information(ref string message)
+        {
+#if DEBUG
+            ConsoleQueue.Add($"Information: {message}");
+#endif
+#if LOGGED_RELEASE
+            Serilog.Log.Information(message);
+#endif
+        }
+
+        public static void Information(string message)
+        {
+#if DEBUG
+            ConsoleQueue.Add($"Information: {message}");
+#endif
+#if LOGGED_RELEASE
+            Serilog.Log.Information(message);
+#endif
+        }
+
+        public static void Information(ref Exception exception, ref string message)
+        {
+#if DEBUG
+            ConsoleQueue.Add($"Information: {exception.StackTrace}\n{message}");
+#endif
+#if LOGGED_RELEASE
+            Serilog.Log.Information(exception, message);
+#endif
+        }
+
+        public static void Information(ref Exception exception, string message)
+        {
+#if DEBUG
+            ConsoleQueue.Add($"Information: {exception.StackTrace}\n{message}");
+#endif
+#if LOGGED_RELEASE
+            Serilog.Log.Information(exception, message);
+#endif
+        }
+
+        public static void Verbose(ref string message)
+        {
+#if DEBUG
+            ConsoleQueue.Add($"Verbose: {message}");
+#endif
+#if LOGGED_RELEASE
+            Serilog.Log.Verbose(message);
+#endif
+        }
+
+        public static void Verbose(string message)
+        {
+#if DEBUG
+            ConsoleQueue.Add($"Verbose: {message}");
+#endif
+#if LOGGED_RELEASE
+            Serilog.Log.Verbose(message);
+#endif
+        }
+
+        public static void Verbose(ref Exception exception, ref string message)
+        {
+#if DEBUG
+            ConsoleQueue.Add($"Verbose: {exception.StackTrace}\n{message}");
+#endif
+#if LOGGED_RELEASE
+            Serilog.Log.Verbose(exception, message);
+#endif
+        }
+
+        public static void Verbose(ref Exception exception, string message)
+        {
+#if DEBUG
+            ConsoleQueue.Add($"Verbose: {exception.StackTrace}\n{message}");
+#endif
+#if LOGGED_RELEASE
+            Serilog.Log.Verbose(exception, message);
+#endif
+        }
+
+        public static void Warning(ref string message)
+        {
+#if DEBUG
+            ConsoleQueue.Add($"Warning: {message}");
+#endif
+#if LOGGED_RELEASE
+            Serilog.Log.Warning(message);
+#endif
+        }
+
+        public static void Warning(string message)
+        {
+#if DEBUG
+            ConsoleQueue.Add($"Warning: {message}");
+#endif
+#if LOGGED_RELEASE
+            Serilog.Log.Warning(message);
+#endif
+        }
+
+        public static void Warning(ref Exception exception, ref string message)
+        {
+#if DEBUG
+            ConsoleQueue.Add($"Warning: {exception.StackTrace}\n{message}");
+#endif
+#if LOGGED_RELEASE
+            Serilog.Log.Warning(exception, message);
+#endif
+        }
+
+        public static void Warning(ref Exception exception, string message)
+        {
+#if DEBUG
+            ConsoleQueue.Add($"Warning: {exception.StackTrace}\n{message}");
+#endif
+#if LOGGED_RELEASE
+            Serilog.Log.Warning(exception, message);
+#endif
+        }
+    }
+    #endregion
 }
