@@ -6,6 +6,6 @@
     android:minResizeWidth="110dp"
     android:minResizeHeight="110dp"
     android:updatePeriodMillis="0"
-    android:initialLayout="@layout/widget_large_progress"
-    android:previewImage="@drawable/widget_large_preview"
+    android:initialLayout="@layout/widget__large_alt_progress"
+    android:previewImage="@drawable/widget__large_alt_preview"
     android:widgetCategory="home_screen"/>

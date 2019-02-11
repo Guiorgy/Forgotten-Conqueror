@@ -18,24 +18,24 @@ namespace ForgottenConqueror
 {
     [BroadcastReceiver(Label = "Last Chapter")]
     [IntentFilter(new string[] { "android.appwidget.action.APPWIDGET_UPDATE" })]
-    [MetaData("android.appwidget.provider", Resource = "@xml/appwidgetprovider")]
-    class Widget : AppWidgetProvider
+    [MetaData("android.appwidget.provider", Resource = "@xml/appwidgetprovider__small")]
+    class WidgetSmall : AppWidgetProvider
     {
         private readonly static string OpenChapterClick = "OpenChapterClick";
         private readonly static string RefreshClick = "RefreshClick";
         private readonly static int[] Layouts =
         {
-            Resource.Layout.widget,
-            Resource.Layout.widget_1cell,
-            Resource.Layout.widget_2cell,
-            Resource.Layout.widget_3cell,
+            Resource.Layout.widget__small,
+            Resource.Layout.widget__small_1cell,
+            Resource.Layout.widget__small_2cell,
+            Resource.Layout.widget__small_3cell,
         };
         private readonly static int[] LayoutsRefreshing =
         {
-            Resource.Layout.widget_progress,
-            Resource.Layout.widget_1cell_progress,
-            Resource.Layout.widget_2cell_progress,
-            Resource.Layout.widget_3cell_progress,
+            Resource.Layout.widget__small_progress,
+            Resource.Layout.widget__small_1cell_progress,
+            Resource.Layout.widget__small_2cell_progress,
+            Resource.Layout.widget__small_3cell_progress,
         };
 
         public override void OnUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
@@ -68,7 +68,7 @@ namespace ForgottenConqueror
 
                 DBController.Instance.ParseBooks(context);
 
-                ComponentName appWidgetComponentName = new ComponentName(context, Java.Lang.Class.FromType(typeof(Widget)).Name);
+                ComponentName appWidgetComponentName = new ComponentName(context, Java.Lang.Class.FromType(typeof(WidgetSmall)).Name);
                 appWidgetManager.UpdateAppWidget(appWidgetComponentName, BuildRemoteView(ref context, appWidgetId, ref widgetParams));
             }
             base.OnUpdate(context, appWidgetManager, appWidgetIds);
@@ -169,14 +169,14 @@ namespace ForgottenConqueror
             widgetView.SetTextViewText(Resource.Id.last_update, new DateTime(lastUpdate).ToString(widgetParams.DateFormat));
 
             // Bind the click intent for the chapter on the widget
-            Intent chapterIntent = new Intent(context, typeof(Widget));
+            Intent chapterIntent = new Intent(context, typeof(WidgetSmall));
             chapterIntent.SetAction(OpenChapterClick);
             chapterIntent.PutExtra(AppWidgetManager.ExtraAppwidgetId, appWidgetId);
             PendingIntent chapterPendingIntent = PendingIntent.GetBroadcast(context, appWidgetId, chapterIntent, 0);
             widgetView.SetOnClickPendingIntent(Resource.Id.container, chapterPendingIntent);
 
             // Bind the click intent for the refresh button on the widget
-            Intent refreshIntent = new Intent(context, typeof(Widget));
+            Intent refreshIntent = new Intent(context, typeof(WidgetSmall));
             refreshIntent.SetAction(RefreshClick);
             refreshIntent.PutExtra(AppWidgetManager.ExtraAppwidgetId, appWidgetId);
             PendingIntent refreshPendingIntent = PendingIntent.GetBroadcast(context, appWidgetId, refreshIntent, PendingIntentFlags.UpdateCurrent);
@@ -229,7 +229,7 @@ namespace ForgottenConqueror
         public void UpdateAll(ref Context context)
         {
             AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
-            ComponentName appWidgetComponentName = new ComponentName(context, Java.Lang.Class.FromType(typeof(Widget)).Name);
+            ComponentName appWidgetComponentName = new ComponentName(context, Java.Lang.Class.FromType(typeof(WidgetSmall)).Name);
             int[] appWidgetIds = appWidgetManager.GetAppWidgetIds(appWidgetComponentName);
             OnUpdate(context, appWidgetManager, appWidgetIds);
         }
@@ -244,7 +244,7 @@ namespace ForgottenConqueror
         {
             Realm realm = Realm.GetInstance(DB.RealmConfiguration);
             AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
-            ComponentName appWidgetComponentName = new ComponentName(context, Java.Lang.Class.FromType(typeof(Widget)).Name);
+            ComponentName appWidgetComponentName = new ComponentName(context, Java.Lang.Class.FromType(typeof(WidgetSmall)).Name);
             int[] appWidgetIds = appWidgetManager.GetAppWidgetIds(appWidgetComponentName);
             foreach (int appWidgetId in appWidgetIds)
             {
@@ -280,7 +280,7 @@ namespace ForgottenConqueror
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.widget_configuration);
+            SetContentView(Resource.Layout.widget__small_configuration);
 
             Bundle extras = Intent.Extras;
             int appWidgetId = extras != null ? extras.GetInt(AppWidgetManager.ExtraAppwidgetId, AppWidgetManager.InvalidAppwidgetId) : AppWidgetManager.InvalidAppwidgetId;
@@ -303,7 +303,7 @@ namespace ForgottenConqueror
                     }
                 , true));
 
-                Widget widget = new Widget();
+                WidgetSmall widget = new WidgetSmall();
                 Context context = this;
                 widget.Redraw(ref context, appWidgetId);
 

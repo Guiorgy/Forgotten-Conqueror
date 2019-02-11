@@ -118,7 +118,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WidgetLargeAlt.cs" />
     <Compile Include="WidgetLarge.cs" />
-    <Compile Include="Widget.cs" />
+    <Compile Include="WidgetSmall.cs" />
     <Compile Include="RemoteChapterAdapter.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -128,7 +128,7 @@
     <None Include="Assets\AboutAssets.txt" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\activity_main.axml">
+    <AndroidResource Include="Resources\layout\main__activity_main.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\values\colors.xml" />
@@ -236,59 +236,56 @@
     <AndroidResource Include="Resources\drawable\ic_refresh_grey_32dp.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\widget_preview.png" />
+    <AndroidResource Include="Resources\drawable\widget__small_preview.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\widget_preview_placeholder.png" />
+    <AndroidResource Include="Resources\layout\widget__small.axml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\widget.axml" />
+    <AndroidResource Include="Resources\layout\widget__small_1cell.axml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\widget_1cell.axml" />
+    <AndroidResource Include="Resources\layout\widget__small_2cell.axml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\widget_2cell.axml" />
+    <AndroidResource Include="Resources\layout\widget__small_3cell.axml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\widget_3cell.axml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\xml\appwidgetprovider.xml" />
+    <AndroidResource Include="Resources\xml\appwidgetprovider__small.xml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FodyWeavers.xml" />
-    <AndroidResource Include="Resources\layout\widget_1cell_progress.axml">
+    <AndroidResource Include="Resources\layout\widget__small_1cell_progress.axml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\widget_2cell_progress.axml">
+    <AndroidResource Include="Resources\layout\widget__small_2cell_progress.axml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\widget_3cell_progress.axml">
+    <AndroidResource Include="Resources\layout\widget__small_3cell_progress.axml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\widget_progress.axml">
+    <AndroidResource Include="Resources\layout\widget__small_progress.axml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\anim\fade_in_from_right.xml" />
     <AndroidResource Include="Resources\anim\fade_out_to_right.xml" />
-    <AndroidResource Include="Resources\layout\widget_large.axml">
+    <AndroidResource Include="Resources\layout\widget__large.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\xml\appwidgetprovider_large.xml">
+    <AndroidResource Include="Resources\xml\appwidgetprovider__large.xml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\widget_large_progress.axml">
+    <AndroidResource Include="Resources\layout\widget__large_progress.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\widget_large_alt.axml">
+    <AndroidResource Include="Resources\layout\widget__large_alt.axml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>
@@ -309,9 +306,6 @@
     <AndroidResource Include="Resources\drawable-xxxhdpi\new_chapter_icon.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\widget_large_preview_placeholder.png" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\drawable\ic_arrow_left_grey_32dp.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -321,45 +315,46 @@
     <AndroidResource Include="Resources\drawable\ic_books_grey_32dp.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\widget_large_chapter_listitem.axml">
+    <AndroidResource Include="Resources\layout\widget__large_chapter_listitem.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\widget_large_preview.png" />
+    <AndroidResource Include="Resources\drawable\widget__large_preview.png" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\ic_swap_vert_grey_32dp.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\xml\appwidgetprovider_large_alt.xml">
+    <AndroidResource Include="Resources\xml\appwidgetprovider__large_alt.xml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\widget_large_alt_progress.axml">
+    <AndroidResource Include="Resources\layout\widget__large_alt_progress.axml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\widget_large_book_listitem.axml">
+    <AndroidResource Include="Resources\layout\widget__large_book_listitem.axml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\widget_large_alt_preview.png" />
+    <AndroidResource Include="Resources\drawable\widget__large_alt_preview.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\fragment_main.axml">
+    <AndroidResource Include="Resources\layout\main__fragment_main.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\widget_configuration.axml" />
+    <AndroidResource Include="Resources\layout\widget__small_configuration.axml" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
     Other similar extension points exist, see Microsoft.Common.targets.

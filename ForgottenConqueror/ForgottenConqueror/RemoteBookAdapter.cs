@@ -21,7 +21,7 @@ namespace ForgottenConqueror
 
         private class ViewFactory : Java.Lang.Object, IRemoteViewsFactory
         {
-            private static readonly int ItemLayout = Resource.Layout.widget_large_book_listitem;
+            private static readonly int ItemLayout = Resource.Layout.widget__large_book_listitem;
             private Context context;
             private int WidgetId = AppWidgetManager.InvalidAppwidgetId;
             private int BookId;
@@ -71,7 +71,7 @@ namespace ForgottenConqueror
 
             public bool HasStableIds => true;
 
-            public RemoteViews LoadingView => new RemoteViews(context.PackageName, Resource.Layout.widget_1cell_progress);
+            public RemoteViews LoadingView => new RemoteViews(context.PackageName, Resource.Layout.widget__small_1cell_progress);
 
             public int ViewTypeCount => 1;
             

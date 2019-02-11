@@ -40,7 +40,7 @@ namespace ForgottenConqueror
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            return inflater.Inflate(Resource.Layout.fragment_main, container, false);
+            return inflater.Inflate(Resource.Layout.main__fragment_main, container, false);
         }
         
         public override void OnViewCreated(View view, Bundle savedInstanceState)

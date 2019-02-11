@@ -1,6 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Weavers xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="FodyWeavers.xsd">
-  <Fielder />
-  <PropertyChanged />
-  <RealmWeaver />
+<Weavers
+  VerifyAssembly="true"
+  VerifyIgnoreCodes="0x80131869"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="FodyWeavers.xsd">
+    <Fielder />
+    <PropertyChanged />
+    <RealmWeaver /> <!--RealmWeaver needs to be added through NuGet now, otherwise this doesn't build. Have to wait for a Realm update. -->
 </Weavers>

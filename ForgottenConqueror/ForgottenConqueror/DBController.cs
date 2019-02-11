@@ -245,7 +245,7 @@ namespace ForgottenConqueror
         private void RedrawAllWidgets(ref Context context)
         {
             // Widget
-            Widget widget = new Widget();
+            WidgetSmall widget = new WidgetSmall();
             widget.RedrawAll(ref context);
 
             // WidgetLarge

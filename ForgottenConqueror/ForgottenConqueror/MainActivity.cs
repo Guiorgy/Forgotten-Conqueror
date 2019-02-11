@@ -35,7 +35,7 @@ namespace ForgottenConqueror
                 return;
             }
 
-            SetContentView(Resource.Layout.widget_configuration);
+            SetContentView(Resource.Layout.widget__small_configuration);
 
 #if !RELEASE
             ForgottenConqueror.Instance.RequestPermission(this, Manifest.Permission.ReadExternalStorage, Manifest.Permission.WriteExternalStorage);

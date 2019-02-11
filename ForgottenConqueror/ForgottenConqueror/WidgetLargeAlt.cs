@@ -2,27 +2,23 @@
 using Android.Appwidget;
 using Android.Content;
 using Android.Widget;
-using static Android.Content.PM.LaunchMode;
 using Realms;
 using static ForgottenConqueror.DB;
 using Uri = Android.Net.Uri;
-using Android.Runtime;
-using Android.Support.V7.App;
-using Android.OS;
 
 namespace ForgottenConqueror
 {
     [BroadcastReceiver(Label = "Forgotten Conqueror")]
     [IntentFilter(new string[] { "android.appwidget.action.APPWIDGET_UPDATE" })]
-    [MetaData("android.appwidget.provider", Resource = "@xml/appwidgetprovider_large_alt")]
+    [MetaData("android.appwidget.provider", Resource = "@xml/appwidgetprovider__large_alt")]
     class WidgetLargeAlt : AppWidgetProvider
     {
         private readonly static string MenuClick = "OpenMenu";
         private readonly static string MenuOutsideClick = "CloseMenu";
         private readonly static string ReverseClick = "ReverseClick";
         private readonly static string RefreshClick = "RefreshClick";
-        private readonly static int Layout = Resource.Layout.widget_large_alt;
-        private readonly static int LayoutRefreshing = Resource.Layout.widget_large_alt_progress;
+        private readonly static int Layout = Resource.Layout.widget__large_alt;
+        private readonly static int LayoutRefreshing = Resource.Layout.widget__large_alt_progress;
 
         public override void OnUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
         {
