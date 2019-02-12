@@ -7,6 +7,7 @@ using Android.Support.V7.App;
 using Android.Content.PM;
 using Android.Support.Design.Widget;
 using System.Collections.Generic;
+using System.Linq;
 
 #if LOGGED_RELEASE
 using Serilog;
@@ -84,23 +85,43 @@ namespace ForgottenConqueror
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.M) return;
 
+            List<string> shouldRequestManually = new List<string>();
+            List<string> shouldRequestNormally = new List<string>();
+
             foreach (string permission in permissions)
             {
                 if (activity.CheckSelfPermission(permission) != Permission.Granted)
                 {
-                    if (activity.ShouldShowRequestPermissionRationale(permission))
+                    if (!activity.ShouldShowRequestPermissionRationale(permission))
                     {
-                        string request = string.Join(", ", permission);
-                        Snackbar.Make(activity.FindViewById(Resource.Id.root), $"Allow ForgottenConqueror permission to {request}?",
-                            Snackbar.LengthIndefinite).SetAction("Allow", new Action<Android.Views.View>(delegate (Android.Views.View obj) {
-                                activity.RequestPermissions(permissions, permission.GetHashCode());
-                            })).Show();
+                        shouldRequestManually.Add(permission);
                     }
                     else
                     {
-                        activity.RequestPermissions(permissions, permission.GetHashCode());
+                        shouldRequestNormally.Add(permission);
                     }
                 }
+            }
+
+            if (!shouldRequestManually.IsEmpty())
+            {
+                void Request(int index)
+                {
+                    string text = Permissions.ContainsKey(shouldRequestManually[index]) ? Permissions[shouldRequestManually[index]] : shouldRequestManually[index];
+                    Snackbar.Make(activity.FindViewById(Resource.Id.root), $"Allow ForgottenConqueror permission to {text}?",
+                        Snackbar.LengthIndefinite).SetAction("Allow", new Action<Android.Views.View>(delegate (Android.Views.View obj) {
+                            activity.RequestPermission(shouldRequestManually[index], shouldRequestManually[index].GetHashCode());
+                            if ((++index) < shouldRequestManually.Count)
+                            {
+                                Request(index);
+                            }
+                        })).Show();
+                }
+            }
+
+            if (!shouldRequestNormally.IsEmpty())
+            {
+                activity.RequestPermissions(shouldRequestNormally.ToArray(), shouldRequestNormally.Sum(p => p.GetHashCode()));
             }
         }
 
