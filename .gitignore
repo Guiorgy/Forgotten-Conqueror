@@ -191,4 +191,6 @@ FakesAssemblies/
 /Components
 /packages
 
+# Others
 *.userprefs
+*.dtbcache

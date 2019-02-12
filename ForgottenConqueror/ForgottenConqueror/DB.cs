@@ -8,6 +8,41 @@ namespace ForgottenConqueror
         public static readonly RealmConfiguration RealmConfiguration = new RealmConfiguration("ForgottenConqueror.realm")
         {
             SchemaVersion = 3,
+            MigrationCallback = (migration, oldSchema) =>
+            {
+                // 1 -> 2
+                if (oldSchema == 1)
+                {
+                    // WidgetLargeParams
+                    var newParams = migration.NewRealm.All<WidgetLargeParams>();
+                    foreach (var p in newParams)
+                    {
+                        p.Descending = false;
+                    }
+                    oldSchema = 2;
+                }
+                // 2 -> 3
+                if (oldSchema == 2)
+                {
+                    // Chapter
+                    var newChapters = migration.NewRealm.All<Chapter>();
+                    foreach (var c in newChapters)
+                    {
+                        c.ClearContent();
+                    }
+                    // WidgetParams
+                    var newParams = migration.NewRealm.All<WidgetParams>();
+                    foreach (var p in newParams)
+                    {
+                        p.DateFormat = "dd/MM/yyyy H:mm:ss";
+                    }
+                    oldSchema = 3;
+                }
+            },
+
+#if Debug
+            ShouldDeleteIfMigrationNeeded = true,
+#endif
         };
         private static object thislock = new object();
         private static DB instance;
@@ -59,6 +94,10 @@ namespace ForgottenConqueror
                 }
             }
 
+            public void ClearContent()
+            {
+                CompressedContent = null;
+            }
         }
 
         public class Book : RealmObject

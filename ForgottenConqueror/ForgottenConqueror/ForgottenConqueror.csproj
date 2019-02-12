@@ -128,7 +128,7 @@
     <None Include="Assets\AboutAssets.txt" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\main__activity_main.axml">
+    <AndroidResource Include="Resources\layout\app__activity_main.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\values\colors.xml" />
@@ -347,7 +347,7 @@
     <AndroidResource Include="Resources\drawable\widget__large_alt_preview.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\main__fragment_main.axml">
+    <AndroidResource Include="Resources\layout\app__fragment_main.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
