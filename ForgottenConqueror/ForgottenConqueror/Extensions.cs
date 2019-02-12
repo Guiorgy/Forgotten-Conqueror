@@ -21,7 +21,12 @@ namespace ForgottenConqueror
             return collection.Count == 0;
         }
 
-        public static void RequestPermission(this AppCompatActivity activity, string permission, int requestCode)
+        public static void RequestPermissions(this AppCompatActivity activity, string[] permissions, byte requestCode)
+        {
+            activity.RequestPermissions(permissions, requestCode);
+        }
+
+        public static void RequestPermission(this AppCompatActivity activity, string permission, byte requestCode)
         {
             string[] permissions = { permission };
             activity.RequestPermissions(permissions, requestCode);

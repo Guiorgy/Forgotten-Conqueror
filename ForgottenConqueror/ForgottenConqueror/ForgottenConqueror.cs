@@ -81,10 +81,11 @@ namespace ForgottenConqueror
             { Manifest.Permission.WriteExternalStorage, "Write External Storage" },
         };
 
-        public void RequestPermission(AppCompatActivity activity, params string[] permissions)
+        public bool RequestPermission(AppCompatActivity activity, params string[] permissions)
         {
-            if (Build.VERSION.SdkInt < BuildVersionCodes.M) return;
+            if (Build.VERSION.SdkInt < BuildVersionCodes.M) return true;
 
+            bool allowed = true;
             List<string> shouldRequestManually = new List<string>();
             List<string> shouldRequestNormally = new List<string>();
 
@@ -92,7 +93,8 @@ namespace ForgottenConqueror
             {
                 if (activity.CheckSelfPermission(permission) != Permission.Granted)
                 {
-                    if (!activity.ShouldShowRequestPermissionRationale(permission))
+                    allowed = false;
+                    if (activity.ShouldShowRequestPermissionRationale(permission))
                     {
                         shouldRequestManually.Add(permission);
                     }
@@ -110,19 +112,24 @@ namespace ForgottenConqueror
                     string text = Permissions.ContainsKey(shouldRequestManually[index]) ? Permissions[shouldRequestManually[index]] : shouldRequestManually[index];
                     Snackbar.Make(activity.FindViewById(Resource.Id.root), $"Allow ForgottenConqueror permission to {text}?",
                         Snackbar.LengthIndefinite).SetAction("Allow", new Action<Android.Views.View>(delegate (Android.Views.View obj) {
-                            activity.RequestPermission(shouldRequestManually[index], shouldRequestManually[index].GetHashCode());
+                            byte requestCode = (byte)(shouldRequestManually[index].GetHashCode() % 256);
+                            activity.RequestPermission(shouldRequestManually[index], requestCode);
                             if ((++index) < shouldRequestManually.Count)
                             {
                                 Request(index);
                             }
                         })).Show();
                 }
+                Request(0);
             }
 
             if (!shouldRequestNormally.IsEmpty())
             {
-                activity.RequestPermissions(shouldRequestNormally.ToArray(), shouldRequestNormally.Sum(p => p.GetHashCode()));
+                byte requestCode = (byte)(shouldRequestNormally.Sum(p => p.GetHashCode()) % 256);
+                activity.RequestPermissions(shouldRequestNormally.ToArray(), requestCode);
             }
+
+            return allowed;
         }
 
         public bool CheckForPermissions(params string[] permissions)
