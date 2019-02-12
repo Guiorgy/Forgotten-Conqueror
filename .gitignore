@@ -194,3 +194,4 @@ FakesAssemblies/
 # Others
 *.userprefs
 *.dtbcache
+**/Resource.Designer.cs

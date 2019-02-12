@@ -29,6 +29,7 @@ namespace ForgottenConqueror
                     foreach (var c in newChapters)
                     {
                         c.ClearContent();
+                        c.IsNew = false;
                     }
                     // WidgetParams
                     var newParams = migration.NewRealm.All<WidgetParams>();
@@ -38,6 +39,11 @@ namespace ForgottenConqueror
                     }
                     oldSchema = 3;
                 }
+            },
+            //EncryptionKey = System.Text.Encoding.ASCII.GetBytes("mYq3t6w9z$C&F)J@NcRfTjWnZr4u7x!A%D*G-KaPdSgVkXp2s5v8y/B?E(H+MbQe"),
+            ShouldCompactOnLaunch = (totalBytes, usedBytes) =>
+            {
+                return totalBytes > 104857600 || (totalBytes > 52428800 && (double)usedBytes / totalBytes < 0.5);
             },
 
 #if Debug
@@ -77,6 +83,7 @@ namespace ForgottenConqueror
             public int Count { get; set; }
             public string Title { get; set; }
             public string URL { get; set; }
+            public bool IsNew { get; set; }
 
             public Book Book { get; set; }
 

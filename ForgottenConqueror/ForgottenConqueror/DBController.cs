@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Android.Content;
+using Badge.Plugin;
 using HtmlAgilityPack;
 using Realms;
 using static ForgottenConqueror.DB;
@@ -70,6 +71,7 @@ namespace ForgottenConqueror
                     if (lastId != -1 && lastId < currentId)
                     {
                         List<Chapter> chapters = realm.All<Chapter>().Where(c => c.ID > lastId).ToList();
+                        CrossBadge.Current.SetBadge(chapters.Count);
                         NotificationManager.Instance.NotifyNewChapters(ref context, ref chapters);
                     }
 
