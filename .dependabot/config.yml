@@ -1,0 +1,13 @@
+version: 1
+
+update_configs:
+  - package_manager: "dotnet:nuget"
+    directory: "/ForgottenConqueror/ForgottenConqueror/"
+    update_schedule: "weekly"
+    target_branch: "0.3"
+    default_reviewers:
+    - Guiorgy
+    default_assignees:
+    - Guiorgy
+    default_labels:
+    - "dependabot"
