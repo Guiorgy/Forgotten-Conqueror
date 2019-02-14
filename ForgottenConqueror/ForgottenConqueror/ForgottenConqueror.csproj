@@ -192,6 +192,9 @@
     <PackageReference Include="Serilog.Sinks.Xamarin">
       <Version>0.1.29</Version>
     </PackageReference>
+    <PackageReference Include="Timestamp">
+      <Version>1.0.2</Version>
+    </PackageReference>
     <PackageReference Include="Xam.Plugin.Badge">
       <Version>1.0.0</Version>
     </PackageReference>

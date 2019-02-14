@@ -1,6 +1,3 @@
-*.lock
-*.ide*
-
 ### this .gitignore below was fount at https://gist.github.com/therealjohn/21eb181c279586471d43
 
 ## Ignore Visual Studio temporary files, build results, and
@@ -192,6 +189,8 @@ FakesAssemblies/
 /packages
 
 # Others
+*.lock
+*.ide*
 *.userprefs
 *.dtbcache
-**/Resource.Designer.cs
+**/[Rr]esource.[Dd]esigner.cs
