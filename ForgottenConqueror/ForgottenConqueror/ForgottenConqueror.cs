@@ -15,6 +15,10 @@ using System.IO;
 using Serilog.Events;
 #endif
 
+#if RELEASE
+using Rollbar;
+#endif
+
 namespace ForgottenConqueror
 {
 #if DEBUG
@@ -45,7 +49,13 @@ namespace ForgottenConqueror
                 .WriteTo.AndroidLog(restrictedToMinimumLevel: LogEventLevel.Verbose)
                 .CreateLogger();
 #endif
-#if LOGGED_RELEASE || DEBUG
+
+#if RELEASE
+            RollbarLocator.RollbarInstance.Configure(new RollbarConfig("a8c994b1bea645d3a70b6aa4508de62b"));
+            RollbarLocator.RollbarInstance.Info("");
+
+#endif
+
             AppDomain.CurrentDomain.UnhandledException += (object sender, UnhandledExceptionEventArgs e) => {
                 if(e.ExceptionObject is Exception)
                 {
@@ -61,7 +71,6 @@ namespace ForgottenConqueror
                     Process.KillProcess(Process.MyPid());
                 }
             };
-#endif
         }
 
         public override void OnTerminate()

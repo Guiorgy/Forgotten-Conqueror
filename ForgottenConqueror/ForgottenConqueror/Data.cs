@@ -11,6 +11,10 @@ using System.Collections.Concurrent;
 using System.Threading;
 #endif
 
+#if RELEASE
+using Rollbar;
+#endif
+
 namespace ForgottenConqueror
 {
     class Data
@@ -39,7 +43,7 @@ namespace ForgottenConqueror
             private set { }
         }
 
-        #region SharedPreferences
+#region SharedPreferences
         public void Write(ref Context context, in string key, in string value)
         {
             ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
@@ -156,9 +160,9 @@ namespace ForgottenConqueror
         
         public readonly static string LastUpdateTime = "LastUpdateTime";
         public readonly static string PreviouslyLastChapterId = "PreviouslyLastChapterId";
-        #endregion
+#endregion
 
-        #region String compression
+#region String compression
         // Thank you @xanatos (https://stackoverflow.com/questions/7343465/compression-decompression-string-with-c-sharp)
         private void CopyTo(in Stream src, in Stream dest)
         {
@@ -229,267 +233,406 @@ namespace ForgottenConqueror
                 return mso.ToArray();
             }
         }
-        #endregion
+#endregion
     }
 
-    #region Log
+#region Log
     public static class Log
     {
+        #region DEBUG
 #if DEBUG
         private static BlockingCollection<string> ConsoleQueue = new BlockingCollection<string>();
-#endif
 
         static Log()
         {
-#if DEBUG
             var thread = new Thread(() =>
             {
                 while (true) Console.WriteLine(ConsoleQueue.Take());
             });
             thread.IsBackground = true;
             thread.Start();
-#endif
         }
-
         public static void Debug(ref string message)
         {
-#if DEBUG
             ConsoleQueue.Add($"Debug: {message}");
-#endif
-#if LOGGED_RELEASE
-            Serilog.Log.Debug(message);
-#endif
         }
 
         public static void Debug(string message)
         {
-#if DEBUG
             ConsoleQueue.Add($"Debug: {message}");
-#endif
-#if LOGGED_RELEASE
-            Serilog.Log.Debug(message);
-#endif
         }
 
         public static void Debug(ref Exception exception, ref string message)
         {
-#if DEBUG
             ConsoleQueue.Add($"Debug: {exception.StackTrace}\n{message}");
-#endif
-#if LOGGED_RELEASE
-            Serilog.Log.Debug(exception, message);
-#endif
         }
 
         public static void Debug(ref Exception exception, string message)
         {
-#if DEBUG
             ConsoleQueue.Add($"Debug: {exception.StackTrace}\n{message}");
-#endif
-#if LOGGED_RELEASE
-            Serilog.Log.Debug(exception, message);
-#endif
         }
 
         public static void Error(ref string message)
         {
-#if DEBUG
             ConsoleQueue.Add($"Error: {message}");
-#endif
-#if LOGGED_RELEASE
-            Serilog.Log.Error(message);
-#endif
         }
 
         public static void Error(string message)
         {
-#if DEBUG
             ConsoleQueue.Add($"Error: {message}");
-#endif
-#if LOGGED_RELEASE
-            Serilog.Log.Error(message);
-#endif
         }
 
         public static void Error(ref Exception exception, ref string message)
         {
-#if DEBUG
             ConsoleQueue.Add($"Error: {exception.StackTrace}\n{message}");
-#endif
-#if LOGGED_RELEASE
-            Serilog.Log.Error(exception, message);
-#endif
         }
 
         public static void Error(ref Exception exception, string message)
         {
-#if DEBUG
             ConsoleQueue.Add($"Error: {exception.StackTrace}\n{message}");
-#endif
-#if LOGGED_RELEASE
-            Serilog.Log.Error(exception, message);
-#endif
         }
 
         public static void Fatal(ref string message)
         {
-#if DEBUG
             ConsoleQueue.Add($"Fatal: {message}");
-#endif
-#if LOGGED_RELEASE
-            Serilog.Log.Fatal(message);
-#endif
         }
 
         public static void Fatal(string message)
         {
-#if DEBUG
             ConsoleQueue.Add($"Fatal: {message}");
-#endif
-#if LOGGED_RELEASE
-            Serilog.Log.Fatal(message);
-#endif
         }
 
         public static void Fatal(ref Exception exception, ref string message)
         {
-#if DEBUG
             ConsoleQueue.Add($"Fatal: {exception.StackTrace}\n{message}");
-#endif
-#if LOGGED_RELEASE
-            Serilog.Log.Fatal(exception, message);
-#endif
         }
 
         public static void Fatal(ref Exception exception, string message)
         {
-#if DEBUG
             ConsoleQueue.Add($"Fatal: {exception.StackTrace}\n{message}");
-#endif
-#if LOGGED_RELEASE
-            Serilog.Log.Fatal(exception, message);
-#endif
         }
 
         public static void Information(ref string message)
         {
-#if DEBUG
             ConsoleQueue.Add($"Information: {message}");
-#endif
-#if LOGGED_RELEASE
-            Serilog.Log.Information(message);
-#endif
         }
 
         public static void Information(string message)
         {
-#if DEBUG
             ConsoleQueue.Add($"Information: {message}");
-#endif
-#if LOGGED_RELEASE
-            Serilog.Log.Information(message);
-#endif
         }
 
         public static void Information(ref Exception exception, ref string message)
         {
-#if DEBUG
             ConsoleQueue.Add($"Information: {exception.StackTrace}\n{message}");
-#endif
-#if LOGGED_RELEASE
-            Serilog.Log.Information(exception, message);
-#endif
         }
 
         public static void Information(ref Exception exception, string message)
         {
-#if DEBUG
             ConsoleQueue.Add($"Information: {exception.StackTrace}\n{message}");
-#endif
-#if LOGGED_RELEASE
-            Serilog.Log.Information(exception, message);
-#endif
         }
 
         public static void Verbose(ref string message)
         {
-#if DEBUG
             ConsoleQueue.Add($"Verbose: {message}");
-#endif
-#if LOGGED_RELEASE
-            Serilog.Log.Verbose(message);
-#endif
         }
 
         public static void Verbose(string message)
         {
-#if DEBUG
             ConsoleQueue.Add($"Verbose: {message}");
-#endif
-#if LOGGED_RELEASE
-            Serilog.Log.Verbose(message);
-#endif
         }
 
         public static void Verbose(ref Exception exception, ref string message)
         {
-#if DEBUG
             ConsoleQueue.Add($"Verbose: {exception.StackTrace}\n{message}");
-#endif
-#if LOGGED_RELEASE
-            Serilog.Log.Verbose(exception, message);
-#endif
         }
 
         public static void Verbose(ref Exception exception, string message)
         {
-#if DEBUG
             ConsoleQueue.Add($"Verbose: {exception.StackTrace}\n{message}");
-#endif
-#if LOGGED_RELEASE
-            Serilog.Log.Verbose(exception, message);
-#endif
         }
 
         public static void Warning(ref string message)
         {
-#if DEBUG
             ConsoleQueue.Add($"Warning: {message}");
-#endif
-#if LOGGED_RELEASE
-            Serilog.Log.Warning(message);
-#endif
         }
 
         public static void Warning(string message)
         {
-#if DEBUG
             ConsoleQueue.Add($"Warning: {message}");
-#endif
-#if LOGGED_RELEASE
-            Serilog.Log.Warning(message);
-#endif
         }
 
         public static void Warning(ref Exception exception, ref string message)
         {
-#if DEBUG
             ConsoleQueue.Add($"Warning: {exception.StackTrace}\n{message}");
-#endif
-#if LOGGED_RELEASE
-            Serilog.Log.Warning(exception, message);
-#endif
         }
 
         public static void Warning(ref Exception exception, string message)
         {
-#if DEBUG
             ConsoleQueue.Add($"Warning: {exception.StackTrace}\n{message}");
-#endif
-#if LOGGED_RELEASE
-            Serilog.Log.Warning(exception, message);
-#endif
         }
+#endif
+        #endregion
+
+        #region LOGGED_RELEASE
+#if LOGGED_RELEASE
+        public static void Debug(ref string message)
+        {
+            Serilog.Log.Debug(message);
+        }
+
+        public static void Debug(string message)
+        {
+            Serilog.Log.Debug(message);
+        }
+
+        public static void Debug(ref Exception exception, ref string message)
+        {
+            Serilog.Log.Debug(exception, message);
+        }
+
+        public static void Debug(ref Exception exception, string message)
+        {
+            Serilog.Log.Debug(exception, message);
+        }
+
+        public static void Error(ref string message)
+        {
+            Serilog.Log.Error(message);
+        }
+
+        public static void Error(string message)
+        {
+            Serilog.Log.Error(message);
+        }
+
+        public static void Error(ref Exception exception, ref string message)
+        {
+            Serilog.Log.Error(exception, message);
+        }
+
+        public static void Error(ref Exception exception, string message)
+        {
+            Serilog.Log.Error(exception, message);
+        }
+
+        public static void Fatal(ref string message)
+        {
+            Serilog.Log.Fatal(message);
+        }
+
+        public static void Fatal(string message)
+        {
+            Serilog.Log.Fatal(message);
+        }
+
+        public static void Fatal(ref Exception exception, ref string message)
+        {
+            Serilog.Log.Fatal(exception, message);
+        }
+
+        public static void Fatal(ref Exception exception, string message)
+        {
+            Serilog.Log.Fatal(exception, message);
+        }
+
+        public static void Information(ref string message)
+        {
+            Serilog.Log.Information(message);
+        }
+
+        public static void Information(string message)
+        {
+            Serilog.Log.Information(message);
+        }
+
+        public static void Information(ref Exception exception, ref string message)
+        {
+            Serilog.Log.Information(exception, message);
+        }
+
+        public static void Information(ref Exception exception, string message)
+        {
+            Serilog.Log.Information(exception, message);
+        }
+
+        public static void Verbose(ref string message)
+        {
+            Serilog.Log.Verbose(message);
+        }
+
+        public static void Verbose(string message)
+        {
+            Serilog.Log.Verbose(message);
+        }
+
+        public static void Verbose(ref Exception exception, ref string message)
+        {
+            Serilog.Log.Verbose(exception, message);
+        }
+
+        public static void Verbose(ref Exception exception, string message)
+        {
+            Serilog.Log.Verbose(exception, message);
+        }
+
+        public static void Warning(ref string message)
+        {
+            Serilog.Log.Warning(message);
+        }
+
+        public static void Warning(string message)
+        {
+            Serilog.Log.Warning(message);
+        }
+
+        public static void Warning(ref Exception exception, ref string message)
+        {
+            Serilog.Log.Warning(exception, message);
+        }
+
+        public static void Warning(ref Exception exception, string message)
+        {
+            Serilog.Log.Warning(exception, message);
+        }
+#endif
+        #endregion
+
+        #region RELEASE
+#if RELEASE
+        public static void Debug(ref string message)
+        {
+            RollbarLocator.RollbarInstance.Debug(message);
+        }
+
+        public static void Debug(string message)
+        {
+            RollbarLocator.RollbarInstance.Debug(message);
+        }
+
+        public static void Debug(ref Exception exception, ref string message)
+        {
+            RollbarLocator.RollbarInstance.Debug(message);
+            RollbarLocator.RollbarInstance.Error(exception);
+        }
+
+        public static void Debug(ref Exception exception, string message)
+        {
+            RollbarLocator.RollbarInstance.Debug(message);
+            RollbarLocator.RollbarInstance.Error(exception);
+        }
+
+        public static void Error(ref string message)
+        {
+            RollbarLocator.RollbarInstance.Error(message);
+        }
+
+        public static void Error(string message)
+        {
+            RollbarLocator.RollbarInstance.Error(message);
+        }
+
+        public static void Error(ref Exception exception, ref string message)
+        {
+            RollbarLocator.RollbarInstance.Error(message);
+            RollbarLocator.RollbarInstance.Error(exception);
+        }
+
+        public static void Error(ref Exception exception, string message)
+        {
+            RollbarLocator.RollbarInstance.Error(message);
+            RollbarLocator.RollbarInstance.Error(exception);
+        }
+
+        public static void Fatal(ref string message)
+        {
+            RollbarLocator.RollbarInstance.Critical(message);
+        }
+
+        public static void Fatal(string message)
+        {
+            RollbarLocator.RollbarInstance.Critical(message);
+        }
+
+        public static void Fatal(ref Exception exception, ref string message)
+        {
+            RollbarLocator.RollbarInstance.Critical(message);
+            RollbarLocator.RollbarInstance.Critical(exception);
+        }
+
+        public static void Fatal(ref Exception exception, string message)
+        {
+            RollbarLocator.RollbarInstance.Critical(message);
+            RollbarLocator.RollbarInstance.Critical(exception);
+        }
+
+        public static void Information(ref string message)
+        {
+            RollbarLocator.RollbarInstance.Info(message);
+        }
+
+        public static void Information(string message)
+        {
+            RollbarLocator.RollbarInstance.Info(message);
+        }
+
+        public static void Information(ref Exception exception, ref string message)
+        {
+            RollbarLocator.RollbarInstance.Info(message);
+            RollbarLocator.RollbarInstance.Error(exception);
+        }
+
+        public static void Information(ref Exception exception, string message)
+        {
+            RollbarLocator.RollbarInstance.Info(message);
+            RollbarLocator.RollbarInstance.Error(exception);
+        }
+
+        public static void Verbose(ref string message)
+        {
+            RollbarLocator.RollbarInstance.Info("VERBOSE: " + message);
+        }
+
+        public static void Verbose(string message)
+        {
+            RollbarLocator.RollbarInstance.Info("VERBOSE: " + message);
+        }
+
+        public static void Verbose(ref Exception exception, ref string message)
+        {
+            RollbarLocator.RollbarInstance.Info("VERBOSE: " + message);
+            RollbarLocator.RollbarInstance.Error(exception);
+        }
+
+        public static void Verbose(ref Exception exception, string message)
+        {
+            RollbarLocator.RollbarInstance.Info("VERBOSE: " + message);
+            RollbarLocator.RollbarInstance.Error(exception);
+        }
+
+        public static void Warning(ref string message)
+        {
+            RollbarLocator.RollbarInstance.Warning(message);
+        }
+
+        public static void Warning(string message)
+        {
+            RollbarLocator.RollbarInstance.Warning(message);
+        }
+
+        public static void Warning(ref Exception exception, ref string message)
+        {
+            RollbarLocator.RollbarInstance.Warning(message);
+            RollbarLocator.RollbarInstance.Error(exception);
+        }
+
+        public static void Warning(ref Exception exception, string message)
+        {
+            RollbarLocator.RollbarInstance.Warning(message);
+            RollbarLocator.RollbarInstance.Error(exception);
+        }
+#endif
+        #endregion
     }
     #endregion
 }

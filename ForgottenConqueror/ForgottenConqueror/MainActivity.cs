@@ -41,7 +41,7 @@ namespace ForgottenConqueror
             ForgottenConqueror.Instance.RequestPermission(this, Manifest.Permission.ReadExternalStorage, Manifest.Permission.WriteExternalStorage);
 #endif
 
-            FinishAndRemoveTask();
+            //FinishAndRemoveTask();
 
             //viewPager = FindViewById<ViewPager>(Resource.Id.viewpager);
             //pagerTitleStrip = FindViewById<PagerTitleStrip>(Resource.Id.viewpager_header);
