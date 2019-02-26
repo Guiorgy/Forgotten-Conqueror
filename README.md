@@ -1,6 +1,8 @@
 ## Project is still work in progress!
 
-# Forgotten-Conqueror [![API](https://img.shields.io/badge/API-15%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=15)
+# Forgotten-Conqueror
+[![API](https://img.shields.io/badge/API-15%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=15)
+[![Build status](https://build.appcenter.ms/v0.1/apps/fd232f1f-1879-4db2-90af-8bf70009c5aa/branches/0.3/badge)](https://appcenter.ms)
 
 An androi application for http://forgottenconqueror.com/ a website for the book "Forgotten Conqueror" by Za1d3
 
