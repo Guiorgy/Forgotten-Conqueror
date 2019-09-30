@@ -166,7 +166,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="HtmlAgilityPack">
-      <Version>1.9.0</Version>
+      <Version>1.11.14</Version>
     </PackageReference>
     <PackageReference Include="MaterialSpinner-Xamarin">
       <Version>1.1.1</Version>
